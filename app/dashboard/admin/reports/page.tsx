@@ -9,6 +9,7 @@ import {
   ChevronRight,
   AlertCircle,
   Clock,
+  
   CheckCircle,
   XCircle,
   MapPin,
@@ -34,7 +35,7 @@ interface Report {
   category: string
   location: string
   urgency: "low" | "medium" | "high"
-  status: "pending" | "in-progress" | "resolved" | "rejected"
+  status: "pending" | "in_progress" | "resolved" | "rejected"
   timestamp?: string
   created_at: string
   updated_at: string
@@ -108,7 +109,7 @@ export default function AdminReportsPage() {
 
   const statuses = [
     { value: "pending", label: "Pending", color: "bg-yellow-100 text-yellow-700", icon: Clock },
-    { value: "in-progress", label: "In Progress", color: "bg-blue-100 text-blue-700", icon: AlertCircle },
+    { value: "in_progress", label: "In Progress", color: "bg-blue-100 text-blue-700", icon: AlertCircle },
     { value: "resolved", label: "Resolved", color: "bg-green-100 text-green-700", icon: CheckCircle },
     { value: "rejected", label: "Rejected", color: "bg-red-100 text-red-700", icon: XCircle },
   ]
@@ -431,7 +432,7 @@ export default function AdminReportsPage() {
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <p className="text-xs text-gray-500 mb-1">In Progress</p>
               <p className="text-2xl font-bold text-blue-600">
-                {reports.filter((r) => r.status === "in-progress").length}
+                {reports.filter((r) => r.status === "in_progress").length}
               </p>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gray-200">

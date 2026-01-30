@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await params in Next.js 15+
+    const { id } = await params
+    
     const body = await request.json()
     const { status } = body
 
@@ -20,7 +23,7 @@ export async function PATCH(
 
     // Forward the request to Laravel backend
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/admin/reports/${params.id}/status`,
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/reports/${id}/status`,
       {
         method: 'PATCH',
         headers: {

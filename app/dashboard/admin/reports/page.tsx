@@ -40,8 +40,8 @@ interface Report {
   updated_at: string
   files?: Array<{
     id: number
-    file_path: string
-    file_type: string
+    path: string
+    type: string
   }>
 }
 
@@ -58,17 +58,24 @@ export default function AdminReportsPage() {
   const { user, loading: authLoading } = useAuth(true)
   const { toast } = useToast()
 
-  const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000"
+  const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000"
 
-  const getImageUrl = (imagePath?: string) => {
-    if (!imagePath) return ""
-    if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-      return imagePath
+  const getImageUrl = (path?: string) => {
+    if (!path) return "/placeholder-image.jpg"
+    
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path
     }
-    if (imagePath.startsWith("/")) {
-      return `${IMAGE_URL}${imagePath}`
+    
+    if (path.startsWith("storage/")) {
+      return `${IMAGE_BASE_URL}/${path}`
     }
-    return `${IMAGE_URL}/${imagePath}`
+    
+    if (!path.startsWith("/")) {
+      return `${IMAGE_BASE_URL}/storage/${path}`
+    }
+    
+    return `${IMAGE_BASE_URL}${path}`
   }
 
   const [reports, setReports] = useState<Report[]>([])
@@ -217,12 +224,10 @@ export default function AdminReportsPage() {
           description: "Report status updated successfully.",
         })
         
-        // Update the report in the list
         setReports(reports.map(r => 
           r.id === reportId ? { ...r, status: newStatus } : r
         ))
         
-        // Update selected report if it's the one being updated
         if (selectedReport?.id === reportId) {
           setSelectedReport({ ...selectedReport, status: newStatus })
         }
@@ -707,14 +712,35 @@ export default function AdminReportsPage() {
                       <label className="block text-sm font-medium text-gray-500 mb-2">Attachments</label>
                       <div className="grid grid-cols-2 gap-4">
                         {selectedReport.files.map((file) => (
-                          <div key={file.id} className="relative h-32 rounded-lg overflow-hidden bg-gray-100">
-                            <Image
-                              src={getImageUrl(file.file_path)}
-                              alt="Report attachment"
-                              fill
-                              className="object-cover"
-                              unoptimized
-                            />
+                          <div key={file.id} className="relative h-32 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                            {file.type === 'image' ? (
+                              <Image
+                                src={getImageUrl(file.path)}
+                                alt="Report attachment"
+                                fill
+                                className="object-cover"
+                                unoptimized
+                                onError={(e) => {
+                                  console.error("Image load error for:", file.path)
+                                  const target = e.target as HTMLImageElement
+                                  target.src = "/placeholder-image.jpg"
+                                }}
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center h-full">
+                                <div className="text-center">
+                                  <p className="text-sm text-gray-500">Video File</p>
+                                  <a 
+                                    href={getImageUrl(file.path)} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-blue-600 hover:underline"
+                                  >
+                                    View Video
+                                  </a>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

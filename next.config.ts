@@ -1,12 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'infinitech-api11.site'],
     remotePatterns: [
       {
         protocol: 'http',
         hostname: 'localhost',
         port: '8000',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'infinitech-api11.site',
+        pathname: '/storage/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'infinitech-api11.site',
         pathname: '/images/**',
       },
     ],

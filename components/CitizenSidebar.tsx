@@ -73,7 +73,7 @@ export default function CitizenSidebar() {
   { icon: FileText, label: 'Citizen Guide', path: '/dashboard/citizen/citizen-guide' },
   { icon: GraduationCap, label: 'Students', path: '/dashboard/citizen/students' },
   { icon: Rocket, label: 'Startup', path: '/dashboard/citizen/startup' },
-  { icon: Building2, label: 'Business', path: '/dashboard/citizen/business' },
+  // { icon: Building2, label: 'Business', path: '/dashboard/citizen/business' },
   { icon: MapPin, label: 'City Map', path: '/dashboard/citizen/city-map' },
   { icon: Bell, label: 'Alerts', path: '/dashboard/citizen/alerts' },
   { icon: File, label: 'Certificate of Indigency', path: '/dashboard/citizen/services/certificate-of-indigency' },

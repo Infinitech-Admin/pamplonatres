@@ -71,6 +71,7 @@ export default function AdminSidebar() {
     { icon: Newspaper, label: "News", path: "/dashboard/admin/news" },
     { icon: Newspaper, label: "Announcements", path: "/dashboard/admin/announcements" },
     { icon: Mail, label: "Contact Messages", path: "/dashboard/admin/contact" },
+        { icon: Mail, label: "Reports", path: "/dashboard/admin/reports" },
   ];
 
   // ------------------------

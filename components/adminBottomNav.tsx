@@ -50,6 +50,7 @@ export default function AdminBottomNav() {
     { icon: Building, label: 'Building Permit', path: '/dashboard/admin/building-permit' },
     { icon: ScrollText, label: 'Cedula', path: '/dashboard/admin/cedula' },
     { icon: Heart, label: 'Marriage License', path: '/dashboard/admin/marriage-license' },
+      { icon: Heart, label: 'Reports', path: '/dashboard/admin/reports' },
   ];
 
   const civilRegistry = [

@@ -102,7 +102,7 @@ export default function AdminBarangayBlotterPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.data) {
-          setBlotters(data.data.data || [])
+          setBlotters(data.data || [])
           setPagination({
             current_page: data.data.current_page || 1,
             last_page: data.data.last_page || 1,

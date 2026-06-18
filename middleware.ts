@@ -20,7 +20,10 @@ export async function middleware(request: NextRequest) {
     '/contact',
     '/cookies',
     '/terms',
-    '/privacy'
+    '/privacy',
+    '/announcements',
+    '/news',
+    '/services',
   ]
   const isPublicPath = publicPaths.includes(pathname)
   

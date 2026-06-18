@@ -4,20 +4,22 @@ import { cookies } from "next/headers"
 const LARAVEL_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
 export async function GET(request: NextRequest) {
+
   try {
     const searchParams = request.nextUrl.searchParams
     const params = new URLSearchParams()
 
-    // Forward query parameters
+
     if (searchParams.get("page")) params.append("page", searchParams.get("page")!)
     if (searchParams.get("per_page")) params.append("per_page", searchParams.get("per_page")!)
     if (searchParams.get("category")) params.append("category", searchParams.get("category")!)
     if (searchParams.get("search")) params.append("search", searchParams.get("search")!)
     if (searchParams.get("is_active")) params.append("is_active", searchParams.get("is_active")!)
 
-    // Get token from HTTP-only cookie (consistent with medical-assistance route)
+
     const cookieStore = await cookies()
     const token = cookieStore.get("auth_token")?.value
+
 
     const headers: HeadersInit = {
       "Content-Type": "application/json",
@@ -29,15 +31,21 @@ export async function GET(request: NextRequest) {
       headers["Authorization"] = `Bearer ${token}`
     }
 
-    const response = await fetch(`${LARAVEL_API_URL}/announcements?${params.toString()}`, {
+    const url = `${LARAVEL_API_URL}/announcements?${params.toString()}`
+
+    const response = await fetch(url, {
       method: "GET",
       headers,
       cache: "no-store",
+      credentials: "include",
     })
+
 
     const data = await response.json()
 
+
     return NextResponse.json(data, { status: response.status })
+
   } catch (error) {
     console.error("Error fetching announcements:", error)
     return NextResponse.json(

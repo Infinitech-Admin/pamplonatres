@@ -106,7 +106,7 @@ export default function AdminBarangayClearancePage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.data) {
-          setClearances(data.data.data || [])
+          setClearances(data.data || [])
           setPagination({
             current_page: data.data.current_page || 1,
             last_page: data.data.last_page || 1,

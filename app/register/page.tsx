@@ -12,12 +12,12 @@ export default function RegisterPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
-    votersId: null as File | null,
+    voters_id: null as File | null,
     password: "",
     confirmPassword: "",
-    phoneNumber: "",
+    phone_number: "",
     address: "",
   })
   const [loading, setLoading] = useState(false)
@@ -32,7 +32,7 @@ export default function RegisterPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0]
-      setFormData((prev) => ({ ...prev, votersId: file || null }))
+      setFormData((prev) => ({ ...prev, voters_id: file || null }))
       setError("") // Clear error on file change
       
       // Show success toast for file upload
@@ -61,7 +61,7 @@ export default function RegisterPage() {
       return
     }
 
-    if (!formData.votersId) {
+    if (!formData.voters_id) {
       setError("Please upload your Voter's ID")
       toast({
         variant: "destructive",
@@ -96,12 +96,12 @@ export default function RegisterPage() {
     try {
       // Create FormData for file upload
       const data = new FormData()
-      data.append("fullName", formData.fullName)
+      data.append("name", formData.name)
       data.append("email", formData.email)
       data.append("password", formData.password)
-      data.append("phoneNumber", formData.phoneNumber)
+      data.append("phone_number", formData.phone_number)
       data.append("address", formData.address)
-      data.append("votersId", formData.votersId)
+      data.append("voters_id", formData.voters_id)
 
       const response = await fetch("/api/auth/register", {
         method: "POST",
@@ -228,8 +228,8 @@ export default function RegisterPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition"
                   placeholder="Juan Dela Cruz"
@@ -254,8 +254,8 @@ export default function RegisterPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
                 <input
                   type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
+                  name="phone_number"
+                  value={formData.phone_number}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition"
                   placeholder="+63 912 345 6789"
@@ -268,7 +268,7 @@ export default function RegisterPage() {
                 <label className="w-full px-4 py-3 rounded-lg border-2 border-dashed border-orange-200 hover:border-orange-500 cursor-pointer flex items-center justify-center gap-2 transition bg-orange-50 hover:bg-orange-100">
                   <Upload size={18} className="text-orange-600" />
                   <span className="text-sm text-orange-600 font-medium truncate max-w-[150px]">
-                    {formData.votersId ? formData.votersId.name : "Upload ID"}
+                    {formData.voters_id ? formData.voters_id.name : "Upload ID"}
                   </span>
                   <input type="file" onChange={handleFileChange} className="hidden" accept="image/*,.pdf" required />
                 </label>

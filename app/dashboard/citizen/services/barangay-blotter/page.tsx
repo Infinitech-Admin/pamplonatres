@@ -200,7 +200,7 @@ export default function BarangayBlotterPage() {
   if (!userLoaded) {
     return (
       <CitizenLayout>
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <div className="text-white text-lg">Loading...</div>
         </div>
       </CitizenLayout>
@@ -209,12 +209,12 @@ export default function BarangayBlotterPage() {
 
   return (
     <CitizenLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100  py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">Barangay Blotter</h1>
-            <p className="text-slate-300 text-lg">File an incident report with your barangay</p>
+            <h1 className="text-4xl font-bold  text-gray-900 mb-3 tracking-tight">Barangay Blotter</h1>
+            <p className="text-gray-600 text-lg">File an incident report with your barangay</p>
           </div>
 
           {/* Success Message */}
@@ -240,15 +240,15 @@ export default function BarangayBlotterPage() {
           )}
 
           {/* Progress Indicator */}
-          <div className="mb-10 bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/50">
+          <div className="mb-10 ">
             <div className="flex justify-between items-center">
               {[1, 2, 3, 4].map((step) => (
                 <div key={step} className="flex flex-col items-center flex-1 relative">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 shadow-lg ${
                       step <= currentStep
-                        ? "bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-orange-500/50"
-                        : "bg-slate-700 text-slate-400"
+                        ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+                 
                     }`}
                   >
                     {step}

@@ -270,10 +270,10 @@ export default function GoodMoralCertificatePage() {
       formDataToSend.append("purpose", formData.purpose)
       
       if (formData.validId) {
-        formDataToSend.append("valid_id", formData.validId)
+        formDataToSend.append("valid_id", formData.validId as File)
       }
       if (formData.proofOfResidency) {
-        formDataToSend.append("proof_of_residency", formData.proofOfResidency)
+        formDataToSend.append("proof_of_residency", formData.proofOfResidency as File)
       }
 
       console.log('Submitting good moral certificate application...')

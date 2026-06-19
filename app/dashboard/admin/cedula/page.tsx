@@ -108,7 +108,7 @@ export default function AdminCedulaPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.data) {
-          setCedulas(data.data || [])
+          setCedulas(data.data.data || [])
           setPagination({
             current_page: data.data.current_page || 1,
             last_page: data.data.last_page || 1,

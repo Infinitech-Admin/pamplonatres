@@ -3,11 +3,12 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, CheckCircle } from "lucide-react"
+import { AlertCircle, CheckCircle2, User, FileText, Users, ClipboardCheck } from "lucide-react"
 import CitizenLayout from "@/components/citizenLayout"
 import { authClient } from "@/lib/auth"
 import { useToast } from "@/components/ui/use-toast"
@@ -121,7 +122,7 @@ export default function BarangayBlotterPage() {
       })
       return
     }
-    
+
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1)
     }
@@ -197,11 +198,44 @@ export default function BarangayBlotterPage() {
     }
   }
 
+  const steps = [
+    { number: 1, title: "Personal Info", icon: User },
+    { number: 2, title: "Incident Details", icon: FileText },
+    { number: 3, title: "Witnesses", icon: Users },
+    { number: 4, title: "Review", icon: ClipboardCheck },
+  ]
+
   if (!userLoaded) {
     return (
       <CitizenLayout>
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-          <div className="text-white text-lg">Loading...</div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </CitizenLayout>
+    )
+  }
+
+  if (success) {
+    return (
+      <CitizenLayout>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-6 h-6 text-blue-600" />
+              </div>
+              <CardTitle className="text-2xl">Blotter Report Submitted!</CardTitle>
+              <CardDescription>Your incident report has been successfully filed</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 text-center">
+                Returning you to the form shortly...
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </CitizenLayout>
     )
@@ -209,445 +243,433 @@ export default function BarangayBlotterPage() {
 
   return (
     <CitizenLayout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100  py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold  text-gray-900 mb-3 tracking-tight">Barangay Blotter</h1>
-            <p className="text-gray-600 text-lg">File an incident report with your barangay</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Barangay Blotter</h1>
+            <p className="text-gray-600">File an incident report with your barangay</p>
           </div>
 
-          {/* Success Message */}
-          {success && (
-            <div className="mb-6 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-5 flex items-center gap-3 shadow-lg border border-green-500/20">
-              <CheckCircle className="w-6 h-6 text-white flex-shrink-0" />
-              <div>
-                <h3 className="font-semibold text-white text-lg">Blotter Report Submitted</h3>
-                <p className="text-green-50">Your incident report has been successfully filed.</p>
-              </div>
-            </div>
-          )}
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 bg-gradient-to-r from-red-600 to-rose-600 rounded-xl p-5 flex items-center gap-3 shadow-lg border border-red-500/20">
-              <AlertCircle className="w-6 h-6 text-white flex-shrink-0" />
-              <div>
-                <h3 className="font-semibold text-white text-lg">Error</h3>
-                <p className="text-red-50">{error}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Progress Indicator */}
-          <div className="mb-10 ">
+          {/* Progress Steps */}
+          <div className="mb-8">
             <div className="flex justify-between items-center">
-              {[1, 2, 3, 4].map((step) => (
-                <div key={step} className="flex flex-col items-center flex-1 relative">
-                  <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 shadow-lg ${
-                      step <= currentStep
-                        ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-                 
-                    }`}
-                  >
-                    {step}
-                  </div>
-                  <div className={`text-sm mt-3 text-center font-medium ${
-                    step <= currentStep ? "text-orange-400" : "text-slate-500"
-                  }`}>
-                    {step === 1 && "Personal Info"}
-                    {step === 2 && "Incident Details"}
-                    {step === 3 && "Witnesses"}
-                    {step === 4 && "Review"}
-                  </div>
-                  {step < 4 && (
+              {steps.map((step, index) => (
+                <div key={step.number} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center flex-1">
                     <div
-                      className={`absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] transition-all duration-300 rounded-full ${
-                        step < currentStep ? "bg-gradient-to-r from-orange-500 to-orange-600" : "bg-slate-700"
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        currentStep >= step.number ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
                       }`}
-                    />
+                    >
+                      <step.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs mt-2 text-gray-600">{step.title}</span>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className={`h-1 flex-1 mx-2 ${currentStep > step.number ? "bg-blue-600" : "bg-gray-200"}`} />
                   )}
                 </div>
               ))}
             </div>
           </div>
 
-          <div>
-            {/* Step 1: Personal Information */}
-            {currentStep === 1 && (
-              <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-slate-700/50">
-                <h2 className="text-2xl font-bold text-white mb-6">Personal Information</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Step {currentStep} of 4</CardTitle>
+              <CardDescription>{steps[currentStep - 1].title}</CardDescription>
+              {currentStep === 1 && (
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    ℹ️ Your information has been pre-filled from your account. You can edit any field if needed.
+                  </p>
+                </div>
+              )}
+            </CardHeader>
+            <CardContent>
+              {/* Error Message */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
 
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Full Name *</label>
-                    <Input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Enter your full name"
-                      className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Email *</label>
-                    <Input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Enter email"
-                      className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Age *</label>
+              {/* Step 1: Personal Information */}
+              {currentStep === 1 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name *</Label>
                       <Input
+                        id="fullName"
+                        type="text"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Juan Dela Cruz"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                        placeholder="juan@example.com"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="age">Age *</Label>
+                      <Input
+                        id="age"
                         type="number"
                         name="age"
                         value={formData.age}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         placeholder="Enter age"
-                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Gender *</label>
+                    <div className="space-y-2">
+                      <Label htmlFor="gender">Gender *</Label>
                       <Select value={formData.gender} onValueChange={(value) => handleSelectChange("gender", value)} required>
-                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white focus:border-orange-500 focus:ring-orange-500/20">
+                        <SelectTrigger id="gender">
                           <SelectValue placeholder="Select gender" />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-800 border-slate-700">
-                          <SelectItem value="male" className="text-white focus:bg-slate-700">Male</SelectItem>
-                          <SelectItem value="female" className="text-white focus:bg-slate-700">Female</SelectItem>
-                          <SelectItem value="other" className="text-white focus:bg-slate-700">Other</SelectItem>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Address *</label>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address *</Label>
                     <Input
+                      id="address"
                       type="text"
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter your address"
-                      className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                       required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Contact Number *</label>
+                  <div className="space-y-2">
+                    <Label htmlFor="contactNumber">Contact Number *</Label>
                     <Input
+                      id="contactNumber"
                       type="tel"
                       name="contactNumber"
                       value={formData.contactNumber}
                       onChange={handleInputChange}
                       onKeyDown={handleKeyDown}
-                      placeholder="Enter contact number"
-                      className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
+                      placeholder="09123456789"
                       required
                     />
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Step 2: Incident Details */}
-            {currentStep === 2 && (
-              <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-slate-700/50">
-                <h2 className="text-2xl font-bold text-white mb-6">Incident Details</h2>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Incident Type *</label>
+              {/* Step 2: Incident Details */}
+              {currentStep === 2 && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="incidentType">Incident Type *</Label>
                     <Select
                       value={formData.incidentType}
                       onValueChange={(value) => handleSelectChange("incidentType", value)}
                       required
                     >
-                      <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white focus:border-orange-500 focus:ring-orange-500/20">
+                      <SelectTrigger id="incidentType">
                         <SelectValue placeholder="Select incident type" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
-                        <SelectItem value="theft" className="text-white focus:bg-slate-700">Theft</SelectItem>
-                        <SelectItem value="harassment" className="text-white focus:bg-slate-700">Harassment</SelectItem>
-                        <SelectItem value="disturbance" className="text-white focus:bg-slate-700">Disturbance</SelectItem>
-                        <SelectItem value="accident" className="text-white focus:bg-slate-700">Accident</SelectItem>
-                        <SelectItem value="property_damage" className="text-white focus:bg-slate-700">Property Damage</SelectItem>
-                        <SelectItem value="lost_found" className="text-white focus:bg-slate-700">Lost & Found</SelectItem>
-                        <SelectItem value="other" className="text-white focus:bg-slate-700">Other</SelectItem>
+                      <SelectContent>
+                        <SelectItem value="theft">Theft</SelectItem>
+                        <SelectItem value="harassment">Harassment</SelectItem>
+                        <SelectItem value="disturbance">Disturbance</SelectItem>
+                        <SelectItem value="accident">Accident</SelectItem>
+                        <SelectItem value="property_damage">Property Damage</SelectItem>
+                        <SelectItem value="lost_found">Lost & Found</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Date of Incident *</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="incidentDate">Date of Incident *</Label>
                       <Input
+                        id="incidentDate"
                         type="date"
                         name="incidentDate"
                         value={formData.incidentDate}
                         onChange={handleInputChange}
-                        className="bg-slate-900/50 border-slate-600 text-white focus:border-orange-500 focus:ring-orange-500/20"
+                        max={new Date().toISOString().split('T')[0]}
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">Time of Incident *</label>
+                    <div className="space-y-2">
+                      <Label htmlFor="incidentTime">Time of Incident *</Label>
                       <Input
+                        id="incidentTime"
                         type="time"
                         name="incidentTime"
                         value={formData.incidentTime}
                         onChange={handleInputChange}
-                        className="bg-slate-900/50 border-slate-600 text-white focus:border-orange-500 focus:ring-orange-500/20"
                         required
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Location of Incident *</label>
+                  <div className="space-y-2">
+                    <Label htmlFor="incidentLocation">Location of Incident *</Label>
                     <Input
+                      id="incidentLocation"
                       type="text"
                       name="incidentLocation"
                       value={formData.incidentLocation}
                       onChange={handleInputChange}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter incident location"
-                      className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                       required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Complaint Against *</label>
+                  <div className="space-y-2">
+                    <Label htmlFor="complaintAgainst">Complaint Against *</Label>
                     <Input
+                      id="complaintAgainst"
                       type="text"
                       name="complaintAgainst"
                       value={formData.complaintAgainst}
                       onChange={handleInputChange}
                       onKeyDown={handleKeyDown}
                       placeholder="Name of person involved (if known)"
-                      className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                       required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Narrative / Description *</label>
+                  <div className="space-y-2">
+                    <Label htmlFor="narrative">Narrative / Description *</Label>
                     <Textarea
+                      id="narrative"
                       name="narrative"
                       value={formData.narrative}
                       onChange={handleInputChange}
                       placeholder="Describe the incident in detail..."
-                      className="h-32 bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
+                      rows={5}
                       required
                     />
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Step 3: Witnesses */}
-            {currentStep === 3 && (
-              <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-slate-700/50">
-                <h2 className="text-2xl font-bold text-white mb-6">Witnesses (Optional)</h2>
-
+              {/* Step 3: Witnesses */}
+              {currentStep === 3 && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="font-semibold text-orange-400 mb-3 text-lg">Witness 1</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Name</label>
+                    <h3 className="font-semibold text-gray-900 mb-3">Witness 1</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="witness1Name">Name</Label>
                         <Input
+                          id="witness1Name"
                           type="text"
                           name="witness1Name"
                           value={formData.witness1Name}
                           onChange={handleInputChange}
                           onKeyDown={handleKeyDown}
                           placeholder="Witness name"
-                          className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Contact Number</label>
+                      <div className="space-y-2">
+                        <Label htmlFor="witness1Contact">Contact Number</Label>
                         <Input
+                          id="witness1Contact"
                           type="tel"
                           name="witness1Contact"
                           value={formData.witness1Contact}
                           onChange={handleInputChange}
                           onKeyDown={handleKeyDown}
                           placeholder="Contact number"
-                          className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-orange-400 mb-3 text-lg">Witness 2</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Name</label>
+                    <h3 className="font-semibold text-gray-900 mb-3">Witness 2</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="witness2Name">Name</Label>
                         <Input
+                          id="witness2Name"
                           type="text"
                           name="witness2Name"
                           value={formData.witness2Name}
                           onChange={handleInputChange}
                           onKeyDown={handleKeyDown}
                           placeholder="Witness name"
-                          className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Contact Number</label>
+                      <div className="space-y-2">
+                        <Label htmlFor="witness2Contact">Contact Number</Label>
                         <Input
+                          id="witness2Contact"
                           type="tel"
                           name="witness2Contact"
                           value={formData.witness2Contact}
                           onChange={handleInputChange}
                           onKeyDown={handleKeyDown}
                           placeholder="Contact number"
-                          className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-orange-500 focus:ring-orange-500/20"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-sm text-slate-400 italic mt-4 bg-slate-900/30 p-4 rounded-lg border border-slate-700/50">
-                    Witness information helps us better document the incident. You may leave blank if no witnesses.
-                  </p>
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      Witness information helps us better document the incident. You may leave blank if no witnesses.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Step 4: Review */}
-            {currentStep === 4 && (
-              <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-slate-700/50">
-                <h2 className="text-2xl font-bold text-white mb-6">Review Your Report</h2>
-
+              {/* Step 4: Review */}
+              {currentStep === 4 && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="font-semibold text-orange-400 mb-3 text-lg">Personal Information</h3>
-                    <div className="bg-slate-900/50 p-5 rounded-xl text-sm space-y-2 border border-slate-700/50">
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Name:</span> {formData.fullName}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Email:</span> {formData.email}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Age:</span> {formData.age} |{" "}
-                        <span className="font-medium text-white">Gender:</span> {formData.gender}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Address:</span> {formData.address}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Contact:</span> {formData.contactNumber}
-                      </p>
+                    <h3 className="font-semibold text-lg mb-3">Personal Information</h3>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-gray-600">Name:</span>
+                        <p className="font-medium">{formData.fullName}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Email:</span>
+                        <p className="font-medium">{formData.email}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Age:</span>
+                        <p className="font-medium">{formData.age}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Gender:</span>
+                        <p className="font-medium capitalize">{formData.gender}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-gray-600">Address:</span>
+                        <p className="font-medium">{formData.address}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Contact:</span>
+                        <p className="font-medium">{formData.contactNumber}</p>
+                      </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-orange-400 mb-3 text-lg">Incident Details</h3>
-                    <div className="bg-slate-900/50 p-5 rounded-xl text-sm space-y-2 border border-slate-700/50">
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Type:</span> {formData.incidentType}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Date & Time:</span> {formData.incidentDate} at{" "}
-                        {formData.incidentTime}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Location:</span> {formData.incidentLocation}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Against:</span> {formData.complaintAgainst}
-                      </p>
-                      <p className="text-slate-300">
-                        <span className="font-medium text-white">Description:</span> {formData.narrative}
-                      </p>
+                    <h3 className="font-semibold text-lg mb-3">Incident Details</h3>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-gray-600">Type:</span>
+                        <p className="font-medium capitalize">{formData.incidentType}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Date & Time:</span>
+                        <p className="font-medium">{formData.incidentDate} at {formData.incidentTime}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-gray-600">Location:</span>
+                        <p className="font-medium">{formData.incidentLocation}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-gray-600">Complaint Against:</span>
+                        <p className="font-medium">{formData.complaintAgainst}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-gray-600">Description:</span>
+                        <p className="font-medium">{formData.narrative}</p>
+                      </div>
                     </div>
                   </div>
 
                   {(formData.witness1Name || formData.witness2Name) && (
                     <div>
-                      <h3 className="font-semibold text-orange-400 mb-3 text-lg">Witnesses</h3>
-                      <div className="bg-slate-900/50 p-5 rounded-xl text-sm space-y-2 border border-slate-700/50">
+                      <h3 className="font-semibold text-lg mb-3">Witnesses</h3>
+                      <div className="space-y-2 text-sm">
                         {formData.witness1Name && (
-                          <p className="text-slate-300">
-                            <span className="font-medium text-white">Witness 1:</span> {formData.witness1Name} (
-                            {formData.witness1Contact})
+                          <p>
+                            <span className="text-gray-600">Witness 1:</span>{" "}
+                            <span className="font-medium">{formData.witness1Name} ({formData.witness1Contact})</span>
                           </p>
                         )}
                         {formData.witness2Name && (
-                          <p className="text-slate-300">
-                            <span className="font-medium text-white">Witness 2:</span> {formData.witness2Name} (
-                            {formData.witness2Contact})
+                          <p>
+                            <span className="text-gray-600">Witness 2:</span>{" "}
+                            <span className="font-medium">{formData.witness2Name} ({formData.witness2Contact})</span>
                           </p>
                         )}
                       </div>
                     </div>
                   )}
+
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      By submitting this blotter report, I confirm that the information provided is true and accurate to the best of my knowledge.
+                    </p>
+                  </div>
                 </div>
-
-                <div className="bg-gradient-to-r from-orange-900/40 to-orange-800/40 border border-orange-600/30 rounded-xl p-5 text-sm text-orange-100 mt-6">
-                  By submitting this blotter report, I confirm that the information provided is true and accurate to the
-                  best of my knowledge.
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Buttons */}
-            <div className="mt-8 flex justify-between gap-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handlePrevious} 
-                disabled={currentStep === 1 || loading}
-                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Previous
-              </Button>
-
-              {currentStep < 4 ? (
-                <Button 
-                  type="button" 
-                  onClick={handleNext} 
-                  className="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold shadow-lg shadow-orange-500/30" 
-                  disabled={loading}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button 
-                  type="button" 
-                  onClick={handleSubmit} 
-                  disabled={loading} 
-                  className="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold shadow-lg shadow-orange-500/30"
-                >
-                  {loading ? "Submitting..." : "Submit Report"}
-                </Button>
               )}
-            </div>
-          </div>
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-between mt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handlePrevious}
+                  disabled={currentStep === 1 || loading}
+                >
+                  Previous
+                </Button>
+                {currentStep < 4 ? (
+                  <Button
+                    type="button"
+                    onClick={handleNext}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    disabled={loading}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    {loading ? "Submitting..." : "Submit Report"}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </CitizenLayout>

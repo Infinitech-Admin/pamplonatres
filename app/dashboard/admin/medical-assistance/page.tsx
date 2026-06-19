@@ -101,7 +101,7 @@ export default function AdminMedicalAssistancePage() {
         params.append("search", searchQuery)
       }
 
-      const response = await fetch(`/api/medical-assistance?${params}`, {
+      const response = await fetch(`/api/admin/medical-assistance?${params}`, {
         credentials: "include",
       })
 

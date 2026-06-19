@@ -106,7 +106,7 @@ export default function AdminBusinessPermitPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.data) {
-          setPermits(data.data || [])
+          setPermits(data.data.data || [])
           setPagination({
             current_page: data.data.current_page || 1,
             last_page: data.data.last_page || 1,

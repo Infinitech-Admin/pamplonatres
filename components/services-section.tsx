@@ -1,52 +1,65 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search, FileText, Building, Heart, Users, TrendingUp, Award, MapPin, Baby, Briefcase } from "lucide-react"
+import {
+  Search,
+  FileText,
+  Building,
+  Heart,
+  Users,
+  TrendingUp,
+  Award,
+  MapPin,
+  Baby,
+  Briefcase,
+} from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
+import { authClient } from "@/lib/auth"
+import { useRouter } from "next/navigation"
 
 const services = [
   {
     id: 1,
     icon: FileText,
     name: "Barangay Clearance",
-    description: "Apply for barangay clearance certificate"
+    description: "Apply for barangay clearance certificate",
   },
   {
     id: 2,
     icon: FileText,
     name: "Cedula",
-    description: "Community tax certificate application"
+    description: "Community tax certificate application",
   },
   {
     id: 3,
     icon: Building,
     name: "Business Permit",
-    description: "Business permit assistance and processing"
+    description: "Business permit assistance and processing",
   },
   {
     id: 4,
     icon: Heart,
     name: "Indigency Certificate",
-    description: "Certificate of indigency for qualified residents"
+    description: "Certificate of indigency for qualified residents",
   },
   {
     id: 5,
     icon: Users,
     name: "Residency Certificate",
-    description: "Proof of residency certification"
+    description: "Proof of residency certification",
   },
   {
     id: 6,
     icon: TrendingUp,
     name: "Good Moral Certificate",
-    description: "Certificate of good moral character"
+    description: "Certificate of good moral character",
   },
   {
     id: 8,
     icon: MapPin,
     name: "Barangay Blotter",
-    description: "Report and record incidents"
+    description: "Report and record incidents",
   },
 ]
 
@@ -58,20 +71,25 @@ const stats = [
 
 export default function ServicesSection() {
   const [searchTerm, setSearchTerm] = useState("")
-
+const router = useRouter()
   const filteredServices = services.filter(
     (service) =>
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  const handleServiceAccess = async () => {
+    const authenticated = await authClient.checkAuth()
+
+    if (authenticated) {
+      router.push("/dashboard/citizen/services")
+    } else {
+      router.push("/login?callbackUrl=/dashboard/citizen/services")
+    }
+  }
+
   return (
     <>
- 
-
-   
-    
-
       {/* Services Grid */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
@@ -111,7 +129,15 @@ export default function ServicesSection() {
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-red-600 group-hover:via-orange-600 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent transition-all">
                     {service.name}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                  <p className="text-gray-600 leading-relaxed">
+                    {service.description}
+                  </p>
+                  <button
+                    onClick={handleServiceAccess}
+                    className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold hover:opacity-90 transition"
+                  >
+                    Apply
+                  </button>
                 </motion.div>
               )
             })}
@@ -125,7 +151,9 @@ export default function ServicesSection() {
               <h3 className="text-2xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
                 No Services Found
               </h3>
-              <p className="text-gray-600 text-lg">Try searching with different keywords</p>
+              <p className="text-gray-600 text-lg">
+                Try searching with different keywords
+              </p>
             </div>
           )}
         </div>
@@ -157,7 +185,9 @@ export default function ServicesSection() {
                   <div className="text-5xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
                     {stat.value}
                   </div>
-                  <div className="text-gray-700 font-semibold text-lg">{stat.label}</div>
+                  <div className="text-gray-700 font-semibold text-lg">
+                    {stat.label}
+                  </div>
                 </motion.div>
               )
             })}
@@ -181,7 +211,8 @@ export default function ServicesSection() {
               Need Assistance?
             </h2>
             <p className="text-xl text-white/95 max-w-2xl mx-auto font-medium drop-shadow-md">
-              Our team is ready to help you with any questions about our services
+              Our team is ready to help you with any questions about our
+              services
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">

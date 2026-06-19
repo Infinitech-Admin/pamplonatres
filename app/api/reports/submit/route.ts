@@ -21,17 +21,12 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const token = await getAuthToken(request)
 
-    console.log('Token found:', token ? 'Yes' : 'No')
-
     if (!token) {
       return NextResponse.json(
         { success: false, message: "Unauthorized - No token provided" },
         { status: 401 }
       )
     }
-
-    console.log('Forwarding to Laravel API...')
-    console.log('API URL:', `${API_URL}/reports/submit`)
 
     const response = await fetch(`${API_URL}/reports/submit`, {
       method: "POST",
@@ -43,10 +38,7 @@ export async function POST(request: NextRequest) {
       body: formData,
     })
 
-    console.log('Laravel response status:', response.status)
-
     const data = await response.json()
-    console.log('Laravel response data:', data)
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status })

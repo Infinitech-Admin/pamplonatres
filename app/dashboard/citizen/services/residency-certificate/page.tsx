@@ -275,8 +275,6 @@ export default function ResidencyCertificatePage() {
         formDataToSend.append("proofOfResidency", formData.proofOfResidency)
       }
 
-      console.log('Submitting residency certificate application...')
-
       const response = await fetch("/api/residency-certificate", {
         method: "POST",
         credentials: "include",
@@ -284,12 +282,6 @@ export default function ResidencyCertificatePage() {
       })
 
       const data = await response.json()
-
-      console.log('Response received:', {
-        status: response.status,
-        success: data.success,
-        message: data.message
-      })
 
       if (response.status === 401) {
         toast({

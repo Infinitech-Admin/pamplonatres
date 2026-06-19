@@ -68,12 +68,6 @@ export async function PATCH(
 
     const body = await request.json()
 
-    console.log('Updating announcement:', {
-      id,
-      body,
-      url: `${LARAVEL_API_URL}/announcements/${id}`
-    })
-
     const response = await fetch(`${LARAVEL_API_URL}/announcements/${id}`, {
       method: "PATCH",
       headers: {
@@ -87,8 +81,6 @@ export async function PATCH(
 
     const data = await response.json()
     
-    console.log('Laravel update response:', data)
-
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
     console.error("Error updating announcement:", error)

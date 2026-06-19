@@ -12,8 +12,6 @@ export async function GET(
     const cookieStore = await cookies()
     const token = cookieStore.get("auth_token")?.value
 
-    console.log("[News Detail] Fetching news ID:", id)
-
     const response = await fetch(`${API_URL}/api/admin/news/${id}`, {
       method: "GET",
       headers: {
@@ -23,7 +21,6 @@ export async function GET(
     })
 
     const responseText = await response.text()
-    console.log("[News Detail] Response status:", response.status)
 
     if (!response.ok) {
       try {
@@ -93,22 +90,10 @@ async function handleUpdate(
 
     const formData = await request.formData()
 
-    console.log("[News Update] Updating news ID:", id)
-    console.log("[News Update] Token present:", !!token)
-    console.log("[News Update] FormData entries:")
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        console.log(`  ${key}: File(${value.name}, ${value.size} bytes)`)
-      } else {
-        console.log(`  ${key}: ${value}`)
-      }
-    }
-
     // ❌ REMOVE THIS LINE - Don't add _method
     // formData.append("_method", "PATCH")
 
     const apiUrl = `${API_URL}/api/admin/news/${id}`
-    console.log("[News Update] Calling Laravel API:", apiUrl)
 
     const response = await fetch(apiUrl, {
       method: "POST", // Laravel route accepts POST
@@ -119,10 +104,8 @@ async function handleUpdate(
       body: formData,
     })
 
-    console.log("[News Update] Response status:", response.status)
 
     const responseText = await response.text()
-    console.log("[News Update] Response text (first 500 chars):", responseText.substring(0, 500))
 
     if (!responseText) {
       console.error("[News Update] Empty response from server")
@@ -151,7 +134,6 @@ async function handleUpdate(
     }
 
     if (!response.ok) {
-      console.log("[News Update] Error response data:", data)
       return NextResponse.json(
         {
           success: false,
@@ -162,7 +144,6 @@ async function handleUpdate(
       )
     }
 
-    console.log("[News Update] Success!")
     return NextResponse.json(data)
   } catch (error) {
     console.error("[News Update] Catch block error:", error)
@@ -192,9 +173,6 @@ export async function DELETE(
       )
     }
 
-    console.log("[News Delete] Deleting news ID:", id)
-    console.log("[News Delete] Token present:", !!token)
-
     const response = await fetch(`${API_URL}/api/admin/news/${id}`, {
       method: "DELETE",
       headers: {
@@ -203,10 +181,7 @@ export async function DELETE(
       },
     })
 
-    console.log("[News Delete] Response status:", response.status)
-    
     const responseText = await response.text()
-    console.log("[News Delete] Response text:", responseText)
 
     if (!responseText) {
       if (response.ok) {

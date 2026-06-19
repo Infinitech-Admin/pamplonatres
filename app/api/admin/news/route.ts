@@ -39,8 +39,6 @@ export async function GET(request: NextRequest) {
     const queryString = queryParams.toString()
     const url = `${API_URL}/admin/news${queryString ? `?${queryString}` : ''}`
 
-    console.log('Fetching news with token:', authToken.value.substring(0, 20) + '...')
-
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -96,8 +94,6 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
 
-    console.log('Creating news with token:', authToken.value.substring(0, 20) + '...')
-
     const response = await fetch(`${API_URL}/admin/news`, {
       method: 'POST',
       headers: {
@@ -125,14 +121,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-      message: data.message,
-      error: data.error,
-      fullData: data,
-    })
 
     if (!response.ok) {
       console.error('Laravel error details:', data)

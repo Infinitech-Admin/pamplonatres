@@ -4,7 +4,6 @@ const API_URL = process.env.API_URL || "http://localhost:8000"
 
 export async function GET() {
   try {
-    console.log("[v0] Health API GET - Fetching from:", `${API_URL}/api/health`)
 
     const response = await fetch(`${API_URL}/api/health`, {
       method: "GET",
@@ -14,7 +13,6 @@ export async function GET() {
     })
 
     const responseText = await response.text()
-    console.log("[v0] Health API GET - Response status:", response.status)
 
     if (!response.ok) {
       try {
@@ -48,9 +46,6 @@ export async function POST(request: NextRequest) {
       data[key] = value
     }
 
-    console.log("[v0] Health API - Sending request to:", `${API_URL}/api/health`)
-    console.log("[v0] Health API - Request body:", JSON.stringify(data, null, 2))
-
     const response = await fetch(`${API_URL}/api/health`, {
       method: "POST",
       headers: {
@@ -61,14 +56,10 @@ export async function POST(request: NextRequest) {
     })
 
     const responseText = await response.text()
-    console.log("[v0] Health API - Response status:", response.status)
-    console.log("[v0] Health API - Response headers:", Object.fromEntries(response.headers.entries()))
-    console.log("[v0] Health API - Response body:", responseText)
 
     if (!response.ok) {
       try {
         const errorData = JSON.parse(responseText)
-        console.log("[v0] Health API - Parsed error data:", errorData)
         return NextResponse.json(
           {
             error: errorData.message || "Failed to create health info",
@@ -78,7 +69,6 @@ export async function POST(request: NextRequest) {
           { status: response.status },
         )
       } catch {
-        console.log("[v0] Health API - Could not parse error as JSON, returning raw text")
         return NextResponse.json(
           {
             error: responseText || "Failed to create health info",

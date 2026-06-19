@@ -34,11 +34,6 @@ export async function GET(request: NextRequest) {
     const queryString = queryParams.toString()
     const url = `${LARAVEL_API_URL}/users${queryString ? `?${queryString}` : ''}`
 
-    console.log('Fetching users:', {
-      url,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -50,13 +45,6 @@ export async function GET(request: NextRequest) {
 
     // Get raw text first to check what we're receiving
     const responseText = await response.text()
-    
-    console.log('Laravel raw response:', {
-      status: response.status,
-      contentType: response.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200)
-    })
 
     // Try to parse as JSON
     let data
@@ -79,11 +67,6 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       )
     }
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-    })
 
     return NextResponse.json(data, { status: response.status })
 

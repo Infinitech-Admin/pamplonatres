@@ -183,12 +183,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('Bulk email results:', {
-      total: subscribers.length,
-      success: results.success.length,
-      failed: results.failed.length,
-    });
-
     return NextResponse.json({
       success: true,
       message: 'Bulk email process completed',

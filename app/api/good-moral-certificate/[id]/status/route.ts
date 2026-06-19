@@ -16,7 +16,6 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     }
 
     const backendUrl = `${LARAVEL_API_URL}/good-moral-certificate/${id}/status`
-    console.log(`[v0] Updating good moral certificate status at: ${backendUrl}`, body)
 
     const response = await fetch(backendUrl, {
       method: "PATCH",

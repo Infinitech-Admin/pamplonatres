@@ -146,7 +146,6 @@ export default function AdminNewsPage() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log("News response:", data)
 
         if (data.success && data.data) {
           setNews(data.data.data || [])
@@ -286,7 +285,6 @@ export default function AdminNewsPage() {
 
       const url = modalMode === "create" ? "/api/admin/news" : `/api/admin/news/${selectedNews?.id}`
      const method = "POST" 
-      console.log("Submitting news:", { url, method })
 
       const response = await fetch(url, {
         method,
@@ -295,7 +293,6 @@ export default function AdminNewsPage() {
       })
 
       const data = await response.json()
-      console.log("Submit response:", data)
 
       if (response.ok && data.success) {
         toast({

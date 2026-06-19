@@ -30,7 +30,6 @@ async function parseResponse(response: Response) {
 
 export async function GET() {
   try {
-    console.log("[v0] Projects API GET - Fetching from:", `${API_URL}/api/projects`)
 
     const response = await fetch(`${API_URL}/api/projects`, {
       method: "GET",
@@ -41,9 +40,6 @@ export async function GET() {
       // Add timeout
       signal: AbortSignal.timeout(10000), // 10 second timeout
     })
-
-    console.log("[v0] Projects API GET - Response status:", response.status)
-    console.log("[v0] Projects API GET - Content-Type:", response.headers.get("content-type"))
 
     // Check if response is JSON
     if (!isJsonResponse(response)) {
@@ -112,26 +108,12 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-
-    console.log("[v0] Projects API POST - Sending request to:", `${API_URL}/api/projects`)
-    console.log("[v0] Projects API POST - FormData entries:")
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        console.log(`[v0]   ${key}: File(${value.name}, ${value.size} bytes)`)
-      } else {
-        console.log(`[v0]   ${key}: ${value}`)
-      }
-    }
-
     const response = await fetch(`${API_URL}/api/projects`, {
       method: "POST",
       body: formData,
       // Add timeout
       signal: AbortSignal.timeout(30000), // 30 second timeout for uploads
     })
-
-    console.log("[v0] Projects API POST - Response status:", response.status)
-    console.log("[v0] Projects API POST - Content-Type:", response.headers.get("content-type"))
 
     // Check if response is JSON
     if (!isJsonResponse(response)) {
@@ -150,7 +132,6 @@ export async function POST(request: NextRequest) {
     const data = await parseResponse(response)
 
     if (!response.ok) {
-      console.log("[v0] Projects API POST - Error response:", data)
       return NextResponse.json(
         {
           error: data.message || "Failed to create project",

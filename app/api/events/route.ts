@@ -23,16 +23,11 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     
-    console.log("[v0] Creating event at:", `${API_URL}/api/events`)
-    console.log("[v0] FormData fields:", Array.from(formData.keys()))
-    
     // Forward the FormData directly to Laravel
     const response = await fetch(`${API_URL}/api/events`, {
       method: "POST",
       body: formData, // Send FormData as-is
     })
-    
-    console.log("[v0] Backend response status:", response.status)
     
     const contentType = response.headers.get("content-type")
     if (!contentType || !contentType.includes("application/json")) {

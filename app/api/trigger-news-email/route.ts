@@ -53,8 +53,6 @@ export async function POST(request: NextRequest) {
       throw new Error(result.message || 'Failed to send emails');
     }
 
-    console.log('News emails triggered:', result);
-
     return NextResponse.json({
       success: true,
       message: 'News emails sent successfully',

@@ -276,8 +276,6 @@ export default function GoodMoralCertificatePage() {
         formDataToSend.append("proof_of_residency", formData.proofOfResidency as File)
       }
 
-      console.log('Submitting good moral certificate application...')
-
       // Cookie is automatically sent with the request
       const response = await fetch('/api/good-moral-certificate', {
         method: 'POST',
@@ -286,12 +284,6 @@ export default function GoodMoralCertificatePage() {
       })
 
       const data = await response.json()
-
-      console.log('Response received:', {
-        status: response.status,
-        success: data.success,
-        message: data.message
-      })
 
       if (response.status === 401) {
         toast({

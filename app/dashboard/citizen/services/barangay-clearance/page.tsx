@@ -280,8 +280,6 @@ export default function BarangayClearancePage() {
         formDataToSend.append("validId", formData.validId)
       }
 
-      console.log('Submitting barangay clearance application...')
-
       // Cookie is automatically sent with the request
       const response = await fetch("/api/barangay-clearance", {
         method: "POST",
@@ -290,12 +288,6 @@ export default function BarangayClearancePage() {
       })
 
       const data = await response.json()
-
-      console.log('Response received:', {
-        status: response.status,
-        success: data.success,
-        message: data.message
-      })
 
       if (response.status === 401) {
         toast({

@@ -154,10 +154,8 @@ export default function LoginPage() {
       // Redirect based on role - FIXED: Admin goes to /dashboard/admin/news
       setTimeout(() => {
         if (userRole === "admin") {
-          console.log('Redirecting admin to: /dashboard/admin/news')
           router.push("/dashboard/admin/news")
         } else {
-          console.log('Redirecting citizen to: /dashboard/citizen')
           router.push("/dashboard/citizen")
         }
       }, 1500)

@@ -7,8 +7,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    console.log("Login attempt:", { email: body.email, apiUrl: API_URL })
-
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
@@ -21,8 +19,6 @@ export async function POST(request: NextRequest) {
     })
 
     const data = await response.json()
-
-    console.log("Laravel response:", { status: response.status, data })
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status })

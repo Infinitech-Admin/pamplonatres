@@ -23,12 +23,6 @@ export async function GET(
     // Await params in Next.js 15
     const { id } = await context.params
 
-    console.log('Fetching cedula by ID:', {
-      id,
-      url: `${LARAVEL_API_URL}/cedula/${id}`,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(`${LARAVEL_API_URL}/cedula/${id}`, {
       method: 'GET',
       headers: {
@@ -40,13 +34,6 @@ export async function GET(
 
     // Get raw text first to check what we're receiving
     const responseText = await response.text()
-    
-    console.log('Laravel raw response:', {
-      status: response.status,
-      contentType: response.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200)
-    })
 
     // Try to parse as JSON
     let data
@@ -69,11 +56,6 @@ export async function GET(
         { status: 500 }
       )
     }
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-    })
 
     return NextResponse.json(data, { status: response.status })
 
@@ -109,13 +91,6 @@ export async function PATCH(
     const { id } = await context.params
     const body = await request.json()
 
-    console.log('Updating cedula status:', {
-      id,
-      url: `${LARAVEL_API_URL}/cedula/${id}/status`,
-      hasAuth: !!token,
-      bodyKeys: Object.keys(body),
-    })
-
     const response = await fetch(`${LARAVEL_API_URL}/cedula/${id}/status`, {
       method: 'PATCH',
       headers: {
@@ -128,13 +103,6 @@ export async function PATCH(
 
     // Get raw text first to check what we're receiving
     const responseText = await response.text()
-    
-    console.log('Laravel raw response:', {
-      status: response.status,
-      contentType: response.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200)
-    })
 
     // Try to parse as JSON
     let data
@@ -157,12 +125,6 @@ export async function PATCH(
         { status: 500 }
       )
     }
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-      message: data.message,
-    })
 
     return NextResponse.json(data, { status: response.status })
 
@@ -197,13 +159,6 @@ export async function PUT(
     // Await params in Next.js 15
     const { id } = await context.params
     const body = await request.json()
-
-    console.log('Updating cedula:', {
-      id,
-      url: `${LARAVEL_API_URL}/cedula/${id}`,
-      hasAuth: !!token,
-      bodyKeys: Object.keys(body),
-    })
 
     const response = await fetch(`${LARAVEL_API_URL}/cedula/${id}`, {
       method: 'PUT',
@@ -264,12 +219,6 @@ export async function DELETE(
 
     // Await params in Next.js 15
     const { id } = await context.params
-
-    console.log('Deleting cedula:', {
-      id,
-      url: `${LARAVEL_API_URL}/cedula/${id}`,
-      hasAuth: !!token,
-    })
 
     const response = await fetch(`${LARAVEL_API_URL}/cedula/${id}`, {
       method: 'DELETE',

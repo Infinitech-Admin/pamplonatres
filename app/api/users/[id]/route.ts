@@ -25,12 +25,6 @@ export async function PATCH(
     // Get request body
     const body = await request.json()
 
-    console.log('Updating user status:', {
-      userId: id,
-      status: body.status,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(`${LARAVEL_API_URL}/users/${id}/status`, {
       method: 'PATCH',
       headers: {
@@ -43,12 +37,6 @@ export async function PATCH(
     })
 
     const data = await response.json()
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-      message: data.message,
-    })
 
     return NextResponse.json(data, { status: response.status })
 
@@ -82,11 +70,6 @@ export async function GET(
       )
     }
 
-    console.log('Fetching user:', {
-      userId: id,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(`${LARAVEL_API_URL}/users/${id}`, {
       method: 'GET',
       headers: {
@@ -97,11 +80,6 @@ export async function GET(
     })
 
     const data = await response.json()
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-    })
 
     return NextResponse.json(data, { status: response.status })
 

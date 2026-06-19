@@ -20,12 +20,6 @@ export async function POST(request: NextRequest) {
     // Get FormData from request
     const formData = await request.formData()
 
-    console.log('Proxying medical assistance request to Laravel:', {
-      url: `${LARAVEL_API_URL}/medical-assistance`,
-      hasAuth: !!token,
-      hasFiles: formData.has('supportingDocuments'),
-    })
-
     // Forward FormData to Laravel backend with Bearer token
     const response = await fetch(`${LARAVEL_API_URL}/medical-assistance`, {
       method: 'POST',
@@ -39,13 +33,6 @@ export async function POST(request: NextRequest) {
 
     // Get the raw text first to debug
     const responseText = await response.text()
-    
-    console.log('Laravel raw response:', {
-      status: response.status,
-      contentType: response.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200)
-    })
 
     // Try to parse as JSON
     let data
@@ -68,12 +55,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-      message: data.message,
-    })
 
     // Return Laravel response
     return NextResponse.json(data, { status: response.status })
@@ -121,11 +102,6 @@ export async function GET(request: NextRequest) {
     // Use the admin route for fetching all applications
     const url = `${LARAVEL_API_URL}/medical-assistance${queryString ? `?${queryString}` : ''}`
 
-    console.log('Fetching medical assistance applications:', {
-      url,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -137,13 +113,6 @@ export async function GET(request: NextRequest) {
 
     // Get raw text first to check what we're receiving
     const responseText = await response.text()
-    
-    console.log('Laravel raw response:', {
-      status: response.status,
-      contentType: response.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200)
-    })
 
     // Try to parse as JSON
     let data
@@ -167,11 +136,6 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       )
     }
-
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-    })
 
     return NextResponse.json(data, { status: response.status })
 

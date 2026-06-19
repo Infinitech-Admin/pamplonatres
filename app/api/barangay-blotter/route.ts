@@ -83,10 +83,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    console.log("[v0] Request body:", JSON.stringify(body, null, 2))
 
     const token = getAuthToken(request)
-    console.log("[v0] Auth token present:", !!token)
 
     if (!token) {
       return NextResponse.json(
@@ -97,8 +95,6 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       )
     }
-
-    console.log("[v0] Sending to Laravel API:", `${LARAVEL_API_URL}/barangay-blotter`)
 
     const response = await fetch(`${LARAVEL_API_URL}/barangay-blotter`, {
       method: "POST",
@@ -112,8 +108,6 @@ export async function POST(request: NextRequest) {
     })
 
     const data = await response.json()
-    console.log("[v0] Laravel response status:", response.status)
-    console.log("[v0] Laravel response data:", JSON.stringify(data, null, 2))
 
     if (!response.ok) {
       console.error("[v0] Error response from Laravel:", data)

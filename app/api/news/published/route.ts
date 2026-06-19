@@ -9,10 +9,6 @@ export async function GET(request: NextRequest) {
     
     // API_URL already includes /api, so just append the endpoint
     const endpoint = `${API_URL}/news/published${queryString ? `?${queryString}` : ''}`
-    console.log("=".repeat(50))
-    console.log("[News API] 🔍 Fetching from:", endpoint)
-    console.log("[News API] 📍 API_URL:", API_URL)
-    console.log("=".repeat(50))
 
     const response = await fetch(endpoint, {
       method: "GET",
@@ -24,9 +20,6 @@ export async function GET(request: NextRequest) {
     })
 
     const responseText = await response.text()
-    console.log("[News API] ✅ Response status:", response.status)
-    console.log("[News API] 📄 Response headers:", Object.fromEntries(response.headers.entries()))
-    console.log("[News API] 📝 Response preview:", responseText.substring(0, 500))
 
     if (!response.ok) {
       console.error("[News API] ❌ Error - Full response:", responseText)
@@ -53,7 +46,6 @@ export async function GET(request: NextRequest) {
     }
 
     const data = JSON.parse(responseText)
-    console.log("[News API] 🎉 Success! Data:", data)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[News API] 💥 Fatal error:", error)

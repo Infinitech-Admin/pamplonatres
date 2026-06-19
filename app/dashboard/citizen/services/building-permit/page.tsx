@@ -253,8 +253,6 @@ export default function BuildingPermitPage() {
         formDataToSend.append("landTitle", landTitle)
       }
 
-      console.log('Submitting building permit application...')
-
       const response = await fetch("/api/building-permit", {
         method: "POST",
         credentials: "include",
@@ -262,12 +260,6 @@ export default function BuildingPermitPage() {
       })
 
       const data = await response.json()
-
-      console.log('Response received:', {
-        status: response.status,
-        success: data.success,
-        message: data.message
-      })
 
       if (response.status === 401) {
         toast({

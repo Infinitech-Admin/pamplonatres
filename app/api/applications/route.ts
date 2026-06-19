@@ -17,8 +17,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log('Fetching applications with token:', token.substring(0, 10) + '...')
-
     // First, get the current user's information to extract user_id
     const userResponse = await fetch(`${API_BASE_URL}/user`, {
       method: 'GET',
@@ -46,8 +44,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log('Fetching applications for user_id:', userId)
-
     // Fetch all application types from Laravel API
     const endpoints = [
       { path: '/barangay-clearance', name: 'Barangay Clearance' },
@@ -65,7 +61,6 @@ export async function GET(request: NextRequest) {
       for (const path of pathsToTry) {
         try {
           const url = `${API_BASE_URL}${path}`
-          console.log(`Attempting to fetch from: ${url}`)
           
           const response = await fetch(url, {
             method: 'GET',
@@ -77,8 +72,6 @@ export async function GET(request: NextRequest) {
             cache: 'no-store',
           })
 
-          console.log(`${endpoint.name} (${path}) response status:`, response.status)
-
           if (!response.ok) {
             console.error(`Failed to fetch ${path}:`, {
               status: response.status,
@@ -86,7 +79,6 @@ export async function GET(request: NextRequest) {
             })
             
             if (response.status === 404 && pathsToTry.indexOf(path) < pathsToTry.length - 1) {
-              console.log(`${endpoint.name} not found at ${path}, trying next path...`)
               continue
             }
             
@@ -94,7 +86,6 @@ export async function GET(request: NextRequest) {
           }
 
           const data = await response.json()
-          console.log(`${endpoint.name} raw data:`, JSON.stringify(data).substring(0, 200))
           
           // Handle different response formats from Laravel
           let applications = []
@@ -113,7 +104,6 @@ export async function GET(request: NextRequest) {
           }
 
           // Filter applications by user_id on the frontend
-          console.log(`${endpoint.name} received ${applications.length} applications (before filtering)`)
 
           const userApplications = applications.filter((app: any) => {
             const appUserId = app.user_id || app.userId || app.applicant_id
@@ -123,8 +113,6 @@ export async function GET(request: NextRequest) {
             }
             return matches
           })
-
-          console.log(`${endpoint.name} filtered to ${userApplications.length} applications for user ${userId}`)
 
           // Add type field using the endpoint name
           const processedApps = userApplications.map((app: any) => ({
@@ -159,9 +147,6 @@ export async function GET(request: NextRequest) {
     // Flatten the results into a single array
     const allApplications = results.flat()
     
-    console.log(`Total applications fetched for user ${userId}: ${allApplications.length}`)
-    console.log('Application types:', allApplications.map(app => app.type))
-
     return NextResponse.json({
       success: true,
       data: allApplications,

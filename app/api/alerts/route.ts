@@ -31,7 +31,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    console.log('Received request body:', body)
 
     // Validate required fields
     const required = ['disaster_date', 'disaster_type', 'establishment_type', 'suspension_start', 'suspension_end', 'status']
@@ -48,13 +47,6 @@ export async function POST(request: NextRequest) {
     // Validate date format - parse dates properly
     const suspensionStart = new Date(body.suspension_start + 'T00:00:00Z')
     const suspensionEnd = new Date(body.suspension_end + 'T00:00:00Z')
-
-    console.log('Parsed dates:', {
-      start: suspensionStart.toISOString(),
-      end: suspensionEnd.toISOString(),
-      startTime: suspensionStart.getTime(),
-      endTime: suspensionEnd.getTime(),
-    })
 
     if (isNaN(suspensionStart.getTime()) || isNaN(suspensionEnd.getTime())) {
       console.warn('Invalid date format')
@@ -75,8 +67,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Sending to backend:', `${API_BASE_URL}/api/alerts`)
-
     const response = await fetch(`${API_BASE_URL}/api/alerts`, {
       method: 'POST',
       headers: {
@@ -87,8 +77,6 @@ export async function POST(request: NextRequest) {
     })
 
     const responseText = await response.text()
-    console.log('Backend response status:', response.status)
-    console.log('Backend response body:', responseText)
 
     if (!response.ok) {
       try {

@@ -16,7 +16,6 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     }
 
     const backendUrl = `${LARAVEL_API_URL}/barangay-blotter/${id}`
-    console.log(`[v0] Updating barangay blotter at: ${backendUrl}`, body)
 
     const response = await fetch(backendUrl, {
       method: "PUT",

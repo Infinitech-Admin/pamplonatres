@@ -22,8 +22,6 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get("id")
     const token = await getAuthToken(request)
 
-    console.log('GET Token found:', token ? 'Yes' : 'No')
-
     if (!token) {
       return NextResponse.json(
         { success: false, message: "Unauthorized - No token provided" },
@@ -35,8 +33,6 @@ export async function GET(request: NextRequest) {
       ? `${API_URL}/reports/${id}`
       : `${API_URL}/reports`
 
-    console.log('Fetching from:', url)
-
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -47,7 +43,6 @@ export async function GET(request: NextRequest) {
     })
 
     const data = await response.json()
-    console.log('Laravel response status:', response.status)
 
     if (!response.ok) {
       return NextResponse.json(

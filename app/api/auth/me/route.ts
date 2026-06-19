@@ -8,8 +8,6 @@ export async function GET() {
     const cookieStore = await cookies()
     const token = cookieStore.get('auth_token')?.value
 
-    console.log('API Route /api/auth/me - Token exists:', !!token)
-
     if (!token) {
       return NextResponse.json(
         { success: false, message: "Not authenticated" },
@@ -25,10 +23,7 @@ export async function GET() {
       },
     })
 
-    console.log('API Route - Laravel response status:', response.status)
-
     if (!response.ok) {
-      console.log('API Route - Laravel response not OK')
       return NextResponse.json(
         { success: false, message: "Invalid token" },
         { status: 401 }
@@ -36,13 +31,10 @@ export async function GET() {
     }
 
     const data = await response.json()
-    console.log('API Route - Laravel response data:', data)
 
     // Laravel returns: { success: true, data: { user: {...} } }
     // So we need to extract data.data.user
     const user = data?.data?.user || null
-
-    console.log('API Route - Extracted user:', user)
 
     if (!user) {
       return NextResponse.json(

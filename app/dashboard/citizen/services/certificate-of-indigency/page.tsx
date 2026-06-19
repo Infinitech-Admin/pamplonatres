@@ -289,8 +289,6 @@ export default function IndigencyCertificatePage() {
         formDataToSend.append("supportingDocument", formData.supportingDocument)
       }
 
-      console.log("Submitting indigency certificate application...")
-
       // Cookie is automatically sent with the request
       const response = await fetch("/api/indigency-certificate", {
         method: "POST",
@@ -299,12 +297,6 @@ export default function IndigencyCertificatePage() {
       })
 
       const data = await response.json()
-
-      console.log("Response received:", {
-        status: response.status,
-        success: data.success,
-        message: data.message,
-      })
 
       if (response.status === 401) {
         toast({

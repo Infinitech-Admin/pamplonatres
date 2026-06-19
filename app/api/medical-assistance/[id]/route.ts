@@ -25,12 +25,6 @@ export async function PATCH(
 
     const body = await request.json()
 
-    console.log("Updating medical assistance status:", {
-      id,
-      status: body.status,
-      hasRejectionReason: !!body.rejection_reason,
-    })
-
     const response = await fetch(
       `${LARAVEL_API_URL}/admin/medical-assistance/${id}`,
       {
@@ -46,12 +40,6 @@ export async function PATCH(
     )
 
     const data = await response.json()
-
-    console.log("Laravel response:", {
-      status: response.status,
-      success: data.success,
-      message: data.message,
-    })
 
     return NextResponse.json(data, { status: response.status })
   } catch (error) {

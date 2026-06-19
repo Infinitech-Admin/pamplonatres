@@ -33,12 +33,6 @@ export async function PUT(
     // Add _method field for Laravel method spoofing
     formData.append('_method', 'PUT')
     
-    // Log what we're sending for debugging
-    console.log("[API] Updating project with FormData:")
-    for (const [key, value] of formData.entries()) {
-      console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value)
-    }
-    
     // Forward the FormData to Laravel backend using POST with _method=PUT
     const response = await fetch(`${API_URL}/api/projects/${id}`, {
       method: "POST", // Use POST with _method spoofing

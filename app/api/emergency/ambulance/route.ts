@@ -19,11 +19,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, phone, address, emergency, notes, location, timestamp } = body
 
-    console.log("Proxying ambulance request to Laravel:", {
-      url: `${LARAVEL_API_URL}/emergency/ambulance`,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(`${LARAVEL_API_URL}/admin/emergency/ambulance`, {
       method: "POST",
       headers: {
@@ -44,12 +39,6 @@ export async function POST(request: NextRequest) {
     })
 
     const data = await response.json()
-
-    console.log("Laravel response:", {
-      status: response.status,
-      success: data.success,
-      message: data.message,
-    })
 
     if (response.status === 401) {
       return NextResponse.json(
@@ -100,11 +89,6 @@ export async function GET(request: NextRequest) {
     const queryString = queryParams.toString()
     // Use admin route for fetching all ambulance requests
     const url = `${LARAVEL_API_URL}/admin/ambulance-requests${queryString ? `?${queryString}` : ""}`
-
-    console.log("Fetching ambulance requests:", {
-      url,
-      hasAuth: !!token,
-    })
 
     const response = await fetch(url, {
       method: "GET",

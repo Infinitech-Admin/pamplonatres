@@ -244,9 +244,6 @@ function ApplicationsContent() {
         apps = data.applications
       }
 
-      console.log('Total applications loaded:', apps.length)
-      console.log('Application breakdown:', data.breakdown)
-
       const sortedApps = apps.sort((a: Application, b: Application) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       )

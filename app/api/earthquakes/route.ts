@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    console.log('Fetching earthquake data from PHIVOLCS...');
     
     // Try multiple endpoints and methods
     const endpoints = [
@@ -14,7 +13,6 @@ export async function GET() {
     
     for (const url of endpoints) {
       try {
-        console.log(`Trying endpoint: ${url}`);
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
@@ -30,19 +28,11 @@ export async function GET() {
         
         clearTimeout(timeoutId);
         
-        console.log('Response status:', response.status);
-
         if (!response.ok) {
           throw new Error(`API returned status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('Data structure:', {
-          hasData: !!data,
-          isArray: Array.isArray(data),
-          hasDataProperty: !!data?.data,
-          dataLength: data?.data?.length || (Array.isArray(data) ? data.length : 0)
-        });
         
         // Handle different response structures
         let earthquakes = [];
@@ -54,11 +44,6 @@ export async function GET() {
           earthquakes = data.features;
         }
         
-        console.log('Number of earthquakes:', earthquakes.length);
-        
-        if (earthquakes.length > 0) {
-          console.log('Sample earthquake:', earthquakes[0]);
-        }
 
         return NextResponse.json(earthquakes, {
           headers: {

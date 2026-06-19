@@ -5,15 +5,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { number, label, timestamp, location } = body
 
-    // This would integrate with your Laravel backend
-    // For now, we'll just log the emergency call
-    console.log("[v0] Emergency call initiated:", {
-      number,
-      label,
-      timestamp,
-      location,
-    })
-
     // In production, this would:
     // 1. Log the call to your Laravel database
     // 2. Send notifications to emergency responders

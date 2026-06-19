@@ -6,8 +6,6 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value
   const { pathname } = request.nextUrl
 
-  console.log('Middleware:', { pathname, hasToken: !!token })
-
   // Public paths that don't require authentication
   const publicPaths = [
     '/', 
@@ -45,13 +43,11 @@ export async function middleware(request: NextRequest) {
 
   // Don't process API routes, public assets, or PWA files
   if (isApiRoute || isPublicAsset || isPWAFile) {
-    console.log('Middleware: Allowing asset/API/PWA:', pathname)
     return NextResponse.next()
   }
 
   // If accessing protected route without token, redirect to login
   if (!token && !isPublicPath) {
-    console.log('Middleware: No token, redirecting to login')
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
@@ -74,14 +70,10 @@ export async function middleware(request: NextRequest) {
         const data = await response.json()
         const userRole = data.user?.role
 
-        console.log('Middleware: User role detected:', userRole)
-
         // Redirect based on role
         if (userRole === 'admin') {
-          console.log('Middleware: Redirecting admin to admin dashboard')
           return NextResponse.redirect(new URL('/dashboard/admin/news', request.url))
         } else if (userRole === 'citizen') {
-          console.log('Middleware: Redirecting citizen to citizen dashboard')
           return NextResponse.redirect(new URL('/dashboard/citizen', request.url))
         }
       }
@@ -95,11 +87,9 @@ export async function middleware(request: NextRequest) {
 
   // Allow access to public paths
   if (isPublicPath) {
-    console.log('Middleware: Public path, allowing access')
     return NextResponse.next()
   }
 
-  console.log('Middleware: Allowing access to protected route')
   return NextResponse.next()
 }
 

@@ -36,8 +36,6 @@ export async function GET() {
   try {
     const typhoons: TyphoonData[] = []
     
-    console.log('Fetching typhoon data...')
-    
     // Method 1: Try GDACS API (most reliable for recent/active disasters)
     try {
       const gdacsResponse = await fetch(
@@ -52,11 +50,9 @@ export async function GET() {
 
       if (gdacsResponse.ok) {
         const xmlText = await gdacsResponse.text()
-        console.log('GDACS Response length:', xmlText.length)
         
         const itemRegex = /<item>([\s\S]*?)<\/item>/g
         const items = xmlText.match(itemRegex) || []
-        console.log('GDACS items found:', items.length)
         
         for (const item of items) {
           const eventTypeMatch = item.match(/<gdacs:eventtype[^>]*>([^<]+)<\/gdacs:eventtype>/)
@@ -75,8 +71,6 @@ export async function GET() {
             if (titleMatch && latMatch && lonMatch) {
               const lat = parseFloat(latMatch[1])
               const lon = parseFloat(lonMatch[1])
-              
-              console.log(`Found TC: ${titleMatch[1]} at ${lat}, ${lon}`)
               
               // Check if in Philippine area (expanded range)
               if (isInPAR(lat, lon)) {
@@ -111,7 +105,6 @@ export async function GET() {
                 const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
                 
                 if (stormDate >= thirtyDaysAgo) {
-                  console.log(`Adding typhoon: ${name} (${windSpeed} km/h)`)
                   
                   typhoons.push({
                     id: `gdacs-${Date.now()}-${Math.random()}`,
@@ -136,8 +129,6 @@ export async function GET() {
             }
           }
         }
-        
-        console.log(`Found ${typhoons.length} typhoons from GDACS in PAR`)
       }
     } catch (gdacsError) {
       console.error('GDACS fetch failed:', gdacsError)
@@ -157,7 +148,6 @@ export async function GET() {
 
       if (reliefwebResponse.ok) {
         const reliefData = await reliefwebResponse.json()
-        console.log('ReliefWeb reports found:', reliefData.data?.length || 0)
         
         if (reliefData.data && Array.isArray(reliefData.data)) {
           const seenNames = new Set(typhoons.map(t => t.name.toLowerCase()))
@@ -185,8 +175,6 @@ export async function GET() {
                 category = 'Typhoon'
                 windSpeed = 150
               }
-              
-              console.log(`Adding from ReliefWeb: ${name}`)
               
               typhoons.push({
                 id: `reliefweb-${Date.now()}-${Math.random()}`,
@@ -229,7 +217,6 @@ export async function GET() {
       return dateB.getTime() - dateA.getTime()
     })
     
-    console.log(`=== FINAL: Returning ${uniqueTyphoons.length} typhoons ===`)
     uniqueTyphoons.forEach(t => {
       console.log(`- ${t.name}: ${t.windSpeed} km/h at ${t.location}`)
     })

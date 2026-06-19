@@ -163,7 +163,6 @@ export default function AdminReportsPage() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log("Reports response:", data)
 
         if (data.success && data.data) {
           setReports(data.data.data || data.data || [])

@@ -10,8 +10,6 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies()
     const token = cookieStore.get("auth_token")?.value
 
-    console.log('GET /api/health-certificate - Token exists:', !!token)
-
     if (!token) {
       return NextResponse.json({ 
         success: false, 
@@ -37,11 +35,6 @@ export async function GET(request: NextRequest) {
     // Use the admin route for fetching all health certificates
     const url = `${API_URL}/admin/health-certificates${queryString ? `?${queryString}` : ''}`
 
-    console.log('Fetching health certificates:', {
-      url,
-      hasAuth: !!token,
-    })
-
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -54,13 +47,6 @@ export async function GET(request: NextRequest) {
     // Get raw text first to check what we're receiving
     const responseText = await response.text()
     
-    console.log('Laravel raw response:', {
-      status: response.status,
-      contentType: response.headers.get('content-type'),
-      textLength: responseText.length,
-      textPreview: responseText.substring(0, 200)
-    })
-
     // Try to parse as JSON
     let data
     try {
@@ -84,11 +70,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log('Laravel response:', {
-      status: response.status,
-      success: data.success,
-    })
-
     return NextResponse.json(data, { status: response.status })
 
   } catch (error) {
@@ -107,9 +88,6 @@ export async function POST(request: NextRequest) {
     // Get token from cookie using async cookies()
     const cookieStore = await cookies()
     const token = cookieStore.get("auth_token")?.value
-
-    console.log('POST /api/health-certificate - Token exists:', !!token)
-    console.log('POST /api/health-certificate - Request body:', body)
 
     if (!token) {
       return NextResponse.json({ 
@@ -136,9 +114,6 @@ export async function POST(request: NextRequest) {
       conditions: body.conditions || null,
     }
 
-    console.log('POST /api/health-certificate - Payload to Laravel:', payload)
-    console.log('POST /api/health-certificate - API URL:', `${API_URL}/health-certificate`)
-
     const response = await fetch(`${API_URL}/health-certificate`, {
       method: "POST",
       headers: {
@@ -150,10 +125,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(payload),
     })
 
-    console.log('POST /api/health-certificate - Laravel response status:', response.status)
-
     const data = await response.json()
-    console.log('POST /api/health-certificate - Laravel response data:', data)
 
     if (!response.ok) {
       return NextResponse.json(
@@ -181,8 +153,6 @@ export async function PUT(request: NextRequest) {
     const cookieStore = await cookies()
     const token = cookieStore.get("auth_token")?.value
 
-    console.log('PUT /health-certificate - Token exists:', !!token)
-
     if (!token) {
       return NextResponse.json({ 
         success: false, 
@@ -207,7 +177,6 @@ export async function PUT(request: NextRequest) {
     })
 
     const data = await response.json()
-    console.log('PUT /health-certificate - Response status:', response.status)
 
     if (!response.ok) {
       return NextResponse.json(
@@ -235,8 +204,6 @@ export async function DELETE(request: NextRequest) {
     const cookieStore = await cookies()
     const token = cookieStore.get("auth_token")?.value
 
-    console.log('DELETE /api/health-certificate - Token exists:', !!token)
-
     if (!token) {
       return NextResponse.json({ 
         success: false, 
@@ -262,7 +229,6 @@ export async function DELETE(request: NextRequest) {
     })
 
     const data = await response.json()
-    console.log('DELETE /api/health-certificate - Response status:', response.status)
 
     if (!response.ok) {
       return NextResponse.json(

@@ -208,7 +208,6 @@ export default function BusinessPermitPage() {
     setValidationErrors({})
 
     try {
-      console.log('Submitting business permit application...')
 
       // The cookie is automatically sent with the request
       const response = await fetch("/api/business-permit", {
@@ -221,12 +220,6 @@ export default function BusinessPermitPage() {
       })
 
       const data = await response.json()
-      
-      console.log('Response received:', {
-        status: response.status,
-        success: data.success,
-        message: data.message
-      })
 
       if (response.status === 401) {
         // Session expired, redirect to login

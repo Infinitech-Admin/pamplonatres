@@ -50,8 +50,6 @@ export async function GET(
     })
 
     const responseText = await response.text()
-    console.log('Backend response status:', response.status)
-    console.log('Backend response body:', responseText)
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -78,8 +76,6 @@ export async function GET(
       status: data.status || 'active',
     }
     
-    console.log('Mapped data:', mappedData)
-    
     return NextResponse.json(mappedData)
   } catch (error) {
     console.error('Error fetching alert:', error)
@@ -97,8 +93,6 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-
-    console.log('Received body from frontend:', body)
 
     // Map frontend field names to backend field names
     const backendBody: BackendAlertBody = {}
@@ -124,8 +118,6 @@ export async function PATCH(
       }
     }
 
-    console.log('Sending to backend:', backendBody)
-
     const apiUrl = `${API_BASE_URL}/api/alerts/${id}`.replace('/api/api/', '/api/')
     const response = await fetch(apiUrl, {
       method: 'PUT',
@@ -137,8 +129,6 @@ export async function PATCH(
     })
 
     const responseText = await response.text()
-    console.log('Backend response status:', response.status)
-    console.log('Backend response body:', responseText)
 
     if (!response.ok) {
       if (response.status === 404) {

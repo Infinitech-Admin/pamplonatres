@@ -53,8 +53,6 @@ export async function GET(request: NextRequest) {
       params.append("search", search)
     }
 
-    console.log("Fetching barangay clearances with params:", params.toString())
-
     const response = await fetch(`${API_URL}/admin/barangay-clearances?${params}`, {
       method: "GET",
       headers: {
@@ -93,8 +91,6 @@ export async function POST(request: NextRequest) {
     // Get token from cookie or header
     const token = getAuthToken(request)
 
-    console.log("Token found:", token ? "Yes" : "No")
-
     if (!token) {
       return NextResponse.json(
         {
@@ -104,8 +100,6 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
-
-    console.log("Submitting barangay clearance application...")
 
     const response = await fetch(`${API_URL}/barangay-clearance`, {
       method: "POST",
@@ -118,8 +112,6 @@ export async function POST(request: NextRequest) {
     })
 
     const data = await response.json()
-
-    console.log("Laravel response:", { status: response.status, data })
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status })

@@ -21,14 +21,10 @@ async function getAuthToken(request: NextRequest): Promise<string | null> {
 // GET method for fetching indigency certificates (admin view)
 export async function GET(request: NextRequest) {
   try {
-    console.log("[v0] === Indigency Certificate GET Request ===")
-    console.log("[v0] Request URL:", request.url)
 
     const token = await getAuthToken(request)
-    console.log("[v0] Auth token found:", !!token)
 
     if (!token) {
-      console.log("[v0] No token - returning 401")
       return NextResponse.json(
         {
           success: false,
@@ -60,7 +56,6 @@ export async function GET(request: NextRequest) {
     }
 
     const backendUrl = `${API_URL}/admin/indigency-certificates?${params}`
-    console.log("[v0] Fetching from backend:", backendUrl)
 
     const response = await fetch(backendUrl, {
       method: "GET",
@@ -71,17 +66,13 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    console.log("[v0] Backend response status:", response.status)
 
     const data = await response.json()
-    console.log("[v0] Backend response data:", JSON.stringify(data, null, 2))
 
     if (!response.ok) {
-      console.log("[v0] Backend error - returning error response")
       return NextResponse.json(data, { status: response.status })
     }
 
-    console.log("[v0] Success - returning data")
     return NextResponse.json(data, { status: 200 })
   } catch (error) {
     console.error("[v0] EXCEPTION in Indigency Certificate GET:", error)
@@ -106,8 +97,6 @@ export async function POST(request: NextRequest) {
     // Get token from cookie or header
     const token = await getAuthToken(request)
 
-    console.log("Token found:", token ? "Yes" : "No")
-
     if (!token) {
       return NextResponse.json(
         {
@@ -117,8 +106,6 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       )
     }
-
-    console.log("Submitting indigency certificate application...")
 
     const response = await fetch(`${API_URL}/indigency-certificate`, {
       method: "POST",
@@ -131,8 +118,6 @@ export async function POST(request: NextRequest) {
     })
 
     const data = await response.json()
-
-    console.log("Laravel response:", { status: response.status, data })
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status })

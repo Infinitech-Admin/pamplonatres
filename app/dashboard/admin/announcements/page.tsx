@@ -112,7 +112,6 @@ export default function AdminAnnouncementsPage() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('Announcements response:', data)
         
         if (data.success && data.data) {
           setAnnouncements(data.data.data || [])
@@ -216,8 +215,6 @@ export default function AdminAnnouncementsPage() {
 
       const method = modalMode === "create" ? "POST" : "PATCH"
 
-      console.log('Submitting announcement:', { url, method, data: formData, selectedId: selectedAnnouncement?.id })
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -228,7 +225,6 @@ export default function AdminAnnouncementsPage() {
       })
 
       const data = await response.json()
-      console.log('Submit response:', data)
 
       if (data.success) {
         toast({

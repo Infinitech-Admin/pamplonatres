@@ -217,10 +217,6 @@ export async function GET() {
       return dateB.getTime() - dateA.getTime()
     })
     
-    uniqueTyphoons.forEach(t => {
-      console.log(`- ${t.name}: ${t.windSpeed} km/h at ${t.location}`)
-    })
-    
     return NextResponse.json(uniqueTyphoons)
     
   } catch (error) {

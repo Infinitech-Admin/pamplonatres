@@ -1,7 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronLeft, Calendar, Eye, Share2, Bookmark, Newspaper } from "lucide-react"
+import {
+  ChevronLeft,
+  Calendar,
+  Eye,
+  Share2,
+  Bookmark,
+  Newspaper,
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import CitizenLayout from "@/components/citizenLayout"
@@ -47,8 +54,11 @@ export default function NewsPage() {
     { value: "projects", label: "Projects" },
   ]
 
-  const transformArticle = (article: ApiNewsArticle, category: string): NewsArticle => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  const transformArticle = (
+    article: ApiNewsArticle,
+    category: string,
+  ): NewsArticle => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
     return {
       id: `${category}-${article.id}`,
       title: article.title,
@@ -56,19 +66,19 @@ export default function NewsPage() {
       content: article.content,
       category: category,
       image: article.image_url ? `${apiUrl}${article.image_url}` : undefined,
-      publishedAt: article.published_at 
-        ? new Date(article.published_at).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
+      publishedAt: article.published_at
+        ? new Date(article.published_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
           })
-        : new Date(article.created_at).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
+        : new Date(article.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
           }),
       views: Math.floor(Math.random() * 1000),
-      author: "Admin"
+      author: "Admin",
     }
   }
 
@@ -76,38 +86,51 @@ export default function NewsPage() {
     const fetchAllData = async () => {
       try {
         // Fetch all categories in parallel
-        const [newsRes, announcementsRes, eventsRes, projectsRes] = await Promise.all([
-          fetch("/api/news"),
-          fetch("/api/announcements"),
-          fetch("/api/events"),
-          fetch("/api/projects"),
-        ])
+        const [newsRes, announcementsRes, eventsRes, projectsRes] =
+          await Promise.all([
+            fetch("/api/news"),
+            fetch("/api/announcements"),
+            fetch("/api/events"),
+            fetch("/api/projects"),
+          ])
 
-        const [newsData, announcementsData, eventsData, projectsData] = await Promise.all([
-          newsRes.json(),
-          announcementsRes.json(),
-          eventsRes.json(),
-          projectsRes.json(),
-        ])
+        const [newsData, announcementsData, eventsData, projectsData] =
+          await Promise.all([
+            newsRes.json(),
+            announcementsRes.json(),
+            eventsRes.json(),
+            projectsRes.json(),
+          ])
 
         // Transform each category
-        const transformedNews = (Array.isArray(newsData) ? newsData : newsData.news || [])
-          .map((article: ApiNewsArticle) => transformArticle(article, "news"))
-        
-        const transformedAnnouncements = (Array.isArray(announcementsData) ? announcementsData : announcementsData.announcements || [])
-          .map((article: ApiNewsArticle) => transformArticle(article, "announcements"))
-        
-        const transformedEvents = (Array.isArray(eventsData) ? eventsData : eventsData.events || [])
-          .map((article: ApiNewsArticle) => transformArticle(article, "events"))
-        
-        const transformedProjects = (Array.isArray(projectsData) ? projectsData : projectsData.projects || [])
-          .map((article: ApiNewsArticle) => transformArticle(article, "projects"))
+        const transformedNews = (
+          Array.isArray(newsData) ? newsData : newsData.data?.data || []
+        ).map((article: ApiNewsArticle) => transformArticle(article, "news"))
+
+        const transformedAnnouncements = (
+          Array.isArray(announcementsData)
+            ? announcementsData
+            : announcementsData.announcements || []
+        ).map((article: ApiNewsArticle) =>
+          transformArticle(article, "announcements"),
+        )
+
+        const transformedEvents = (
+          Array.isArray(eventsData) ? eventsData : eventsData.events || []
+        ).map((article: ApiNewsArticle) => transformArticle(article, "events"))
+
+        const transformedProjects = (
+          Array.isArray(projectsData)
+            ? projectsData
+            : projectsData.projects || []
+        ).map((article: ApiNewsArticle) =>
+          transformArticle(article, "projects"),
+        )
 
         setNews(transformedNews)
         setAnnouncements(transformedAnnouncements)
         setEvents(transformedEvents)
         setProjects(transformedProjects)
-       
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
@@ -143,17 +166,24 @@ export default function NewsPage() {
         <header className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10 shadow-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/" className="hover:bg-white/10 p-1 rounded-lg transition-colors">
+              <Link
+                href="/"
+                className="hover:bg-white/10 p-1 rounded-lg transition-colors"
+              >
                 <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               </Link>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold">City News</h1>
-                <p className="text-white/90 text-xs sm:text-sm mt-0.5">Latest updates from Pamploma Tres City</p>
+                <p className="text-white/90 text-xs sm:text-sm mt-0.5">
+                  Latest updates from Pamploma Tres City
+                </p>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-sm">
               <Newspaper className="w-5 h-5" />
-              <span className="font-medium">{filteredNews.length} Articles</span>
+              <span className="font-medium">
+                {filteredNews.length} Articles
+              </span>
             </div>
           </div>
         </header>
@@ -194,15 +224,19 @@ export default function NewsPage() {
                 <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-orange-100 rounded-full flex items-center justify-center mb-4">
                   <Calendar className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No news articles</h3>
-                <p className="text-gray-600 text-center max-w-sm">Check back later for updates from the city.</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No news articles
+                </h3>
+                <p className="text-gray-600 text-center max-w-sm">
+                  Check back later for updates from the city.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {filteredNews.map((article) => (
                   <Link
                     key={article.id}
-                    href={`/news/${article.id}`}
+                    href={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${article.id}`}
                     className="group block bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all duration-300"
                   >
                     {article.image && (
@@ -231,10 +265,14 @@ export default function NewsPage() {
                       <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg leading-tight group-hover:text-emerald-600 transition-colors line-clamp-2">
                         {article.title}
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-600 mb-4 leading-relaxed line-clamp-2">{article.excerpt}</p>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-4 leading-relaxed line-clamp-2">
+                        {article.excerpt}
+                      </p>
 
                       <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
-                        <span className="font-medium text-gray-700 truncate max-w-[120px]">By {article.author}</span>
+                        <span className="font-medium text-gray-700 truncate max-w-[120px]">
+                          By {article.author}
+                        </span>
                         <div className="flex items-center gap-3 sm:gap-4">
                           <span className="flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" />

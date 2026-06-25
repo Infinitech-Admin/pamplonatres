@@ -30,7 +30,6 @@ let globalDeferredPrompt: BeforeInstallPromptEvent | null = null
 
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeinstallprompt', (e: Event) => {
-    console.log("📲 Global beforeinstallprompt captured!")
     e.preventDefault()
     globalDeferredPrompt = e as BeforeInstallPromptEvent
   })
@@ -46,13 +45,11 @@ export default function Header() {
   const pathname = usePathname()
 
   useEffect(() => {
-    console.log("🔄 Header mounted, checking PWA status...")
 
     const checkIOS = () => {
       const ua = window.navigator.userAgent.toLowerCase()
       const isIOSDevice = /iphone|ipad|ipod/.test(ua)
       setIsIOS(isIOSDevice)
-      console.log(`📱 iOS Device: ${isIOSDevice}`)
       return isIOSDevice
     }
 
@@ -66,13 +63,11 @@ export default function Header() {
       const installed = isStandaloneDisplay || isIOSStandalone || isAndroidApp
 
       if (installed) {
-        console.log("✅ App is already installed!")
         setIsInstalled(true)
         setShowInstallButton(false)
         return true
       }
       
-      console.log("ℹ️ App not yet installed")
       return false
     }
 
@@ -83,17 +78,14 @@ export default function Header() {
     setShowInstallButton(true)
 
     if (iosDetected) {
-      console.log("📱 iOS: Showing install button")
       return
     }
 
     if (globalDeferredPrompt) {
-      console.log("✅ Using globally captured install prompt")
       setDeferredPrompt(globalDeferredPrompt)
     }
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log("📲 beforeinstallprompt event in component")
       e.preventDefault()
       const promptEvent = e as BeforeInstallPromptEvent
       globalDeferredPrompt = promptEvent
@@ -103,7 +95,6 @@ export default function Header() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
     const handleAppInstalled = () => {
-      console.log("🎉 App successfully installed!")
       setIsInstalled(true)
       setShowInstallButton(false)
       setDeferredPrompt(null)
@@ -143,11 +134,9 @@ export default function Header() {
     const prompt = deferredPrompt || globalDeferredPrompt
 
     try {
-      console.log("🚀 Showing install prompt...")
       await prompt!.prompt()
 
       const { outcome } = await prompt!.userChoice
-      console.log(`👤 User response: ${outcome}`)
 
       if (outcome === 'accepted') {
         console.log('✅ User accepted installation')

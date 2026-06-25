@@ -11,15 +11,11 @@ export function useAuth(requireAuth = true) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        console.log('useAuth: Starting auth check...')
         const currentUser = await authClient.getCurrentUser()
-        console.log('useAuth: Got user:', currentUser)
         
         if (!currentUser && requireAuth) {
-          console.log('useAuth: No user and auth required, redirecting to login')
           router.push("/login")
         } else {
-          console.log('useAuth: Setting user')
           setUser(currentUser)
         }
       } catch (err) {
@@ -29,7 +25,6 @@ export function useAuth(requireAuth = true) {
           router.push("/login")
         }
       } finally {
-        console.log('useAuth: Setting loading to false')
         setLoading(false)
       }
     }

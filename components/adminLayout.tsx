@@ -19,27 +19,22 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        console.log('AdminLayout: Checking authentication...');
         
         // Get user from cookie-based auth
         const currentUser = await authClient.getCurrentUser();
         
-        console.log('AdminLayout: User data received:', currentUser);
         
         if (!currentUser) {
-          console.log('AdminLayout: No user found, redirecting to login');
           router.push('/login');
           return;
         }
 
         // Check if user is an admin
         if (currentUser.role !== 'admin') {
-          console.log('AdminLayout: User is not an admin, role:', currentUser.role);
           router.push('/login');
           return;
         }
 
-        console.log('AdminLayout: Auth successful, user:', currentUser.name);
         setUser(currentUser);
       } catch (error) {
         console.error('AdminLayout: Auth check error:', error);

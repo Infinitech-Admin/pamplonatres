@@ -4,7 +4,6 @@ const LARAVEL_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:800
 
 export async function GET(req: NextRequest) {
   try {
-    // TODO: Fetch services from Laravel API
     const response = await fetch(`${LARAVEL_API_URL}/api/services`, {
       headers: { "Content-Type": "application/json" },
     })
@@ -18,7 +17,6 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    // TODO: Submit service request to Laravel API
     const response = await fetch(`${LARAVEL_API_URL}/api/services`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

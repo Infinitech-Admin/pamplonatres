@@ -19,27 +19,20 @@ export default function CitizenLayout({ children }: CitizenLayoutProps) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        console.log('CitizenLayout: Checking authentication...');
-        
         // Get user from cookie-based auth
         const currentUser = await authClient.getCurrentUser();
         
-        console.log('CitizenLayout: User data received:', currentUser);
-        
         if (!currentUser) {
-          console.log('CitizenLayout: No user found, redirecting to login');
           router.push('/login');
           return;
         }
 
         // Check if user is a citizen
         if (currentUser.role !== 'citizen') {
-          console.log('CitizenLayout: User is not a citizen, role:', currentUser.role);
           router.push('/login');
           return;
         }
 
-        console.log('CitizenLayout: Auth successful, user:', currentUser.name);
         setUser(currentUser);
       } catch (error) {
         console.error('CitizenLayout: Auth check error:', error);

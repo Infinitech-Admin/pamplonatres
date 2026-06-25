@@ -52,15 +52,12 @@ export const authClient = {
         credentials: "include",
       })
 
-      console.log('authClient.getCurrentUser - Response status:', response.status)
 
       if (!response.ok) {
-        console.log('authClient.getCurrentUser - Not OK, returning null')
         return null
       }
 
       const data = await response.json()
-      console.log('authClient.getCurrentUser - Response data:', data)
       
       // The API returns { success: true, user: {...} }
       // So we need to return data.user, not just data

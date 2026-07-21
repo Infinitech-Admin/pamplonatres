@@ -21,12 +21,20 @@ import { useRouter } from "next/navigation";
 
 const services = [
   {
+    id: 14,
+    icon: AlertTriangle,
+    name: "Report an Issue",
+    description: "Report road damage, garbage, flooding, and other city issues",
+    category: "Public Safety",
+    route: "/dashboard/citizen/report-issue",
+  },
+  {
     id: 1,
     icon: FileText,
     name: "Barangay Clearance",
     description: "Get barangay clearance",
     category: "Public Safety",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/barangay-clearance",
   },
   {
     id: 2,
@@ -34,7 +42,7 @@ const services = [
     name: "Cedula",
     description: "Community tax certificate",
     category: "Government Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/cedula",
   },
   {
     id: 3,
@@ -42,7 +50,7 @@ const services = [
     name: "Business Permit",
     description: "Apply for business permits",
     category: "Government Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/business-permit",
   },
   {
     id: 4,
@@ -50,7 +58,7 @@ const services = [
     name: "Building Permit",
     description: "Construction permits",
     category: "Government Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/building-permit",
   },
   {
     id: 5,
@@ -58,7 +66,7 @@ const services = [
     name: "Marriage License",
     description: "Apply for marriage license",
     category: "Government Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/marriage-license",
   },
   {
     id: 6,
@@ -66,7 +74,7 @@ const services = [
     name: "Health Certificate",
     description: "Medical clearance",
     category: "Health Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/health-certificate",
   },
   {
     id: 7,
@@ -74,7 +82,7 @@ const services = [
     name: "Medical Assistance",
     description: "Request medical aid",
     category: "Health Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/medical-assistance",
   },
   {
     id: 8,
@@ -82,7 +90,7 @@ const services = [
     name: "Police Clearance",
     description: "Request police clearance",
     category: "Public Safety",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/police-clearance",
   },
   {
     id: 9,
@@ -90,7 +98,7 @@ const services = [
     name: "Fire Safety Inspection",
     description: "Schedule inspection",
     category: "Public Safety",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/fire-safety-inspection",
   },
 
   // ✅ Newly added services
@@ -100,7 +108,7 @@ const services = [
     name: "Certificate of Indigency",
     description: "Financial assistance qualification certificate",
     category: "Social Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/certificate-of-indigency",
   },
   {
     id: 11,
@@ -108,7 +116,7 @@ const services = [
     name: "Residency Certificate",
     description: "Proof of residency certification",
     category: "Government Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/residency-certificate",
   },
   {
     id: 12,
@@ -116,7 +124,7 @@ const services = [
     name: "Good Moral Certificate",
     description: "Certificate of good moral character",
     category: "Government Services",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/good-moral-certificate",
   },
   {
     id: 13,
@@ -124,18 +132,10 @@ const services = [
     name: "Barangay Blotter",
     description: "Report and record incidents",
     category: "Public Safety",
-    route: "/dashboard/citizen/services",
+    route: "/dashboard/citizen/services/barangay-blotter",
   },
 
   // ✅ Report an Issue (links to the ReportIssuePage component)
-  {
-    id: 14,
-    icon: AlertTriangle,
-    name: "Report an Issue",
-    description: "Report road damage, garbage, flooding, and other city issues",
-    category: "Public Safety",
-    route: "/dashboard/citizen/report-issue",
-  },
 ];
 
 const stats = [
@@ -160,7 +160,7 @@ export default function ServicesSection() {
     if (authenticated) {
       router.push(route);
     } else {
-      router.push(`/login?callbackUrl=${route}`);
+      router.push(`/login?callbackUrl=${encodeURIComponent(route)}`);
     }
   };
 

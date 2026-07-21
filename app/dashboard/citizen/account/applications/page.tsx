@@ -1,314 +1,479 @@
-"use client"
+"use client";
 
-import { useEffect, useState, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, FileText, CheckCircle, Clock, XCircle, Eye, Search, Calendar, User, Hash, RefreshCw, Heart, Shield, Building, Users, Home, FileHeart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import CitizenLayout from "@/components/citizenLayout"
-import { authClient } from "@/lib/auth"
-import { useToast } from "@/components/ui/use-toast"
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  ArrowLeft,
+  FileText,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Eye,
+  Search,
+  Calendar,
+  User,
+  Hash,
+  RefreshCw,
+  Heart,
+  Shield,
+  Building,
+  Users,
+  Home,
+  FileHeart,
+  AlertTriangle,
+  Paperclip,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import CitizenLayout from "@/components/citizenLayout";
+import { authClient } from "@/lib/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Application {
-  id: number
-  reference_number: string
-  status: string
-  created_at: string
-  type: string
-  document_path?: string
-  photo_path?: string
-  image_url?: string
-  [key: string]: unknown
+  id: number;
+  reference_number: string;
+  status: string;
+  created_at: string;
+  type: string;
+  document_path?: string;
+  photo_path?: string;
+  image_url?: string;
+  [key: string]: unknown;
 }
 
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || 'http://localhost:8000'
+// Shape returned by GET /api/reports (mirrors the report_id/data payload
+// your POST /api/reports/submit endpoint already uses).
+interface ReportItem {
+  id: number;
+  report_id: string;
+  status: string;
+  category: string;
+  title?: string;
+  description?: string;
+  location?: string;
+  urgency?: string;
+  created_at: string;
+  files?: Array<{
+    id: number;
+    name: string;
+    url: string;
+    type?: string;
+  }>;
+}
 
-const imageCache = new Map<string, string>()
+const IMAGE_BASE_URL =
+  process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000";
 
-const fetchImageAsBase64 = async (imagePath: string): Promise<string | null> => {
-  if (!imagePath) return null
-  
+const imageCache = new Map<string, string>();
+
+const fetchImageAsBase64 = async (
+  imagePath: string,
+): Promise<string | null> => {
+  if (!imagePath) return null;
+
   if (imageCache.has(imagePath)) {
-    return imageCache.get(imagePath)!
+    return imageCache.get(imagePath)!;
   }
-  
+
   try {
-    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`
-    const fullImageUrl = `${IMAGE_BASE_URL}${cleanPath}`
-    
+    const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+    const fullImageUrl = `${IMAGE_BASE_URL}${cleanPath}`;
+
     const response = await fetch(fullImageUrl, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'include',
-    })
-    
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    });
+
     if (!response.ok) {
-      console.error(`Failed to fetch image: ${response.status}`)
-      return null
+      console.error(`Failed to fetch image: ${response.status}`);
+      return null;
     }
-    
-    const blob = await response.blob()
-    
+
+    const blob = await response.blob();
+
     return new Promise((resolve, reject) => {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        const base64 = reader.result as string
-        imageCache.set(imagePath, base64)
-        resolve(base64)
-      }
-      reader.onerror = reject
-      reader.readAsDataURL(blob)
-    })
+        const base64 = reader.result as string;
+        imageCache.set(imagePath, base64);
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   } catch (error) {
-    console.error('Error fetching image:', error)
-    return null
+    console.error("Error fetching image:", error);
+    return null;
   }
-}
+};
+
+// API responses here can be wrapped in several layers of { success, data }
+// envelopes before reaching the actual array (e.g. a Laravel paginator's
+// { current_page, data: [...] } nested inside a proxy route's own
+// { success, data } wrapper). Rather than hardcode a fixed nesting depth,
+// this walks common wrapper keys until it finds an array.
+const extractList = <T,>(payload: unknown, depth = 0): T[] => {
+  if (depth > 6 || payload === null || payload === undefined) return [];
+  if (Array.isArray(payload)) return payload as T[];
+  if (typeof payload !== "object") return [];
+
+  const obj = payload as Record<string, unknown>;
+  const wrapperKeys = ["data", "reports", "applications", "items", "results"];
+
+  for (const key of wrapperKeys) {
+    if (key in obj) {
+      const found = extractList<T>(obj[key], depth + 1);
+      if (found.length > 0) return found;
+    }
+  }
+
+  return [];
+};
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+// Maps the `category` value stored on a report (e.g. "road", "streetlight")
+// to the human-readable label used as the report's `type` label everywhere
+// else on this page.
+const reportCategoryLabels: Record<string, string> = {
+  road: "Road Damage",
+  streetlight: "Street Light",
+  garbage: "Garbage/Waste",
+  drainage: "Drainage/Flood",
+  traffic: "Traffic Issue",
+  vandalism: "Vandalism",
+  noise: "Noise Complaint",
+  other: "Other Issue",
+};
+
+// Normalizes a raw report record into the same shape used for every other
+// application type, so it can flow through the existing filtering, sorting,
+// and detail-modal logic unchanged.
+const mapReportToApplication = (report: ReportItem): Application => ({
+  id: report.id,
+  reference_number: report.report_id,
+  status: report.status,
+  created_at: report.created_at,
+  type: reportCategoryLabels[report.category] || "Other Issue",
+  title: report.title,
+  description: report.description,
+  location: report.location,
+  urgency: report.urgency,
+  files: report.files,
+});
 
 const categories = [
   {
-    id: 'health-certificate',
-    name: 'Health Certificate',
+    id: "report-issue",
+    name: "Report an Issue",
+    icon: AlertTriangle,
+    color: "from-red-500 to-orange-600",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-500",
+    textColor: "text-red-700",
+    types: [
+      "Road Damage",
+      "Street Light",
+      "Garbage/Waste",
+      "Drainage/Flood",
+      "Traffic Issue",
+      "Vandalism",
+      "Noise Complaint",
+      "Other Issue",
+    ],
+  },
+  {
+    id: "health-certificate",
+    name: "Health Certificate",
     icon: Heart,
-    color: 'from-rose-500 to-pink-600',
-    bgColor: 'bg-rose-50',
-    borderColor: 'border-rose-500',
-    textColor: 'text-rose-700',
-    types: ['Health Certificate']
+    color: "from-rose-500 to-pink-600",
+    bgColor: "bg-rose-50",
+    borderColor: "border-rose-500",
+    textColor: "text-rose-700",
+    types: ["Health Certificate"],
   },
   {
-    id: 'barangay-clearance',
-    name: 'Barangay Clearance',
+    id: "barangay-clearance",
+    name: "Barangay Clearance",
     icon: Shield,
-    color: 'from-blue-500 to-cyan-600',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-500',
-    textColor: 'text-blue-700',
-    types: ['Barangay Clearance']
+    color: "from-blue-500 to-cyan-600",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-500",
+    textColor: "text-blue-700",
+    types: ["Barangay Clearance"],
   },
   {
-    id: 'business-permit',
-    name: 'Business Permit',
+    id: "business-permit",
+    name: "Business Permit",
     icon: Building,
-    color: 'from-purple-500 to-violet-600',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-500',
-    textColor: 'text-purple-700',
-    types: ['Business Permit', 'Business Permit Renewal']
+    color: "from-purple-500 to-violet-600",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-500",
+    textColor: "text-purple-700",
+    types: ["Business Permit", "Business Permit Renewal"],
   },
   {
-    id: 'cedula',
-    name: 'Cedula',
+    id: "cedula",
+    name: "Cedula",
     icon: Users,
-    color: 'from-teal-500 to-emerald-600',
-    bgColor: 'bg-teal-50',
-    borderColor: 'border-teal-500',
-    textColor: 'text-teal-700',
-    types: ['Cedula', 'Community Tax Certificate']
+    color: "from-teal-500 to-emerald-600",
+    bgColor: "bg-teal-50",
+    borderColor: "border-teal-500",
+    textColor: "text-teal-700",
+    types: ["Cedula", "Community Tax Certificate"],
   },
   {
-    id: 'medical-assistance',
-    name: 'Medical Assistance',
+    id: "medical-assistance",
+    name: "Medical Assistance",
     icon: FileHeart,
-    color: 'from-orange-500 to-amber-600',
-    bgColor: 'bg-orange-50',
-    borderColor: 'border-orange-500',
-    textColor: 'text-orange-700',
-    types: ['Medical Assistance']
+    color: "from-orange-500 to-amber-600",
+    bgColor: "bg-orange-50",
+    borderColor: "border-orange-500",
+    textColor: "text-orange-700",
+    types: ["Medical Assistance"],
   },
   {
-    id: 'building-permit',
-    name: 'Building Permit',
+    id: "building-permit",
+    name: "Building Permit",
     icon: Home,
-    color: 'from-indigo-500 to-blue-600',
-    bgColor: 'bg-indigo-50',
-    borderColor: 'border-indigo-500',
-    textColor: 'text-indigo-700',
-    types: ['Building Permit']
+    color: "from-indigo-500 to-blue-600",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-500",
+    textColor: "text-indigo-700",
+    types: ["Building Permit"],
   },
   {
-    id: 'other',
-    name: 'Other Services',
+    id: "other",
+    name: "Other Services",
     icon: FileText,
-    color: 'from-gray-500 to-slate-600',
-    bgColor: 'bg-gray-50',
-    borderColor: 'border-gray-500',
-    textColor: 'text-gray-700',
-    types: []
-  }
-]
+    color: "from-gray-500 to-slate-600",
+    bgColor: "bg-gray-50",
+    borderColor: "border-gray-500",
+    textColor: "text-gray-700",
+    types: [],
+  },
+];
 
 function ApplicationsContent() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { toast } = useToast()
-  const [applications, setApplications] = useState<Application[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [selectedApp, setSelectedApp] = useState<Application | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [sortBy, setSortBy] = useState("newest")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [imageData, setImageData] = useState<Map<string, string>>(new Map())
-  const [loadingImages, setLoadingImages] = useState<Set<string>>(new Set())
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [imageData, setImageData] = useState<Map<string, string>>(new Map());
+  const [loadingImages, setLoadingImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const user = await authClient.getCurrentUser()
-        
+        const user = await authClient.getCurrentUser();
+
         if (!user) {
           toast({
             title: "Authentication Required",
             description: "Please log in to view your applications.",
             variant: "destructive",
-          })
-          router.push('/login')
-          return
+          });
+          router.push("/login");
+          return;
         }
 
-        setIsAuthenticated(true)
-        
-        const success = searchParams.get("success")
+        setIsAuthenticated(true);
+
+        const success = searchParams.get("success");
         if (success) {
           toast({
             title: "Success!",
             description: `Your ${success} application has been submitted.`,
-          })
+          });
         }
 
-        await fetchApplications()
+        await fetchApplications();
       } catch (error) {
-        console.error("Error verifying authentication:", error)
+        console.error("Error verifying authentication:", error);
         toast({
           title: "Authentication Error",
           description: "Failed to verify your session. Please log in again.",
           variant: "destructive",
-        })
-        router.push('/login')
+        });
+        router.push("/login");
       }
-    }
+    };
 
-    verifyAuth()
-  }, [router, searchParams, toast])
+    verifyAuth();
+  }, [router, searchParams, toast]);
 
   const fetchApplications = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch("/api/applications", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      // Fetch regular service applications and reported issues in parallel,
+      // then merge them into a single normalized list so they share one
+      // set of filters, sorting, and the detail modal.
+      const [applicationsRes, reportsRes] = await Promise.all([
+        fetch("/api/applications", {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        }),
+        fetch("/api/reports", {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        }),
+      ]);
 
-      if (response.status === 401) {
+      if (applicationsRes.status === 401 || reportsRes.status === 401) {
         toast({
           title: "Session Expired",
           description: "Please log in again to continue.",
           variant: "destructive",
-        })
-        router.push('/login')
-        return
+        });
+        router.push("/login");
+        return;
       }
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch applications: ${response.statusText}`)
+      if (!applicationsRes.ok) {
+        throw new Error(
+          `Failed to fetch applications: ${applicationsRes.statusText}`,
+        );
       }
 
-      const data = await response.json()
-      let apps: Application[] = []
-      
-      if (Array.isArray(data)) {
-        apps = data
-      } else if (data.data && Array.isArray(data.data)) {
-        apps = data.data
-      } else if (data.applications && Array.isArray(data.applications)) {
-        apps = data.applications
+      const data = await applicationsRes.json();
+      const apps: Application[] = extractList<Application>(data);
+
+      // Reports endpoint is treated as optional/best-effort: if it fails or
+      // isn't available yet, we still show the regular applications rather
+      // than blocking the whole page on it.
+      let reportApps: Application[] = [];
+      if (reportsRes.ok) {
+        try {
+          const reportsData = await reportsRes.json();
+          const reports = extractList<ReportItem>(reportsData);
+          reportApps = reports.map(mapReportToApplication);
+        } catch (err) {
+          console.error("Error parsing reports response:", err);
+        }
+      } else {
+        console.warn(
+          `Reports endpoint returned ${reportsRes.status}; skipping reported issues.`,
+        );
       }
 
-      const sortedApps = apps.sort((a: Application, b: Application) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
+      const combinedApps = [...apps, ...reportApps].sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
 
-      setApplications(sortedApps)
-      await fetchAllImages(sortedApps)
+      setApplications(combinedApps);
+      await fetchAllImages(combinedApps);
 
-      if (sortedApps.length > 0) {
+      if (combinedApps.length > 0) {
         toast({
           title: "Applications Loaded",
-          description: `Found ${sortedApps.length} application${sortedApps.length !== 1 ? 's' : ''}.`,
-        })
+          description: `Found ${combinedApps.length} application${combinedApps.length !== 1 ? "s" : ""}.`,
+        });
       }
     } catch (err) {
-      console.error("Error fetching applications:", err)
-      const errorMessage = err instanceof Error ? err.message : "Failed to load applications"
-      setError(errorMessage)
+      console.error("Error fetching applications:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load applications";
+      setError(errorMessage);
       toast({
         title: "Error",
         description: errorMessage,
         variant: "destructive",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchAllImages = async (apps: Application[]) => {
-    const newImageData = new Map<string, string>()
-    const imagePaths = new Set<string>()
-    
-    apps.forEach(app => {
-      const path = app.photo_path || app.image_url || app.document_path
-      if (path && typeof path === 'string') {
-        imagePaths.add(path)
+    const newImageData = new Map<string, string>();
+    const imagePaths = new Set<string>();
+
+    apps.forEach((app) => {
+      const path = app.photo_path || app.image_url || app.document_path;
+      if (path && typeof path === "string") {
+        imagePaths.add(path);
       }
-      
-      if (app.supporting_documents && typeof app.supporting_documents === 'string') {
-        imagePaths.add(app.supporting_documents)
+
+      if (
+        app.supporting_documents &&
+        typeof app.supporting_documents === "string"
+      ) {
+        imagePaths.add(app.supporting_documents);
       }
-      
+
       Object.entries(app).forEach(([key, value]) => {
-        if ((key.includes('photo') || key.includes('image') || key.includes('document') || key.includes('supporting')) && 
-            (key.includes('path') || key.includes('documents')) && value && typeof value === 'string') {
-          imagePaths.add(value as string)
+        if (
+          (key.includes("photo") ||
+            key.includes("image") ||
+            key.includes("document") ||
+            key.includes("supporting")) &&
+          (key.includes("path") || key.includes("documents")) &&
+          value &&
+          typeof value === "string"
+        ) {
+          imagePaths.add(value as string);
         }
-      })
-    })
+      });
+    });
 
     const imagePromises = Array.from(imagePaths).map(async (imgPath) => {
-      setLoadingImages(prev => new Set(prev).add(imgPath))
-      const base64 = await fetchImageAsBase64(imgPath)
-      setLoadingImages(prev => {
-        const newSet = new Set(prev)
-        newSet.delete(imgPath)
-        return newSet
-      })
+      setLoadingImages((prev) => new Set(prev).add(imgPath));
+      const base64 = await fetchImageAsBase64(imgPath);
+      setLoadingImages((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(imgPath);
+        return newSet;
+      });
       if (base64) {
-        newImageData.set(imgPath, base64)
+        newImageData.set(imgPath, base64);
       }
-    })
+    });
 
-    await Promise.all(imagePromises)
-    setImageData(newImageData)
-  }
+    await Promise.all(imagePromises);
+    setImageData(newImageData);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -318,95 +483,115 @@ function ApplicationsContent() {
             <CheckCircle className="h-3 w-3 mr-1" />
             Approved
           </Badge>
-        )
+        );
       case "pending":
         return (
           <Badge className="bg-amber-500 text-white hover:bg-amber-600 shadow-sm">
             <Clock className="h-3 w-3 mr-1" />
             Pending
           </Badge>
-        )
+        );
       case "rejected":
         return (
           <Badge className="bg-rose-500 text-white hover:bg-rose-600 shadow-sm">
             <XCircle className="h-3 w-3 mr-1" />
             Rejected
           </Badge>
-        )
+        );
       default:
-        return <Badge className="bg-slate-500 text-white">{status}</Badge>
+        return <Badge className="bg-slate-500 text-white">{status}</Badge>;
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "approved": return "border-l-emerald-500 bg-emerald-50/50"
-      case "pending": return "border-l-amber-500 bg-amber-50/50"
-      case "rejected": return "border-l-rose-500 bg-rose-50/50"
-      default: return "border-l-slate-500 bg-slate-50/50"
+      case "approved":
+        return "border-l-emerald-500 bg-emerald-50/50";
+      case "pending":
+        return "border-l-amber-500 bg-amber-50/50";
+      case "rejected":
+        return "border-l-rose-500 bg-rose-50/50";
+      default:
+        return "border-l-slate-500 bg-slate-50/50";
     }
-  }
+  };
 
-  const getCategoryForType = (type: string): typeof categories[0] | null => {
-    const category = categories.find(cat => 
-      cat.types.some(t => type.toLowerCase().includes(t.toLowerCase()))
-    )
-    return category || categories.find(cat => cat.id === 'other') || null
-  }
+  const getCategoryForType = (type: string): (typeof categories)[0] | null => {
+    const category = categories.find((cat) =>
+      cat.types.some((t) => type.toLowerCase().includes(t.toLowerCase())),
+    );
+    return category || categories.find((cat) => cat.id === "other") || null;
+  };
 
   const getCategoryApps = (categoryId: string) => {
-    const category = categories.find(c => c.id === categoryId)
-    if (!category) return []
+    const category = categories.find((c) => c.id === categoryId);
+    if (!category) return [];
 
-    if (category.id === 'other') {
-      return applications.filter(app => {
-        const appCategory = getCategoryForType(app.type)
-        return appCategory?.id === 'other'
-      })
+    if (category.id === "other") {
+      return applications.filter((app) => {
+        const appCategory = getCategoryForType(app.type);
+        return appCategory?.id === "other";
+      });
     }
 
-    return applications.filter(app => 
-      category.types.some(t => app.type.toLowerCase().includes(t.toLowerCase()))
-    )
-  }
+    return applications.filter((app) =>
+      category.types.some((t) =>
+        app.type.toLowerCase().includes(t.toLowerCase()),
+      ),
+    );
+  };
 
   const filterAndSortApplications = (apps: Application[]) => {
     let filtered = apps.filter((app) => {
-      if (statusFilter !== "all" && app.status.toLowerCase() !== statusFilter) return false
-      
+      if (statusFilter !== "all" && app.status.toLowerCase() !== statusFilter)
+        return false;
+
       if (searchQuery) {
-        const query = searchQuery.toLowerCase()
+        const query = searchQuery.toLowerCase();
         return (
           app.reference_number.toLowerCase().includes(query) ||
           app.type.toLowerCase().includes(query) ||
-          String(app.full_name || app.fullName || app.owner_name || "").toLowerCase().includes(query)
-        )
+          String(
+            app.full_name || app.fullName || app.owner_name || app.title || "",
+          )
+            .toLowerCase()
+            .includes(query)
+        );
       }
-      
-      return true
-    })
+
+      return true;
+    });
 
     switch (sortBy) {
       case "newest":
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        break
+        filtered.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
+        break;
       case "oldest":
-        filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        break
+        filtered.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+        );
+        break;
       case "type":
-        filtered.sort((a, b) => a.type.localeCompare(b.type))
-        break
+        filtered.sort((a, b) => a.type.localeCompare(b.type));
+        break;
     }
 
-    return filtered
-  }
+    return filtered;
+  };
 
   const stats = {
     total: applications.length,
-    pending: applications.filter(a => a.status.toLowerCase() === "pending").length,
-    approved: applications.filter(a => a.status.toLowerCase() === "approved").length,
-    rejected: applications.filter(a => a.status.toLowerCase() === "rejected").length,
-  }
+    pending: applications.filter((a) => a.status.toLowerCase() === "pending")
+      .length,
+    approved: applications.filter((a) => a.status.toLowerCase() === "approved")
+      .length,
+    rejected: applications.filter((a) => a.status.toLowerCase() === "rejected")
+      .length,
+  };
 
   if (!isAuthenticated || loading) {
     return (
@@ -416,23 +601,32 @@ function ApplicationsContent() {
             <div className="flex flex-col items-center justify-center">
               <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
               <p className="text-gray-600 font-medium">
-                {!isAuthenticated ? "Verifying authentication..." : "Loading applications..."}
+                {!isAuthenticated
+                  ? "Verifying authentication..."
+                  : "Loading applications..."}
               </p>
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  const currentCategoryApps = selectedCategory ? filterAndSortApplications(getCategoryApps(selectedCategory)) : []
+  const currentCategoryApps = selectedCategory
+    ? filterAndSortApplications(getCategoryApps(selectedCategory))
+    : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/20 to-slate-50 pb-20 lg:pb-0">
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3 mb-4">
-            <Button variant="ghost" size="icon" onClick={() => router.back()} className="hover:bg-orange-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()}
+              className="hover:bg-orange-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2 flex-1">
@@ -440,12 +634,14 @@ function ApplicationsContent() {
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">My Applications</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  My Applications
+                </h1>
                 <p className="text-xs text-gray-500">Browse by category</p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={fetchApplications}
               className="hidden sm:flex gap-2"
@@ -459,17 +655,19 @@ function ApplicationsContent() {
               <p className="text-xl font-bold text-white">{stats.total}</p>
               <p className="text-[10px] text-blue-100 font-medium">Total</p>
             </div>
-            
+
             <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg p-2.5 text-center shadow">
               <p className="text-xl font-bold text-white">{stats.pending}</p>
               <p className="text-[10px] text-amber-100 font-medium">Pending</p>
             </div>
-            
+
             <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2.5 text-center shadow">
               <p className="text-xl font-bold text-white">{stats.approved}</p>
-              <p className="text-[10px] text-emerald-100 font-medium">Approved</p>
+              <p className="text-[10px] text-emerald-100 font-medium">
+                Approved
+              </p>
             </div>
-            
+
             <div className="bg-gradient-to-br from-rose-500 to-rose-600 rounded-lg p-2.5 text-center shadow">
               <p className="text-xl font-bold text-white">{stats.rejected}</p>
               <p className="text-[10px] text-rose-100 font-medium">Rejected</p>
@@ -484,11 +682,13 @@ function ApplicationsContent() {
             <div className="flex items-start gap-3">
               <XCircle className="h-5 w-5 text-rose-600 mt-0.5" />
               <div className="flex-1">
-                <p className="font-medium text-rose-900">Error loading applications</p>
+                <p className="font-medium text-rose-900">
+                  Error loading applications
+                </p>
                 <p className="text-sm text-rose-700 mt-1">{error}</p>
               </div>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={fetchApplications}
                 className="text-rose-700 hover:text-rose-800 hover:bg-rose-100"
@@ -502,15 +702,19 @@ function ApplicationsContent() {
         {!selectedCategory ? (
           <div>
             <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Select a Service Category</h2>
-              <p className="text-gray-600">Choose a category to view your applications</p>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                Select a Service Category
+              </h2>
+              <p className="text-gray-600">
+                Choose a category to view your applications
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories.map((category) => {
-                const categoryApps = getCategoryApps(category.id)
-                const Icon = category.icon
-                
+                const categoryApps = getCategoryApps(category.id);
+                const Icon = category.icon;
+
                 return (
                   <Card
                     key={category.id}
@@ -520,10 +724,14 @@ function ApplicationsContent() {
                     <div className={`h-2 bg-gradient-to-r ${category.color}`} />
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between mb-3">
-                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                        <div
+                          className={`w-14 h-14 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}
+                        >
                           <Icon className="h-7 w-7 text-white" />
                         </div>
-                        <div className={`px-3 py-1 rounded-full ${category.bgColor} ${category.textColor} font-bold text-lg`}>
+                        <div
+                          className={`px-3 py-1 rounded-full ${category.bgColor} ${category.textColor} font-bold text-lg`}
+                        >
                           {categoryApps.length}
                         </div>
                       </div>
@@ -531,27 +739,32 @@ function ApplicationsContent() {
                         {category.name}
                       </CardTitle>
                       <CardDescription className="text-sm">
-                        {categoryApps.length} application{categoryApps.length !== 1 ? 's' : ''}
+                        {categoryApps.length} application
+                        {categoryApps.length !== 1 ? "s" : ""}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex gap-2 flex-wrap">
-                        {['pending', 'approved', 'rejected'].map(status => {
-                          const count = categoryApps.filter(a => a.status.toLowerCase() === status).length
-                          if (count === 0) return null
+                        {["pending", "approved", "rejected"].map((status) => {
+                          const count = categoryApps.filter(
+                            (a) => a.status.toLowerCase() === status,
+                          ).length;
+                          if (count === 0) return null;
                           return (
                             <Badge
                               key={status}
                               variant="secondary"
                               className={
-                                status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
-                                status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                                'bg-rose-100 text-rose-700'
+                                status === "approved"
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : status === "pending"
+                                    ? "bg-amber-100 text-amber-700"
+                                    : "bg-rose-100 text-rose-700"
                               }
                             >
                               {count} {status}
                             </Badge>
-                          )
+                          );
                         })}
                       </div>
                       <Button
@@ -563,7 +776,7 @@ function ApplicationsContent() {
                       </Button>
                     </CardContent>
                   </Card>
-                )
+                );
               })}
             </div>
           </div>
@@ -580,19 +793,28 @@ function ApplicationsContent() {
               </Button>
 
               {(() => {
-                const category = categories.find(c => c.id === selectedCategory)
-                const Icon = category?.icon || FileText
+                const category = categories.find(
+                  (c) => c.id === selectedCategory,
+                );
+                const Icon = category?.icon || FileText;
                 return (
                   <div className="flex items-center gap-4 mb-6">
-                    <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${category?.color} flex items-center justify-center shadow-lg`}>
+                    <div
+                      className={`w-16 h-16 rounded-xl bg-gradient-to-br ${category?.color} flex items-center justify-center shadow-lg`}
+                    >
                       <Icon className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900">{category?.name}</h2>
-                      <p className="text-gray-600">{currentCategoryApps.length} application{currentCategoryApps.length !== 1 ? 's' : ''}</p>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        {category?.name}
+                      </h2>
+                      <p className="text-gray-600">
+                        {currentCategoryApps.length} application
+                        {currentCategoryApps.length !== 1 ? "s" : ""}
+                      </p>
                     </div>
                   </div>
-                )
+                );
               })()}
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -605,7 +827,7 @@ function ApplicationsContent() {
                     className="pl-10 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
-                
+
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-full sm:w-[160px] border-gray-200">
                     <SelectValue placeholder="Filter Status" />
@@ -638,21 +860,23 @@ function ApplicationsContent() {
                     <FileText className="h-10 w-10 text-orange-600" />
                   </div>
                   <h3 className="text-xl font-bold mb-2 text-gray-900">
-                    {searchQuery ? "No matching applications" : "No applications found"}
+                    {searchQuery
+                      ? "No matching applications"
+                      : "No applications found"}
                   </h3>
                   <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                    {searchQuery 
+                    {searchQuery
                       ? "Try adjusting your search criteria or filters."
                       : statusFilter !== "all"
-                      ? `You don't have any ${statusFilter} applications in this category.`
-                      : "You haven't submitted any applications in this category yet."}
+                        ? `You don't have any ${statusFilter} applications in this category.`
+                        : "You haven't submitted any applications in this category yet."}
                   </p>
                 </CardContent>
               </Card>
             ) : (
               <div className="space-y-4">
                 {currentCategoryApps.map((app) => (
-                  <Card 
+                  <Card
                     key={`${app.type}-${app.id}`}
                     className={`hover:shadow-lg transition-all border-l-4 ${getStatusColor(app.status)} cursor-pointer group`}
                     onClick={() => setSelectedApp(app)}
@@ -662,12 +886,12 @@ function ApplicationsContent() {
                         <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
                           <FileText className="h-6 w-6 text-white" />
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-4 mb-2">
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-orange-600 transition-colors mb-1">
-                                {app.type}
+                                {String(app.title || app.type)}
                               </h3>
                               <div className="flex items-center gap-3 text-sm text-gray-500 flex-wrap">
                                 <span className="flex items-center gap-1">
@@ -680,20 +904,26 @@ function ApplicationsContent() {
                                 </span>
                                 <span className="flex items-center gap-1 truncate">
                                   <User className="h-3.5 w-3.5" />
-                                  {String(app.full_name || app.fullName || app.owner_name || app.groom_name || "N/A")}
+                                  {String(
+                                    app.full_name ||
+                                      app.fullName ||
+                                      app.owner_name ||
+                                      app.groom_name ||
+                                      "N/A",
+                                  )}
                                 </span>
                               </div>
                             </div>
                             {getStatusBadge(app.status)}
                           </div>
-                          
+
                           <Button
                             variant="ghost"
                             size="sm"
                             className="mt-3 group-hover:bg-orange-500 group-hover:text-white transition-colors"
                             onClick={(e) => {
-                              e.stopPropagation()
-                              setSelectedApp(app)
+                              e.stopPropagation();
+                              setSelectedApp(app);
                             }}
                           >
                             <Eye className="h-4 w-4 mr-2" />
@@ -710,7 +940,10 @@ function ApplicationsContent() {
         )}
       </div>
 
-      <Dialog open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)}>
+      <Dialog
+        open={!!selectedApp}
+        onOpenChange={(open) => !open && setSelectedApp(null)}
+      >
         <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader className="border-b pb-4">
             <div className="flex items-start gap-4">
@@ -719,7 +952,7 @@ function ApplicationsContent() {
               </div>
               <div className="flex-1 min-w-0">
                 <DialogTitle className="text-2xl font-bold text-gray-900 mb-1">
-                  {selectedApp?.type}
+                  {String(selectedApp?.title || selectedApp?.type)}
                 </DialogTitle>
                 <DialogDescription className="flex items-center gap-2 text-sm">
                   <Hash className="h-4 w-4" />
@@ -736,83 +969,178 @@ function ApplicationsContent() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
                     <CardContent className="p-4">
-                      <p className="text-xs font-medium text-blue-700 mb-1">Status</p>
-                      <div className="mt-2">{getStatusBadge(selectedApp.status)}</div>
+                      <p className="text-xs font-medium text-blue-700 mb-1">
+                        Status
+                      </p>
+                      <div className="mt-2">
+                        {getStatusBadge(selectedApp.status)}
+                      </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="border-l-4 border-l-purple-500 bg-purple-50/50">
                     <CardContent className="p-4">
-                      <p className="text-xs font-medium text-purple-700 mb-1">Submitted Date</p>
+                      <p className="text-xs font-medium text-purple-700 mb-1">
+                        Submitted Date
+                      </p>
                       <p className="font-semibold text-purple-900 mt-2">
                         {formatDate(selectedApp.created_at)}
                       </p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="border-l-4 border-l-teal-500 bg-teal-50/50">
                     <CardContent className="p-4">
-                      <p className="text-xs font-medium text-teal-700 mb-1">Application ID</p>
-                      <p className="font-semibold text-teal-900 mt-2">#{selectedApp.id}</p>
+                      <p className="text-xs font-medium text-teal-700 mb-1">
+                        Application ID
+                      </p>
+                      <p className="font-semibold text-teal-900 mt-2">
+                        #{selectedApp.id}
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
                       <FileText className="h-4 w-4 text-white" />
                     </div>
-                    <h3 className="font-bold text-lg text-gray-900">Application Details</h3>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Application Details
+                    </h3>
                   </div>
-                  
+
                   <Card className="border-0 shadow-md">
                     <CardContent className="p-0 divide-y">
                       {Object.entries(selectedApp).map(([key, value]) => {
-                        if ([
-                          "id", 
-                          "type", 
-                          "created_at", 
-                          "status", 
-                          "reference_number", 
-                          "user_id",
-                          "user",
-                          "updated_at",
-                          "deleted_at"
-                        ].includes(key)) {
-                          return null
+                        if (
+                          [
+                            "id",
+                            "type",
+                            "created_at",
+                            "status",
+                            "reference_number",
+                            "user_id",
+                            "user",
+                            "updated_at",
+                            "deleted_at",
+                          ].includes(key)
+                        ) {
+                          return null;
                         }
-                        
-                        if (key.toLowerCase().includes('_url') && (
-                          key.toLowerCase().includes('building') ||
-                          key.toLowerCase().includes('land') ||
-                          key.toLowerCase().includes('title') ||
-                          key.toLowerCase().includes('plan')
-                        )) {
-                          return null
+
+                        if (
+                          key.toLowerCase().includes("_url") &&
+                          (key.toLowerCase().includes("building") ||
+                            key.toLowerCase().includes("land") ||
+                            key.toLowerCase().includes("title") ||
+                            key.toLowerCase().includes("plan"))
+                        ) {
+                          return null;
                         }
-                        
-                        const isImagePath = value && typeof value === 'string' && (
-                          value.includes('uploads/') || 
-                          value.includes('medical-assistance-documents/') ||
-                          value.includes('.jpg') || 
-                          value.includes('.jpeg') || 
-                          value.includes('.png') || 
-                          value.includes('.gif') || 
-                          value.includes('.webp') ||
-                          value.includes('.pdf') ||
-                          key.includes('photo') || 
-                          key.includes('image') || 
-                          key.includes('picture') ||
-                          key.includes('supporting') ||
-                          (key.includes('document') && value.match(/\.(jpg|jpeg|png|gif|webp|pdf)$/i))
-                        )
-                        
-                        const isPdfFile = value && typeof value === 'string' && value.match(/\.pdf$/i)
-                        
+
+                        // Reports carry their photos/videos as an array of
+                        // { id, name, url } objects rather than a single
+                        // string path, so they need their own row renderer.
+                        const isFileArray =
+                          key === "files" && Array.isArray(value);
+
+                        if (isFileArray) {
+                          const fileList = value as Array<{
+                            id: number;
+                            name: string;
+                            url: string;
+                            type?: string;
+                          }>;
+                          if (fileList.length === 0) return null;
+
+                          return (
+                            <div
+                              key={key}
+                              className="flex flex-col py-3 px-4 hover:bg-gray-50 transition-colors"
+                            >
+                              <dt className="text-sm font-semibold text-gray-700 capitalize mb-2">
+                                Attachments
+                              </dt>
+                              <dd className="flex flex-wrap gap-3">
+                                {fileList.map((file) => {
+                                  const isImage = file.type
+                                    ? file.type === "image"
+                                    : !!file.name.match(
+                                        /\.(jpg|jpeg|png|gif|webp)$/i,
+                                      );
+                                  const fileUrl = file.url.startsWith("http")
+                                    ? file.url
+                                    : `${IMAGE_BASE_URL}/${file.url}`;
+
+                                  if (isImage) {
+                                    return (
+                                      <div
+                                        key={file.id}
+                                        className="relative w-32 h-32 rounded-lg overflow-hidden border shadow-sm bg-gray-50"
+                                      >
+                                        <img
+                                          src={fileUrl}
+                                          alt={file.name}
+                                          className="w-full h-full object-cover"
+                                          onError={(e) => {
+                                            const target =
+                                              e.target as HTMLImageElement;
+                                            target.src = "/placeholder.png";
+                                          }}
+                                        />
+                                      </div>
+                                    );
+                                  }
+
+                                  return (
+                                    <a
+                                      key={file.id}
+                                      href={fileUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900 hover:bg-blue-100 transition-colors"
+                                    >
+                                      <Paperclip className="h-4 w-4 text-blue-600" />
+                                      {file.name}
+                                    </a>
+                                  );
+                                })}
+                              </dd>
+                            </div>
+                          );
+                        }
+
+                        const isImagePath =
+                          value &&
+                          typeof value === "string" &&
+                          (value.includes("uploads/") ||
+                            value.includes("medical-assistance-documents/") ||
+                            value.includes(".jpg") ||
+                            value.includes(".jpeg") ||
+                            value.includes(".png") ||
+                            value.includes(".gif") ||
+                            value.includes(".webp") ||
+                            value.includes(".pdf") ||
+                            key.includes("photo") ||
+                            key.includes("image") ||
+                            key.includes("picture") ||
+                            key.includes("supporting") ||
+                            (key.includes("document") &&
+                              value.match(/\.(jpg|jpeg|png|gif|webp|pdf)$/i)));
+
+                        const isPdfFile =
+                          value &&
+                          typeof value === "string" &&
+                          value.match(/\.pdf$/i);
+
                         if (isImagePath) {
                           return (
-                            <div key={key} className="flex flex-col py-3 px-4 hover:bg-gray-50 transition-colors">
+                            <div
+                              key={key}
+                              className="flex flex-col py-3 px-4 hover:bg-gray-50 transition-colors"
+                            >
                               <dt className="text-sm font-semibold text-gray-700 capitalize mb-2">
                                 {key.replace(/_/g, " ")}
                               </dt>
@@ -821,7 +1149,9 @@ function ApplicationsContent() {
                                   <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                                       <FileText className="h-5 w-5 text-blue-600" />
-                                      <span className="text-sm font-medium text-blue-900">PDF Document</span>
+                                      <span className="text-sm font-medium text-blue-900">
+                                        PDF Document
+                                      </span>
                                     </div>
                                     <a
                                       href={`${IMAGE_BASE_URL}/${value}`}
@@ -840,39 +1170,47 @@ function ApplicationsContent() {
                                       alt={key}
                                       className="w-full h-full object-contain"
                                       onError={(e) => {
-                                        const target = e.target as HTMLImageElement
-                                        console.error('Failed to load image:', value)
-                                        target.src = '/placeholder.png'
+                                        const target =
+                                          e.target as HTMLImageElement;
+                                        console.error(
+                                          "Failed to load image:",
+                                          value,
+                                        );
+                                        target.src = "/placeholder.png";
                                       }}
                                     />
                                   </div>
                                 )}
                               </dd>
                             </div>
-                          )
+                          );
                         }
-                        
+
                         return (
-                          <div key={key} className="flex py-3 px-4 hover:bg-gray-50 transition-colors">
+                          <div
+                            key={key}
+                            className="flex py-3 px-4 hover:bg-gray-50 transition-colors"
+                          >
                             <dt className="text-sm font-semibold text-gray-700 capitalize w-1/3 flex-shrink-0">
                               {key.replace(/_/g, " ")}
                             </dt>
                             <dd className="text-sm text-gray-900 flex-1 break-words">
                               {(() => {
-                                if (value && typeof value === 'string') {
-                                  const datePattern = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}.*)?$/
+                                if (value && typeof value === "string") {
+                                  const datePattern =
+                                    /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}.*)?$/;
                                   if (datePattern.test(value)) {
-                                    const date = new Date(value)
+                                    const date = new Date(value);
                                     if (!isNaN(date.getTime())) {
-                                      return formatDate(value)
+                                      return formatDate(value);
                                     }
                                   }
                                 }
-                                return String(value || "N/A")
+                                return String(value ?? "N/A");
                               })()}
                             </dd>
                           </div>
-                        )
+                        );
                       })}
                     </CardContent>
                   </Card>
@@ -883,26 +1221,28 @@ function ApplicationsContent() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
 export default function ApplicationsPage() {
   return (
     <CitizenLayout>
-      <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/20 to-slate-50 flex items-center justify-center">
-          <Card className="w-full max-w-md border-0 shadow-xl">
-            <CardContent className="py-12">
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="text-gray-600 font-medium">Loading...</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/20 to-slate-50 flex items-center justify-center">
+            <Card className="w-full max-w-md border-0 shadow-xl">
+              <CardContent className="py-12">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                  <p className="text-gray-600 font-medium">Loading...</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        }
+      >
         <ApplicationsContent />
       </Suspense>
     </CitizenLayout>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   Search,
   FileText,
@@ -12,11 +12,12 @@ import {
   MapPin,
   Baby,
   Briefcase,
-} from "lucide-react"
-import { useState } from "react"
-import Link from "next/link"
-import { authClient } from "@/lib/auth"
-import { useRouter } from "next/navigation"
+  AlertTriangle,
+} from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
+import { authClient } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 const services = [
   {
@@ -25,6 +26,7 @@ const services = [
     name: "Barangay Clearance",
     description: "Get barangay clearance",
     category: "Public Safety",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 2,
@@ -32,6 +34,7 @@ const services = [
     name: "Cedula",
     description: "Community tax certificate",
     category: "Government Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 3,
@@ -39,6 +42,7 @@ const services = [
     name: "Business Permit",
     description: "Apply for business permits",
     category: "Government Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 4,
@@ -46,6 +50,7 @@ const services = [
     name: "Building Permit",
     description: "Construction permits",
     category: "Government Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 5,
@@ -53,6 +58,7 @@ const services = [
     name: "Marriage License",
     description: "Apply for marriage license",
     category: "Government Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 6,
@@ -60,6 +66,7 @@ const services = [
     name: "Health Certificate",
     description: "Medical clearance",
     category: "Health Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 7,
@@ -67,6 +74,7 @@ const services = [
     name: "Medical Assistance",
     description: "Request medical aid",
     category: "Health Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 8,
@@ -74,6 +82,7 @@ const services = [
     name: "Police Clearance",
     description: "Request police clearance",
     category: "Public Safety",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 9,
@@ -81,6 +90,7 @@ const services = [
     name: "Fire Safety Inspection",
     description: "Schedule inspection",
     category: "Public Safety",
+    route: "/dashboard/citizen/services",
   },
 
   // ✅ Newly added services
@@ -90,6 +100,7 @@ const services = [
     name: "Certificate of Indigency",
     description: "Financial assistance qualification certificate",
     category: "Social Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 11,
@@ -97,6 +108,7 @@ const services = [
     name: "Residency Certificate",
     description: "Proof of residency certification",
     category: "Government Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 12,
@@ -104,6 +116,7 @@ const services = [
     name: "Good Moral Certificate",
     description: "Certificate of good moral character",
     category: "Government Services",
+    route: "/dashboard/citizen/services",
   },
   {
     id: 13,
@@ -111,33 +124,45 @@ const services = [
     name: "Barangay Blotter",
     description: "Report and record incidents",
     category: "Public Safety",
+    route: "/dashboard/citizen/services",
   },
-]
+
+  // ✅ Report an Issue (links to the ReportIssuePage component)
+  {
+    id: 14,
+    icon: AlertTriangle,
+    name: "Report an Issue",
+    description: "Report road damage, garbage, flooding, and other city issues",
+    category: "Public Safety",
+    route: "/dashboard/citizen/report-issue",
+  },
+];
 
 const stats = [
   { label: "Active Services", value: "7+", icon: FileText },
   { label: "Residents Served", value: "18,500+", icon: Users },
   { label: "Requests Processed", value: "5,000+", icon: TrendingUp },
-]
+];
 
 export default function ServicesSection() {
-  const [searchTerm, setSearchTerm] = useState("")
-const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+
   const filteredServices = services.filter(
     (service) =>
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  );
 
-  const handleServiceAccess = async () => {
-    const authenticated = await authClient.checkAuth()
+  const handleServiceAccess = async (route: string) => {
+    const authenticated = await authClient.checkAuth();
 
     if (authenticated) {
-      router.push("/dashboard/citizen/services")
+      router.push(route);
     } else {
-      router.push("/login?callbackUrl=/dashboard/citizen/services")
+      router.push(`/login?callbackUrl=${route}`);
     }
-  }
+  };
 
   return (
     <>
@@ -163,7 +188,7 @@ const router = useRouter()
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredServices.map((service, i) => {
-              const Icon = service.icon
+              const Icon = service.icon;
               return (
                 <motion.div
                   key={service.id}
@@ -184,13 +209,13 @@ const router = useRouter()
                     {service.description}
                   </p>
                   <button
-                    onClick={handleServiceAccess}
+                    onClick={() => handleServiceAccess(service.route)}
                     className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold hover:opacity-90 transition"
                   >
                     Apply
                   </button>
                 </motion.div>
-              )
+              );
             })}
           </div>
 
@@ -217,7 +242,7 @@ const router = useRouter()
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, i) => {
-              const Icon = stat.icon
+              const Icon = stat.icon;
               return (
                 <motion.div
                   key={i}
@@ -240,7 +265,7 @@ const router = useRouter()
                     {stat.label}
                   </div>
                 </motion.div>
-              )
+              );
             })}
           </div>
         </div>
@@ -289,5 +314,5 @@ const router = useRouter()
         </div>
       </section>
     </>
-  )
+  );
 }

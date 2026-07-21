@@ -5,13 +5,11 @@ import {
   Search,
   FileText,
   Building,
-  Heart,
   Users,
   TrendingUp,
-  Award,
+  Layers,
+  Heart,
   MapPin,
-  Baby,
-  Briefcase,
   AlertTriangle,
 } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +17,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
-const services = [
+const guides = [
   {
     id: 14,
     icon: AlertTriangle,
@@ -38,25 +36,25 @@ const services = [
   },
   {
     id: 2,
-    icon: FileText,
-    name: "Cedula",
-    description: "Community tax certificate",
+    icon: Building,
+    name: "Business Permit Application",
+    description: "Step-by-step guide to apply for a business permit.",
     category: "Government Services",
     route: "/dashboard/citizen/services/cedula",
   },
   {
     id: 3,
     icon: Building,
-    name: "Business Permit",
-    description: "Apply for business permits",
+    name: "Building Permit Process",
+    description: "Requirements and procedures for obtaining a building permit.",
     category: "Government Services",
     route: "/dashboard/citizen/services/business-permit",
   },
   {
     id: 4,
-    icon: Building,
-    name: "Building Permit",
-    description: "Construction permits",
+    icon: FileText,
+    name: "Community Tax Certificate",
+    description: "How to get your Cedula (Community Tax Certificate).",
     category: "Government Services",
     route: "/dashboard/citizen/services/building-permit",
   },
@@ -100,8 +98,6 @@ const services = [
     category: "Public Safety",
     route: "/dashboard/citizen/services/fire-safety-inspection",
   },
-
-  // ✅ Newly added services
   {
     id: 10,
     icon: FileText,
@@ -134,25 +130,39 @@ const services = [
     category: "Public Safety",
     route: "/dashboard/citizen/services/barangay-blotter",
   },
+];
 
-  // ✅ Report an Issue (links to the ReportIssuePage component)
+// Build the category filter list from the guides themselves: "All" + every
+// unique category, in the order they first appear.
+const categories = [
+  "All",
+  ...Array.from(new Set(guides.map((g) => g.category))),
 ];
 
 const stats = [
-  { label: "Active Services", value: "7+", icon: FileText },
+  {
+    label: "Guide Categories",
+    value: `${categories.length - 1}`,
+    icon: Layers,
+  },
   { label: "Residents Served", value: "18,500+", icon: Users },
-  { label: "Requests Processed", value: "5,000+", icon: TrendingUp },
+  { label: "Guides Published", value: `${guides.length}+`, icon: TrendingUp },
 ];
 
 export default function ServicesSection() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
   const router = useRouter();
 
-  const filteredServices = services.filter(
-    (service) =>
-      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredGuides = guides.filter((guide) => {
+    const matchesSearch =
+      guide.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guide.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guide.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      activeCategory === "All" || guide.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const handleServiceAccess = async (route: string) => {
     const authenticated = await authClient.checkAuth();
@@ -166,7 +176,7 @@ export default function ServicesSection() {
 
   return (
     <>
-      {/* Services Grid */}
+      {/* Guide Grid */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -177,55 +187,97 @@ export default function ServicesSection() {
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
-                Available Services
+                OUR SERVICES
               </span>
             </h2>
             <div className="w-32 h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full mx-auto mb-4" />
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto font-medium">
-              Quick access to essential barangay services and documentation
-            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredServices.map((service, i) => {
-              const Icon = service.icon;
+          {/* Search */}
+          <div className="relative max-w-md mx-auto mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search guides..."
+              className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-orange-300 focus:outline-none transition"
+            />
+          </div>
+
+          {/* Category Filter */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all ${
+                    isActive
+                      ? "bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white border-transparent shadow-md"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-orange-300 hover:text-orange-600"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* items-stretch ensures every card in a row matches the tallest
+              card's height; each card is a flex column so the button below
+              is always pinned to the bottom regardless of description length */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+            {filteredGuides.map((guide, i) => {
+              const Icon = guide.icon;
               return (
                 <motion.div
-                  key={service.id}
+                  key={guide.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05, duration: 0.5 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -12, scale: 1.02 }}
-                  className="p-8 rounded-3xl bg-white border-2 border-gray-100 hover:border-orange-300 hover:shadow-2xl transition-all group cursor-pointer"
+                  whileHover={{ y: -8, scale: 1.01 }}
+                  className="p-8 rounded-3xl bg-white border-2 border-gray-100 hover:border-orange-300 hover:shadow-2xl transition-all group flex flex-col h-full"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
-                    <Icon className="w-8 h-8 text-white" />
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-orange-500">
+                        {guide.category}
+                      </span>
+                      <h3 className="text-xl font-bold text-gray-900 mt-1 mb-2">
+                        {guide.name}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        {guide.description}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-red-600 group-hover:via-orange-600 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent transition-all">
-                    {service.name}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {service.description}
-                  </p>
-                  <button
-                    onClick={() => handleServiceAccess(service.route)}
-                    className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold hover:opacity-90 transition"
-                  >
-                    Apply
-                  </button>
+
+                  <div className="mt-6">
+                    <button
+                      onClick={() => handleServiceAccess(guide.route)}
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold hover:opacity-90 transition"
+                    >
+                      Apply Now
+                    </button>
+                  </div>
                 </motion.div>
               );
             })}
           </div>
 
-          {filteredServices.length === 0 && (
+          {filteredGuides.length === 0 && (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
                 <Search className="w-12 h-12 text-white" />
               </div>
               <h3 className="text-2xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
-                No Services Found
+                No Guides Found
               </h3>
               <p className="text-gray-600 text-lg">
                 Try searching with different keywords

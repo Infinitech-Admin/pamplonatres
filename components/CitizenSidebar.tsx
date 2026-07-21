@@ -62,6 +62,11 @@ export default function CitizenSidebar() {
 
   const navigationItems = [
     { icon: Home, label: "Home", path: "/dashboard/citizen" },
+    {
+      icon: Home,
+      label: "Report Issue",
+      path: "/dashboard/citizen/report-issue",
+    },
     { icon: Grid3x3, label: "Services", path: "/dashboard/citizen/services" },
     { icon: Newspaper, label: "News", path: "/dashboard/citizen/news" },
     {

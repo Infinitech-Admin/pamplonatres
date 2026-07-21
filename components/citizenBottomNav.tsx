@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { 
-  Home, 
-  Grid3x3, 
-  Newspaper, 
-  AlertTriangle, 
+import React, { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Home,
+  Grid3x3,
+  Newspaper,
+  AlertTriangle,
   User,
   Menu,
   X,
@@ -18,8 +18,8 @@ import {
   Bell,
   LogOut,
   ChevronUp,
-   File,
-} from 'lucide-react';
+  File,
+} from "lucide-react";
 
 export default function CitizenBottomNav() {
   const router = useRouter();
@@ -27,28 +27,64 @@ export default function CitizenBottomNav() {
   const [showQuickAccess, setShowQuickAccess] = useState(false);
 
   const mainNavigationItems = [
-    { icon: Home, label: 'Home', path: '/dashboard/citizen' },
-    { icon: Grid3x3, label: 'Services', path: '/dashboard/citizen/services' },
-    { icon: AlertTriangle, label: 'Emergency', path: '/dashboard/citizen/emergency' },
-    { icon: User, label: 'Account', path: '/dashboard/citizen/account/applications' },
+    { icon: Home, label: "Home", path: "/dashboard/citizen" },
+    { icon: Grid3x3, label: "Services", path: "/dashboard/citizen/services" },
+    {
+      icon: Grid3x3,
+      label: "Report Issue",
+      path: "/dashboard/citizen/report-issue",
+    },
+    {
+      icon: AlertTriangle,
+      label: "Emergency",
+      path: "/dashboard/citizen/emergency",
+    },
+    {
+      icon: User,
+      label: "Account",
+      path: "/dashboard/citizen/account/applications",
+    },
   ];
 
   const quickAccessItems = [
-  { icon: Newspaper, label: 'News', path: '/dashboard/citizen/news' },
-  { icon: FileText, label: 'Citizen Guide', path: '/dashboard/citizen/citizen-guide' },
-  { icon: GraduationCap, label: 'Students', path: '/dashboard/citizen/students' },
-  { icon: Rocket, label: 'Startup', path: '/dashboard/citizen/startup' },
-  // { icon: Building2, label: 'Business', path: '/dashboard/citizen/business' },
-  { icon: MapPin, label: 'City Map', path: '/dashboard/citizen/city-map' },
-  { icon: Bell, label: 'Alerts', path: '/dashboard/citizen/alerts' },
+    { icon: Newspaper, label: "News", path: "/dashboard/citizen/news" },
+    {
+      icon: FileText,
+      label: "Citizen Guide",
+      path: "/dashboard/citizen/citizen-guide",
+    },
+    {
+      icon: GraduationCap,
+      label: "Students",
+      path: "/dashboard/citizen/students",
+    },
+    { icon: Rocket, label: "Startup", path: "/dashboard/citizen/startup" },
+    // { icon: Building2, label: 'Business', path: '/dashboard/citizen/business' },
+    { icon: MapPin, label: "City Map", path: "/dashboard/citizen/city-map" },
+    { icon: Bell, label: "Alerts", path: "/dashboard/citizen/alerts" },
 
-  // ✅ Newly added items
-  { icon: File, label: 'Certificate of Indigency', path: '/dashboard/citizen/services/certificate-of-indigency' },
-  { icon: File, label: 'Residency Certificate', path: '/dashboard/citizen/services/residency-certificate' },
-    { icon: File, label: 'Good Moral Certificate', path: '/dashboard/citizen/services/good-moral' },
-       { icon: File, label: 'Barangay Blotter', path: '/dashboard/citizen/services/barangay-blotter' },
-];
-
+    // ✅ Newly added items
+    {
+      icon: File,
+      label: "Certificate of Indigency",
+      path: "/dashboard/citizen/services/certificate-of-indigency",
+    },
+    {
+      icon: File,
+      label: "Residency Certificate",
+      path: "/dashboard/citizen/services/residency-certificate",
+    },
+    {
+      icon: File,
+      label: "Good Moral Certificate",
+      path: "/dashboard/citizen/services/good-moral",
+    },
+    {
+      icon: File,
+      label: "Barangay Blotter",
+      path: "/dashboard/citizen/services/barangay-blotter",
+    },
+  ];
 
   const isActive = (path: string) => pathname === path;
 
@@ -60,12 +96,12 @@ export default function CitizenBottomNav() {
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40">
       {/* Quick Access Expandable Panel */}
-      <div 
+      <div
         className={`bg-gradient-to-br from-emerald-50 to-orange-50 border-t border-gray-200 shadow-lg transition-all duration-300 overflow-hidden ${
-          showQuickAccess ? 'max-h-96' : 'max-h-0'
+          showQuickAccess ? "max-h-96" : "max-h-0"
         }`}
       >
-        <div className="p-4 overflow-y-auto" style={{ maxHeight: '24rem' }}>
+        <div className="p-4 overflow-y-auto" style={{ maxHeight: "24rem" }}>
           {/* Quick Access Grid */}
           <div className="grid grid-cols-3 gap-2 mb-3">
             {quickAccessItems.map((item, index) => {
@@ -75,19 +111,21 @@ export default function CitizenBottomNav() {
                   key={index}
                   onClick={() => handleNavigation(item.path)}
                   className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${
-                    active 
-                      ? 'bg-gradient-to-br from-emerald-500 to-orange-500 shadow-md' 
-                      : 'bg-white hover:bg-gray-50'
+                    active
+                      ? "bg-gradient-to-br from-emerald-500 to-orange-500 shadow-md"
+                      : "bg-white hover:bg-gray-50"
                   }`}
                 >
-                  <item.icon 
-                    size={20} 
-                    className={active ? 'text-white' : 'text-gray-700'}
+                  <item.icon
+                    size={20}
+                    className={active ? "text-white" : "text-gray-700"}
                     strokeWidth={2}
                   />
-                  <span className={`text-xs font-medium text-center ${
-                    active ? 'text-white' : 'text-gray-700'
-                  }`}>
+                  <span
+                    className={`text-xs font-medium text-center ${
+                      active ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     {item.label}
                   </span>
                 </button>
@@ -99,7 +137,7 @@ export default function CitizenBottomNav() {
           <button
             onClick={() => {
               // Add your logout logic here
-              console.log('Logout clicked');
+              console.log("Logout clicked");
             }}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 transition-colors text-white shadow-md"
           >
@@ -130,21 +168,23 @@ export default function CitizenBottomNav() {
                 key={index}
                 onClick={() => router.push(item.path)}
                 className={`flex flex-col items-center gap-1 px-3 py-2 transition-colors flex-1 ${
-                  active ? 'text-orange-600' : 'text-gray-600'
+                  active ? "text-orange-600" : "text-gray-600"
                 }`}
               >
-                <item.icon 
-                  size={22} 
-                  className={active ? 'text-orange-600' : 'text-gray-600'} 
+                <item.icon
+                  size={22}
+                  className={active ? "text-orange-600" : "text-gray-600"}
                   strokeWidth={active ? 2.5 : 2}
                 />
-                <span className={`text-xs font-medium ${active ? 'text-orange-600 font-semibold' : 'text-gray-600'}`}>
+                <span
+                  className={`text-xs font-medium ${active ? "text-orange-600 font-semibold" : "text-gray-600"}`}
+                >
                   {item.label}
                 </span>
               </button>
             );
           })}
-          
+
           {/* Menu Toggle Button */}
           <button
             onClick={() => setShowQuickAccess(!showQuickAccess)}
@@ -152,24 +192,15 @@ export default function CitizenBottomNav() {
           >
             {showQuickAccess ? (
               <>
-                <X 
-                  size={22} 
-                  className="text-orange-600" 
-                  strokeWidth={2.5}
-                />
+                <X size={22} className="text-orange-600" strokeWidth={2.5} />
                 <span className="text-xs font-semibold text-orange-600">
                   Close
                 </span>
               </>
             ) : (
               <>
-                <Menu 
-                  size={22} 
-                  strokeWidth={2}
-                />
-                <span className="text-xs font-medium">
-                  Menu
-                </span>
+                <Menu size={22} strokeWidth={2} />
+                <span className="text-xs font-medium">Menu</span>
               </>
             )}
           </button>

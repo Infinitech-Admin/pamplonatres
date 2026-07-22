@@ -189,8 +189,8 @@ export default function Home() {
 
   const stats = [
     { label: "Community Members", value: "18,500+", icon: Users },
-    { label: "Services Offered", value: "25+", icon: Zap },
-    { label: "Requests Processed", value: "5,000+", icon: Clock },
+    { label: "Services Offered", value: "14+", icon: Zap },
+    { label: "Requests Processed", value: "500+", icon: Clock },
   ];
 
   const formatDate = (dateString: string) => {

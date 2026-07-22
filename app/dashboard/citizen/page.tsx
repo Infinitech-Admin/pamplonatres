@@ -123,7 +123,7 @@ export default function CitizenDashboard() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <button
-            onClick={() => router.push("/dashboard/citizen/view-reports")}
+            onClick={() => router.push("/dashboard/citizen/account/applications")}
             className="flex-1 bg-white text-emerald-600 px-6 py-3 rounded-xl font-bold hover:shadow-xl transition-all"
           >
             View Reports

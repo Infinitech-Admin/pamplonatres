@@ -16,7 +16,8 @@ import {
   MapPin,
   Bell,
   LogOut,
-  File, // Added icon for "Certificate of Indigency"
+  File,
+  AlertCircle, // Added icon for "Certificate of Indigency"
 } from "lucide-react";
 import { authClient } from "@/lib/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -63,7 +64,7 @@ export default function CitizenSidebar() {
   const navigationItems = [
     { icon: Home, label: "Home", path: "/dashboard/citizen" },
     {
-      icon: Home,
+      icon: AlertCircle,
       label: "Report Issue",
       path: "/dashboard/citizen/report-issue",
     },

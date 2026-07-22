@@ -189,8 +189,8 @@ export default function Home() {
 
   const stats = [
     { label: "Community Members", value: "18,500+", icon: Users },
-    { label: "Services Offered", value: "25+", icon: Zap },
-    { label: "Requests Processed", value: "5,000+", icon: Clock },
+    { label: "Services Offered", value: "14+", icon: Zap },
+    { label: "Requests Processed", value: "500+", icon: Clock },
   ];
 
   const formatDate = (dateString: string) => {
@@ -432,7 +432,7 @@ export default function Home() {
             </div>
           ) : news.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {news.slice(0, 3).map((item, i) => (
+              {news.slice(0, 20).map((item, i) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 30 }}

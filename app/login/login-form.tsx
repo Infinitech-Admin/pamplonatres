@@ -19,9 +19,12 @@ export default function LoginForm() {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   // Where to send the user after a successful login.
-  // If they were redirected here from a specific service (e.g. "Apply" on
-  // Report an Issue), callbackUrl carries that exact page.
-  const callbackUrl = searchParams.get("callbackUrl");
+  // The middleware redirects unauthenticated visitors using `?redirect=`,
+  // while some manual redirects in the app use `?callbackUrl=`. We check
+  // BOTH so the user always lands back on the exact page/step they were
+  // on, regardless of which one sent them here.
+  const callbackUrl =
+    searchParams.get("redirect") || searchParams.get("callbackUrl");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,8 +181,8 @@ export default function LoginForm() {
       });
 
       // Redirect back to the exact page the user was trying to reach.
-      // If there was no callbackUrl (e.g. they came straight to /login),
-      // fall back to the role-based default dashboard.
+      // If there was no redirect/callbackUrl (e.g. they came straight to
+      // /login), fall back to the role-based default dashboard.
       setTimeout(() => {
         if (callbackUrl) {
           router.push(decodeURIComponent(callbackUrl));

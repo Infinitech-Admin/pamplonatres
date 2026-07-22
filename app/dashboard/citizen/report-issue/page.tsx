@@ -1,45 +1,82 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { ChevronLeft, MapPin, Upload, AlertCircle } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import CitizenLayout from "@/components/citizenLayout"
-import { useAuth } from "@/hooks/useAuth"
-import { useToast } from "@/components/ui/use-toast"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, MapPin, Upload, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import CitizenLayout from "@/components/citizenLayout";
+import { authClient } from "@/lib/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ApiResponse {
-  success: boolean
-  message: string
+  success: boolean;
+  message: string;
   data?: {
-    report_id: string
-    id: number
-    status: string
+    report_id: string;
+    id: number;
+    status: string;
     files: Array<{
-      id: number
-      name: string
-      url: string
-    }>
-  }
-  errors?: Record<string, string[]>
+      id: number;
+      name: string;
+      url: string;
+    }>;
+  };
+  errors?: Record<string, string[]>;
 }
 
+// sessionStorage key used to hold a draft of the text fields while the
+// user is sent to /login and back. Files/photos are NOT saved here
+// (File objects aren't JSON-serializable) — only text fields survive.
+const DRAFT_KEY = "report-issue-draft";
+
+type FormDataShape = {
+  category: string;
+  title: string;
+  description: string;
+  location: string;
+  urgency: string;
+};
+
 export default function ReportIssuePage() {
-  const { user, loading: authLoading } = useAuth(true)
-  const { toast } = useToast()
-  
-  const [formData, setFormData] = useState({
+  const { toast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [formData, setFormData] = useState<FormDataShape>({
     category: "",
     title: "",
     description: "",
     location: "",
     urgency: "medium",
-  })
-  const [files, setFiles] = useState<File[]>([])
-  const [previews, setPreviews] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string>("")
+  });
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+
+  // On mount: if there's a saved draft (e.g. the user just came back
+  // from /login), restore it into the form and let them know.
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed: FormDataShape = JSON.parse(saved);
+        setFormData(parsed);
+        sessionStorage.removeItem(DRAFT_KEY);
+
+        toast({
+          title: "Draft restored",
+          description:
+            "We saved what you typed before you logged in. Please re-attach any photos/videos, then submit again.",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to restore report draft:", err);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const categories = [
     { value: "road", label: "Road Damage", icon: "🛣️" },
@@ -50,130 +87,132 @@ export default function ReportIssuePage() {
     { value: "vandalism", label: "Vandalism", icon: "🎨" },
     { value: "noise", label: "Noise Complaint", icon: "🔊" },
     { value: "other", label: "Other", icon: "📋" },
-  ]
+  ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || [])
-    
-    // Validate file size (10MB max)
-    const validFiles = selectedFiles.filter(file => {
+    const selectedFiles = Array.from(e.target.files || []);
+
+    const validFiles = selectedFiles.filter((file) => {
       if (file.size > 10 * 1024 * 1024) {
         toast({
           variant: "warning",
           title: "File too large",
           description: `${file.name} exceeds 10MB limit.`,
-        })
-        return false
+        });
+        return false;
       }
-      return true
-    })
+      return true;
+    });
 
-    const newFiles = [...files, ...validFiles].slice(0, 5) // Max 5 files
-    setFiles(newFiles)
+    const newFiles = [...files, ...validFiles].slice(0, 5);
+    setFiles(newFiles);
 
-    // Create previews
-    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
-    setPreviews(newPreviews)
-  }
+    const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+    setPreviews(newPreviews);
+  };
 
   const removeFile = (index: number) => {
-    const newFiles = files.filter((_, i) => i !== index)
-    const newPreviews = previews.filter((_, i) => i !== index)
-    
-    // Revoke the object URL to free memory
-    URL.revokeObjectURL(previews[index])
-    
-    setFiles(newFiles)
-    setPreviews(newPreviews)
-  }
+    const newFiles = files.filter((_, i) => i !== index);
+    const newPreviews = previews.filter((_, i) => i !== index);
+
+    URL.revokeObjectURL(previews[index]);
+
+    setFiles(newFiles);
+    setPreviews(newPreviews);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+    e.preventDefault();
+    setError("");
 
-    try {
-      // Validate required fields
-      if (!formData.category) {
-        setError("Please select a category")
-        setLoading(false)
-        return
+    // 🔒 Auth check happens HERE — only when the user clicks "Submit Report".
+    const currentUser = await authClient.getCurrentUser();
+    if (!currentUser) {
+      // Save the text fields so they survive the trip to /login and back.
+      try {
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+      } catch (err) {
+        console.error("Failed to save report draft:", err);
       }
 
-      // Create FormData for file upload
-      const formDataToSend = new FormData()
-      formDataToSend.append("category", formData.category)
-      formDataToSend.append("title", formData.title)
-      formDataToSend.append("description", formData.description)
-      formDataToSend.append("location", formData.location)
-      formDataToSend.append("urgency", formData.urgency)
-      formDataToSend.append("timestamp", new Date().toISOString())
+      toast({
+        title: "Please log in to submit",
+        description:
+          "Your answers are saved — just log in and we'll bring you right back.",
+      });
 
-      // Append files
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      if (!formData.category) {
+        setError("Please select a category");
+        setLoading(false);
+        return;
+      }
+
+      const formDataToSend = new FormData();
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("location", formData.location);
+      formDataToSend.append("urgency", formData.urgency);
+      formDataToSend.append("timestamp", new Date().toISOString());
+
       files.forEach((file, index) => {
-        formDataToSend.append(`file_${index}`, file)
-      })
+        formDataToSend.append(`file_${index}`, file);
+      });
 
-      // Submit to API (this will automatically include the session cookie)
       const response = await fetch("/api/reports/submit", {
         method: "POST",
-        credentials: "include", // Important: Send cookies
+        credentials: "include",
         body: formDataToSend,
-      })
+      });
 
-      const result: ApiResponse = await response.json()
+      const result: ApiResponse = await response.json();
 
       if (response.ok && result.success) {
-        // Success - Show toast notification
         toast({
           variant: "success",
           title: "Report Submitted!",
           description: `Report ID: ${result.data?.report_id || "N/A"}. Track it in your reports section.`,
-        })
-        
-        // Clean up object URLs
-        previews.forEach(preview => URL.revokeObjectURL(preview))
-        
-        // Reset form
+        });
+
+        previews.forEach((preview) => URL.revokeObjectURL(preview));
+
         setFormData({
           category: "",
           title: "",
           description: "",
           location: "",
           urgency: "medium",
-        })
-        setFiles([])
-        setPreviews([])
+        });
+        setFiles([]);
+        setPreviews([]);
+        sessionStorage.removeItem(DRAFT_KEY);
       } else {
-        // Handle validation errors
         if (result.errors) {
-          const firstError = Object.values(result.errors)[0][0]
-          setError(firstError)
+          const firstError = Object.values(result.errors)[0][0];
+          setError(firstError);
         } else {
-          setError(result.message || "Failed to submit report. Please try again.")
+          setError(
+            result.message || "Failed to submit report. Please try again.",
+          );
         }
       }
     } catch (error) {
-      console.error("Error submitting report:", error)
-      setError("Network error. Please check your connection and try again.")
+      console.error("Error submitting report:", error);
+      setError("Network error. Please check your connection and try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-  // Show loading state while checking authentication
-  if (authLoading) {
-    return (
-      <CitizenLayout>
-        <div className="flex flex-col min-h-screen bg-white items-center justify-center">
-          <div className="text-gray-600">Loading...</div>
-        </div>
-      </CitizenLayout>
-    )
-  }
+  };
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       <div className="flex flex-col min-h-screen bg-white">
         {/* Header */}
         <header className="bg-orange-600 text-white px-4 py-4">
@@ -183,7 +222,9 @@ export default function ReportIssuePage() {
             </Link>
             <h1 className="text-xl font-bold">Report an Issue</h1>
           </div>
-          <p className="text-orange-100 text-sm">Help us improve Pamploma Tres City</p>
+          <p className="text-orange-100 text-sm">
+            Help us improve Pamploma Tres City
+          </p>
         </header>
 
         {/* Main Content */}
@@ -210,7 +251,9 @@ export default function ReportIssuePage() {
                   <button
                     key={cat.value}
                     type="button"
-                    onClick={() => setFormData({ ...formData, category: cat.value })}
+                    onClick={() =>
+                      setFormData({ ...formData, category: cat.value })
+                    }
                     className={`p-4 rounded-xl border-2 transition-all ${
                       formData.category === cat.value
                         ? "border-orange-600 bg-orange-50"
@@ -218,7 +261,9 @@ export default function ReportIssuePage() {
                     }`}
                   >
                     <div className="text-2xl mb-2">{cat.icon}</div>
-                    <div className="text-sm font-medium text-gray-900">{cat.label}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {cat.label}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -233,7 +278,9 @@ export default function ReportIssuePage() {
                 type="text"
                 required
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="Brief description of the issue"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
@@ -247,7 +294,9 @@ export default function ReportIssuePage() {
               <textarea
                 required
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Provide more details about the issue..."
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
@@ -265,7 +314,9 @@ export default function ReportIssuePage() {
                   type="text"
                   required
                   value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
                   placeholder="Street, Barangay, or landmark"
                   className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
@@ -279,14 +330,28 @@ export default function ReportIssuePage() {
               </label>
               <div className="flex gap-3">
                 {[
-                  { value: "low", label: "Low", color: "bg-green-100 text-green-700 border-green-300" },
-                  { value: "medium", label: "Medium", color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
-                  { value: "high", label: "High", color: "bg-red-100 text-red-700 border-red-300" },
+                  {
+                    value: "low",
+                    label: "Low",
+                    color: "bg-green-100 text-green-700 border-green-300",
+                  },
+                  {
+                    value: "medium",
+                    label: "Medium",
+                    color: "bg-yellow-100 text-yellow-700 border-yellow-300",
+                  },
+                  {
+                    value: "high",
+                    label: "High",
+                    color: "bg-red-100 text-red-700 border-red-300",
+                  },
                 ].map((urgency) => (
                   <button
                     key={urgency.value}
                     type="button"
-                    onClick={() => setFormData({ ...formData, urgency: urgency.value })}
+                    onClick={() =>
+                      setFormData({ ...formData, urgency: urgency.value })
+                    }
                     className={`flex-1 py-3 rounded-xl border-2 font-semibold text-sm transition-all ${
                       formData.urgency === urgency.value
                         ? urgency.color
@@ -305,11 +370,13 @@ export default function ReportIssuePage() {
                 Photos/Videos (Optional, max 5)
               </label>
 
-              {/* File Previews */}
               {previews.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 mb-3">
                   {previews.map((preview, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden bg-gray-100"
+                    >
                       <Image
                         src={preview}
                         alt={`Preview ${index + 1}`}
@@ -328,20 +395,23 @@ export default function ReportIssuePage() {
                 </div>
               )}
 
-              {/* Upload Button */}
               {files.length < 5 && (
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
                   <div className="flex flex-col items-center">
                     <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                    <p className="text-sm font-medium text-gray-600">Upload photos or videos</p>
-                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, MP4 (max 10MB each)</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Upload photos or videos
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      PNG, JPG, MP4 (max 10MB each)
+                    </p>
                   </div>
-                  <input 
-                    type="file" 
-                    multiple 
-                    accept="image/*,video/*" 
-                    onChange={handleFileChange} 
-                    className="hidden" 
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*,video/*"
+                    onChange={handleFileChange}
+                    className="hidden"
                   />
                 </label>
               )}
@@ -351,9 +421,12 @@ export default function ReportIssuePage() {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-900">
-                <p className="font-semibold mb-1">Your report helps improve our city</p>
+                <p className="font-semibold mb-1">
+                  Your report helps improve our city
+                </p>
                 <p className="text-blue-700">
-                  All reports are reviewed by city officials. You will receive updates on the status of your report.
+                  All reports are reviewed by city officials. You will receive
+                  updates on the status of your report.
                 </p>
               </div>
             </div>
@@ -370,5 +443,5 @@ export default function ReportIssuePage() {
         </main>
       </div>
     </CitizenLayout>
-  )
+  );
 }

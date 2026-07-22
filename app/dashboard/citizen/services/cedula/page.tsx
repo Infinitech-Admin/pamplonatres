@@ -1,24 +1,60 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, FileText, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import CitizenLayout from "@/components/citizenLayout"
-import { authClient } from "@/lib/auth"
-import { useToast } from "@/components/ui/use-toast"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { ArrowLeft, FileText, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import CitizenLayout from "@/components/citizenLayout";
+import { authClient } from "@/lib/auth";
+import { useToast } from "@/components/ui/use-toast";
+
+// sessionStorage key used to hold a draft of the form while the user is
+// sent to /login and back. Everything here is plain text/JSON-safe, so
+// the whole formData object (no files in this form) can be saved as-is.
+const DRAFT_KEY = "cedula-draft";
+
+type DraftShape = {
+  formData: {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
+    birthDate: string;
+    civilStatus: string;
+    citizenship: string;
+    occupation: string;
+    tinNumber: string;
+    height: string;
+    heightUnit: string;
+    weight: string;
+    weightUnit: string;
+  };
+};
 
 export default function CedulaPage() {
-  const router = useRouter()
-  const { toast } = useToast()
+  const router = useRouter();
+  const pathname = usePathname();
+  const { toast } = useToast();
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -33,15 +69,38 @@ export default function CedulaPage() {
     heightUnit: "cm",
     weight: "",
     weightUnit: "kg",
-  })
+  });
 
-  // Auto-fill form with logged-in user data
+  // Restore draft / auto-fill on mount. Guests are allowed to fill the
+  // form — login is only required at final submit.
   useEffect(() => {
-    const loadUserData = async () => {
+    const init = async () => {
+      // 1. Restore a saved draft first (means the user just came back
+      // from /login).
+      let restoredFromDraft = false;
       try {
-        const user = await authClient.getCurrentUser()
+        const saved = sessionStorage.getItem(DRAFT_KEY);
+        if (saved) {
+          const parsed: DraftShape = JSON.parse(saved);
+          setFormData(parsed.formData);
+          sessionStorage.removeItem(DRAFT_KEY);
+          restoredFromDraft = true;
 
-        if (user) {
+          toast({
+            title: "Draft restored",
+            description:
+              "We saved your answers before you logged in. Please review and continue.",
+          });
+        }
+      } catch (err) {
+        console.error("Failed to restore cedula draft:", err);
+      }
+
+      // 2. Auto-fill from profile if logged in (skip if we just restored
+      // a draft, so we don't overwrite what the user already typed).
+      try {
+        const user = await authClient.getCurrentUser();
+        if (user && !restoredFromDraft) {
           setFormData((prev) => ({
             ...prev,
             fullName: user.name || "",
@@ -57,38 +116,29 @@ export default function CedulaPage() {
             heightUnit: user.height_unit || "cm",
             weight: user.weight || "",
             weightUnit: user.weight_unit || "kg",
-          }))
+          }));
 
           toast({
             title: "Welcome Back",
             description: "Your profile information has been pre-filled.",
-          })
-        } else {
-          toast({
-            title: "Authentication Required",
-            description: "Please log in to continue.",
-            variant: "destructive",
-          })
-          router.push('/login')
+          });
         }
+        // If no user: leave the form blank/editable. Login is only
+        // required later, at final submit.
       } catch (error) {
-        console.error("Error loading user data:", error)
-        toast({
-          title: "Error",
-          description: "Failed to load your profile information.",
-          variant: "destructive",
-        })
+        console.error("Error loading user data:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    loadUserData()
-  }, [toast, router])
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateFormData = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const validateForm = () => {
     // Validate required fields
@@ -97,66 +147,66 @@ export default function CedulaPage() {
         title: "Validation Error",
         description: "Full name is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
       toast({
         title: "Validation Error",
         description: "Valid email is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
     if (!formData.phone.trim()) {
       toast({
         title: "Validation Error",
         description: "Phone number is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
     if (!formData.address.trim()) {
       toast({
         title: "Validation Error",
         description: "Complete address is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
     if (!formData.birthDate) {
       toast({
         title: "Validation Error",
         description: "Birth date is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
 
     // Validate birth date is not in the future
-    const birthDate = new Date(formData.birthDate)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
+    const birthDate = new Date(formData.birthDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     if (birthDate > today) {
       toast({
         title: "Validation Error",
         description: "Birth date cannot be in the future",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
 
     // Validate minimum age (18 years old)
-    const minDate = new Date()
-    minDate.setFullYear(minDate.getFullYear() - 18)
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 18);
     if (birthDate > minDate) {
       toast({
         title: "Age Requirement Not Met",
         description: "Applicant must be at least 18 years old",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
 
     if (!formData.civilStatus) {
@@ -164,53 +214,84 @@ export default function CedulaPage() {
         title: "Validation Error",
         description: "Civil status is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
     if (!formData.citizenship.trim()) {
       toast({
         title: "Validation Error",
         description: "Citizenship is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
     if (!formData.occupation.trim()) {
       toast({
         title: "Validation Error",
         description: "Occupation is required",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-    if (!formData.height || parseFloat(formData.height) <= 0 || parseFloat(formData.height) > 999.99) {
+    if (
+      !formData.height ||
+      parseFloat(formData.height) <= 0 ||
+      parseFloat(formData.height) > 999.99
+    ) {
       toast({
         title: "Validation Error",
         description: "Valid height is required (max 999.99)",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-    if (!formData.weight || parseFloat(formData.weight) <= 0 || parseFloat(formData.weight) > 999.99) {
+    if (
+      !formData.weight ||
+      parseFloat(formData.weight) <= 0 ||
+      parseFloat(formData.weight) > 999.99
+    ) {
       toast({
         title: "Validation Error",
         description: "Valid weight is required (max 999.99)",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
 
-    return true
-  }
+    return true;
+  };
+
+  const saveDraft = () => {
+    const draft: DraftShape = { formData };
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch (err) {
+      console.error("Failed to save cedula draft:", err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
+    // 🔒 Auth check happens HERE — only when the user clicks "Submit
+    // Application".
+    const currentUser = await authClient.getCurrentUser();
+    if (!currentUser) {
+      saveDraft();
+      toast({
+        title: "Please log in to submit",
+        description:
+          "Your answers are saved — just log in and we'll bring you right back.",
+      });
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/cedula", {
@@ -234,68 +315,76 @@ export default function CedulaPage() {
           weight: formData.weight,
           weight_unit: formData.weightUnit,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.status === 401) {
+        // Session expired between page load and submit.
+        saveDraft();
         toast({
           title: "Session Expired",
-          description: "Please log in again to continue.",
+          description: "Please log in again — your answers are saved.",
           variant: "destructive",
-        })
+        });
         setTimeout(() => {
-          router.push("/login")
-        }, 2000)
-        return
+          router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+        }, 1500);
+        return;
       }
 
       if (response.ok && data.success) {
+        sessionStorage.removeItem(DRAFT_KEY);
         toast({
           title: "Success!",
-          description: "Your cedula application has been submitted successfully.",
-        })
+          description:
+            "Your cedula application has been submitted successfully.",
+        });
         setTimeout(() => {
-          router.push("/dashboard/citizen/account/applications?success=cedula")
-        }, 1500)
+          router.push("/dashboard/citizen/account/applications?success=cedula");
+        }, 1500);
       } else {
         toast({
           title: "Application Failed",
-          description: data.message || "Failed to submit application. Please try again.",
+          description:
+            data.message || "Failed to submit application. Please try again.",
           variant: "destructive",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error submitting application:", error)
-      const errorMsg = error instanceof TypeError && error.message.includes("Failed to fetch")
-        ? "Network connection error. Please check your internet connection."
-        : "An unexpected error occurred. Please try again."
-      
+      console.error("Error submitting application:", error);
+      const errorMsg =
+        error instanceof TypeError && error.message.includes("Failed to fetch")
+          ? "Network connection error. Please check your internet connection."
+          : "An unexpected error occurred. Please try again.";
+
       toast({
         title: "Error",
         description: errorMsg,
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (isLoading) {
     return (
-      <CitizenLayout>
+      <CitizenLayout requireAuth={false}>
         <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
-            <p className="text-sm text-muted-foreground">Loading your information...</p>
+            <p className="text-sm text-muted-foreground">
+              Loading your information...
+            </p>
           </div>
         </div>
       </CitizenLayout>
-    )
+    );
   }
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
         <div className="bg-white border-b sticky top-0 z-10">
           <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
@@ -307,8 +396,12 @@ export default function CedulaPage() {
                 <FileText className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">Community Tax Certificate (Cedula)</h1>
-                <p className="text-sm text-muted-foreground">Apply for your cedula</p>
+                <h1 className="text-xl font-bold">
+                  Community Tax Certificate (Cedula)
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Apply for your cedula
+                </p>
               </div>
             </div>
           </div>
@@ -324,7 +417,8 @@ export default function CedulaPage() {
                 </CardDescription>
                 <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    ℹ️ Your information has been pre-filled from your account. You can edit any field if needed.
+                    ℹ️ Your information has been pre-filled from your account.
+                    You can edit any field if needed.
                   </p>
                 </div>
               </CardHeader>
@@ -336,7 +430,9 @@ export default function CedulaPage() {
                       id="fullName"
                       placeholder="Enter your full name"
                       value={formData.fullName}
-                      onChange={(e) => updateFormData("fullName", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("fullName", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -348,7 +444,9 @@ export default function CedulaPage() {
                         type="email"
                         placeholder="email@example.com"
                         value={formData.email}
-                        onChange={(e) => updateFormData("email", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("email", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -358,7 +456,9 @@ export default function CedulaPage() {
                         id="phone"
                         placeholder="09XX XXX XXXX"
                         value={formData.phone}
-                        onChange={(e) => updateFormData("phone", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("phone", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -369,7 +469,9 @@ export default function CedulaPage() {
                       id="address"
                       placeholder="Street, Barangay, City"
                       value={formData.address}
-                      onChange={(e) => updateFormData("address", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("address", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -380,17 +482,23 @@ export default function CedulaPage() {
                         id="birthDate"
                         type="date"
                         value={formData.birthDate}
-                        onChange={(e) => updateFormData("birthDate", e.target.value)}
-                        max={new Date().toISOString().split('T')[0]}
+                        onChange={(e) =>
+                          updateFormData("birthDate", e.target.value)
+                        }
+                        max={new Date().toISOString().split("T")[0]}
                         required
                       />
-                      <p className="text-xs text-gray-500">Must be at least 18 years old</p>
+                      <p className="text-xs text-gray-500">
+                        Must be at least 18 years old
+                      </p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="civilStatus">Civil Status *</Label>
                       <Select
                         value={formData.civilStatus}
-                        onValueChange={(value) => updateFormData("civilStatus", value)}
+                        onValueChange={(value) =>
+                          updateFormData("civilStatus", value)
+                        }
                         required
                       >
                         <SelectTrigger>
@@ -410,7 +518,9 @@ export default function CedulaPage() {
                         id="citizenship"
                         placeholder="Filipino"
                         value={formData.citizenship}
-                        onChange={(e) => updateFormData("citizenship", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("citizenship", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -422,7 +532,9 @@ export default function CedulaPage() {
                         id="occupation"
                         placeholder="Enter your occupation"
                         value={formData.occupation}
-                        onChange={(e) => updateFormData("occupation", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("occupation", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -432,7 +544,9 @@ export default function CedulaPage() {
                         id="tinNumber"
                         placeholder="XXX-XXX-XXX-XXX"
                         value={formData.tinNumber}
-                        onChange={(e) => updateFormData("tinNumber", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("tinNumber", e.target.value)
+                        }
                       />
                     </div>
                   </div>
@@ -446,13 +560,17 @@ export default function CedulaPage() {
                           step="0.01"
                           placeholder="170.5"
                           value={formData.height}
-                          onChange={(e) => updateFormData("height", e.target.value)}
+                          onChange={(e) =>
+                            updateFormData("height", e.target.value)
+                          }
                           className="flex-1"
                           required
                         />
                         <Select
                           value={formData.heightUnit}
-                          onValueChange={(value) => updateFormData("heightUnit", value)}
+                          onValueChange={(value) =>
+                            updateFormData("heightUnit", value)
+                          }
                         >
                           <SelectTrigger className="w-20">
                             <SelectValue />
@@ -474,13 +592,17 @@ export default function CedulaPage() {
                           step="0.01"
                           placeholder="65.5"
                           value={formData.weight}
-                          onChange={(e) => updateFormData("weight", e.target.value)}
+                          onChange={(e) =>
+                            updateFormData("weight", e.target.value)
+                          }
                           className="flex-1"
                           required
                         />
                         <Select
                           value={formData.weightUnit}
-                          onValueChange={(value) => updateFormData("weightUnit", value)}
+                          onValueChange={(value) =>
+                            updateFormData("weightUnit", value)
+                          }
                         >
                           <SelectTrigger className="w-20">
                             <SelectValue />
@@ -497,8 +619,9 @@ export default function CedulaPage() {
 
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                   <p className="text-sm text-orange-800">
-                    <strong>Note:</strong> Processing time is 3-5 business days. You will receive an email
-                    notification once your cedula is ready for pickup.
+                    <strong>Note:</strong> Processing time is 3-5 business days.
+                    You will receive an email notification once your cedula is
+                    ready for pickup.
                   </p>
                 </div>
 
@@ -522,5 +645,5 @@ export default function CedulaPage() {
         </div>
       </div>
     </CitizenLayout>
-  )
+  );
 }

@@ -14,10 +14,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-import { authClient } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
 const guides = [
+  // --- Public Safety ---
   {
     id: 14,
     icon: AlertTriangle,
@@ -33,54 +33,6 @@ const guides = [
     description: "Get barangay clearance",
     category: "Public Safety",
     route: "/dashboard/citizen/services/barangay-clearance",
-  },
-  {
-    id: 2,
-    icon: Building,
-    name: "Business Permit Application",
-    description: "Step-by-step guide to apply for a business permit.",
-    category: "Government Services",
-    route: "/dashboard/citizen/services/cedula",
-  },
-  {
-    id: 3,
-    icon: Building,
-    name: "Building Permit Process",
-    description: "Requirements and procedures for obtaining a building permit.",
-    category: "Government Services",
-    route: "/dashboard/citizen/services/business-permit",
-  },
-  {
-    id: 4,
-    icon: FileText,
-    name: "Community Tax Certificate",
-    description: "How to get your Cedula (Community Tax Certificate).",
-    category: "Government Services",
-    route: "/dashboard/citizen/services/building-permit",
-  },
-  {
-    id: 5,
-    icon: Heart,
-    name: "Marriage License",
-    description: "Apply for marriage license",
-    category: "Government Services",
-    route: "/dashboard/citizen/services/marriage-license",
-  },
-  {
-    id: 6,
-    icon: Heart,
-    name: "Health Certificate",
-    description: "Medical clearance",
-    category: "Health Services",
-    route: "/dashboard/citizen/services/health-certificate",
-  },
-  {
-    id: 7,
-    icon: Heart,
-    name: "Medical Assistance",
-    description: "Request medical aid",
-    category: "Health Services",
-    route: "/dashboard/citizen/services/medical-assistance",
   },
   {
     id: 8,
@@ -99,12 +51,46 @@ const guides = [
     route: "/dashboard/citizen/services/fire-safety-inspection",
   },
   {
-    id: 10,
+    id: 13,
+    icon: MapPin,
+    name: "Barangay Blotter",
+    description: "Report and record incidents",
+    category: "Public Safety",
+    route: "/dashboard/citizen/services/barangay-blotter",
+  },
+
+  // --- Government Services ---
+  {
+    id: 2,
+    icon: Building,
+    name: "Business Permit Application",
+    description: "Step-by-step guide to apply for a business permit.",
+    category: "Government Services",
+    route: "/dashboard/citizen/services/business-permit",
+  },
+  {
+    id: 3,
+    icon: Building,
+    name: "Building Permit Process",
+    description: "Requirements and procedures for obtaining a building permit.",
+    category: "Government Services",
+    route: "/dashboard/citizen/services/building-permit",
+  },
+  {
+    id: 4,
     icon: FileText,
-    name: "Certificate of Indigency",
-    description: "Financial assistance qualification certificate",
-    category: "Social Services",
-    route: "/dashboard/citizen/services/certificate-of-indigency",
+    name: "Community Tax Certificate",
+    description: "How to get your Cedula (Community Tax Certificate).",
+    category: "Government Services",
+    route: "/dashboard/citizen/services/cedula",
+  },
+  {
+    id: 5,
+    icon: Heart,
+    name: "Marriage License",
+    description: "Apply for marriage license",
+    category: "Government Services",
+    route: "/dashboard/citizen/services/marriage-license",
   },
   {
     id: 11,
@@ -122,27 +108,49 @@ const guides = [
     category: "Government Services",
     route: "/dashboard/citizen/services/good-moral-certificate",
   },
+
   {
-    id: 13,
-    icon: MapPin,
-    name: "Barangay Blotter",
-    description: "Report and record incidents",
-    category: "Public Safety",
-    route: "/dashboard/citizen/services/barangay-blotter",
+    id: 10,
+    icon: FileText,
+    name: "Certificate of Indigency",
+    description: "Financial assistance qualification certificate",
+    category: "Government Services",
+    route: "/dashboard/citizen/services/certificate-of-indigency",
+  },
+
+  // --- Health Services ---
+  {
+    id: 6,
+    icon: Heart,
+    name: "Health Certificate",
+    description: "Medical clearance",
+    category: "Health Services",
+    route: "/dashboard/citizen/services/health-certificate",
+  },
+  {
+    id: 7,
+    icon: Heart,
+    name: "Medical Assistance",
+    description: "Request medical aid",
+    category: "Health Services",
+    route: "/dashboard/citizen/services/medical-assistance",
   },
 ];
 
-// Build the category filter list from the guides themselves: "All" + every
-// unique category, in the order they first appear.
-const categories = [
-  "All",
-  ...Array.from(new Set(guides.map((g) => g.category))),
+// Fixed, deliberate category order (instead of "order first appears in the
+// array", which is what made the grid look scattered before).
+const categoryOrder = [
+  "Public Safety",
+  "Government Services",
+  "Health Services",
 ];
+
+const categories = ["All", ...categoryOrder];
 
 const stats = [
   {
     label: "Guide Categories",
-    value: `${categories.length - 1}`,
+    value: `${categoryOrder.length}`,
     icon: Layers,
   },
   { label: "Residents Served", value: "18,500+", icon: Users },
@@ -164,14 +172,60 @@ export default function ServicesSection() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleServiceAccess = async (route: string) => {
-    const authenticated = await authClient.checkAuth();
+  // Group the (already filtered) guides by category, in categoryOrder, so
+  // the "All" view reads as clean sections instead of one scrambled grid.
+  // Empty categories (no matches) are simply skipped.
+  const groupedGuides = categoryOrder
+    .map((category) => ({
+      category,
+      items: filteredGuides.filter((g) => g.category === category),
+    }))
+    .filter((group) => group.items.length > 0);
 
-    if (authenticated) {
-      router.push(route);
-    } else {
-      router.push(`/login?callbackUrl=${encodeURIComponent(route)}`);
-    }
+  // Walang auth check dito. "Apply Now" ay direktang mag-nanavigate sa
+  // service page. Ang pag-check ng login ay mangyayari na lang sa
+  // Submit button ng bawat form (see auth-on-submit pattern).
+  const handleServiceAccess = (route: string) => {
+    router.push(route);
+  };
+
+  const renderCard = (guide: (typeof guides)[number], i: number) => {
+    const Icon = guide.icon;
+    return (
+      <motion.div
+        key={guide.id}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: (i % 6) * 0.05, duration: 0.5 }}
+        viewport={{ once: true }}
+        whileHover={{ y: -8, scale: 1.01 }}
+        className="p-8 rounded-3xl bg-white border-2 border-gray-100 hover:border-orange-300 hover:shadow-2xl transition-all group flex flex-col h-full"
+      >
+        <div className="flex items-start gap-4 flex-1">
+          <div className="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <Icon className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wide text-orange-500">
+              {guide.category}
+            </span>
+            <h3 className="text-xl font-bold text-gray-900 mt-1 mb-2">
+              {guide.name}
+            </h3>
+            <p className="text-gray-600 leading-relaxed">{guide.description}</p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <button
+            onClick={() => handleServiceAccess(guide.route)}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold hover:opacity-90 transition"
+          >
+            Apply Now
+          </button>
+        </div>
+      </motion.div>
+    );
   };
 
   return (
@@ -225,51 +279,28 @@ export default function ServicesSection() {
             })}
           </div>
 
-          {/* items-stretch ensures every card in a row matches the tallest
-              card's height; each card is a flex column so the button below
-              is always pinned to the bottom regardless of description length */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-            {filteredGuides.map((guide, i) => {
-              const Icon = guide.icon;
-              return (
-                <motion.div
-                  key={guide.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.5 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -8, scale: 1.01 }}
-                  className="p-8 rounded-3xl bg-white border-2 border-gray-100 hover:border-orange-300 hover:shadow-2xl transition-all group flex flex-col h-full"
-                >
-                  <div className="flex items-start gap-4 flex-1">
-                    <div className="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <Icon className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-orange-500">
-                        {guide.category}
-                      </span>
-                      <h3 className="text-xl font-bold text-gray-900 mt-1 mb-2">
-                        {guide.name}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {guide.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <button
-                      onClick={() => handleServiceAccess(guide.route)}
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold hover:opacity-90 transition"
-                    >
-                      Apply Now
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          {/* Grouped by category (in a fixed order) instead of one long
+              mixed grid. When a single category is selected there's only
+              ever one group, so this renders the same as before in that
+              case — the section header is what changes for "All". */}
+          {groupedGuides.map((group) => (
+            <div key={group.category} className="mb-14 last:mb-0">
+              {activeCategory === "All" && (
+                <div className="flex items-center gap-3 mb-6">
+                  <h3 className="text-lg font-bold text-gray-900">
+                    {group.category}
+                  </h3>
+                  <span className="text-sm font-semibold text-gray-400">
+                    {group.items.length}
+                  </span>
+                  <div className="h-px flex-1 bg-gray-100" />
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+                {group.items.map((guide, i) => renderCard(guide, i))}
+              </div>
+            </div>
+          ))}
 
           {filteredGuides.length === 0 && (
             <div className="text-center py-16">

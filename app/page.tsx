@@ -24,12 +24,54 @@ interface NewsArticle {
   };
 }
 
+// Hero background videos, served from /public. Drop your files in
+// public/videos/ (or adjust these paths to match your actual filenames) —
+// the carousel auto-advances to the next clip when the current one
+// finishes playing, and the dots at the bottom let people jump to a
+// specific clip manually.
+const heroVideos = [
+  "/videos/hero-1.mp4",
+  "/videos/hero-2.mp4",
+  "/videos/hero-3.mp4",
+];
+
+const heroText = "Welcome to Pamplona Tres";
+const TYPE_SPEED_MS = 65; // per character
+const HOLD_MS = 1400; // how long the finished text stays before fading
+
 export default function Home() {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(
     null,
   );
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [introVisible, setIntroVisible] = useState(true);
+
+  const handleVideoEnd = () => {
+    setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
+  };
+
+  // Typewriter intro: types the greeting once, holds briefly, then fades
+  // out for good so it stops covering the video.
+  useEffect(() => {
+    let charIndex = 0;
+    const typingInterval = setInterval(() => {
+      charIndex += 1;
+      setTypedText(heroText.slice(0, charIndex));
+
+      if (charIndex >= heroText.length) {
+        clearInterval(typingInterval);
+        const holdTimeout = setTimeout(() => {
+          setIntroVisible(false);
+        }, HOLD_MS);
+        return () => clearTimeout(holdTimeout);
+      }
+    }, TYPE_SPEED_MS);
+
+    return () => clearInterval(typingInterval);
+  }, []);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -114,92 +156,96 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative w-full overflow-hidden pt-20 pb-32">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/Pamploma_logo.png')",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-red-800/90 via-orange-700/90 to-green-800/90" />
-
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="w-24 h-1 bg-white rounded-full mx-auto mb-8"
-            />
-
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-balance drop-shadow-lg">
-              Welcome to Barangay Pamplona Tres
-            </h1>
-
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="w-32 h-1 bg-white/80 rounded-full mx-auto mb-8"
-            />
-
-            <p className="text-xl md:text-2xl mb-10 text-white/95 max-w-3xl mx-auto text-balance font-medium drop-shadow-md">
-              Your trusted partner in community services and governance in Las
-              Piñas City
-            </p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+      {/* Hero Section — full-bleed video carousel, minimal mark */}
+      <section className="relative w-full h-screen overflow-hidden bg-black">
+        {/* Video Carousel Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <AnimatePresence mode="sync">
+            <motion.video
+              key={currentVideoIndex}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+              autoPlay
+              muted
+              playsInline
+              onEnded={handleVideoEnd}
+              className="absolute inset-0 w-full h-full object-cover"
             >
-              <Link href="/services">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-10 py-4 bg-white text-orange-600 font-bold rounded-full shadow-2xl hover:shadow-white/20 transition-all text-lg"
-                >
-                  Explore Services
-                </motion.button>
-              </Link>
-              <Link href="/about">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-10 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-bold rounded-full hover:bg-white/20 transition-all text-lg"
-                >
-                  Learn More
-                </motion.button>
-              </Link>
-            </motion.div>
-          </motion.div>
+              <source src={heroVideos[currentVideoIndex]} type="video/mp4" />
+            </motion.video>
+          </AnimatePresence>
         </div>
 
-        {/* Wave Decoration */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            className="w-full h-16 md:h-24"
-            viewBox="0 0 1440 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0 0L60 8.33333C120 16.6667 240 33.3333 360 41.6667C480 50 600 50 720 41.6667C840 33.3333 960 16.6667 1080 16.6667C1200 16.6667 1320 33.3333 1380 41.6667L1440 50V100H1380C1320 100 1200 100 1080 100C960 100 840 100 720 100C600 100 480 100 360 100C240 100 120 100 60 100H0V0Z"
-              fill="white"
-            />
-          </svg>
-        </div>
+        {/* Typewriter intro — types once, holds, then fades out for good
+            so the video underneath is left completely unobstructed. */}
+        <AnimatePresence>
+          {introVisible && (
+            <motion.div
+              key="hero-intro"
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
+              className="absolute inset-0 z-10"
+            >
+              {/* Contrast wash — fades away together with the text */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/5 to-black/45" />
+
+              <div className="relative h-full flex items-center justify-center px-6 text-center text-white">
+                <h1
+                  className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-none whitespace-nowrap"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                >
+                  {typedText}
+                  <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{
+                      duration: 0.6,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                    className="inline-block w-[2px] h-[0.85em] bg-white/80 ml-1 translate-y-[0.08em]"
+                  />
+                </h1>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Carousel dot indicators */}
+        {heroVideos.length > 1 && (
+          <div className="absolute bottom-10 left-0 right-0 z-10 flex items-center justify-center gap-3">
+            {heroVideos.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentVideoIndex(i)}
+                aria-label={`Show background clip ${i + 1}`}
+                className={`h-1 rounded-full transition-all duration-500 ${
+                  i === currentVideoIndex
+                    ? "w-8 bg-white"
+                    : "w-3 bg-white/35 hover:bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Subtle scroll cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 1 }}
+          className="absolute bottom-10 right-8 z-10 hidden md:flex flex-col items-center gap-2 text-white/50"
+        >
+          <span className="text-[10px] tracking-[0.3em] uppercase [writing-mode:vertical-rl]">
+            Scroll
+          </span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            className="w-px h-8 bg-white/40"
+          />
+        </motion.div>
       </section>
 
       {/* Services Section (shared component, replaces the old static list) */}

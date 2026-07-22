@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeft, Heart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,8 +26,33 @@ import CitizenLayout from "@/components/citizenLayout";
 import { authClient } from "@/lib/auth";
 import { useToast } from "@/components/ui/use-toast";
 
+// sessionStorage key used to hold a draft of the form while the user is
+// sent to /login and back. Everything here is plain text/JSON-safe, so
+// the whole formData object (no files in this form) can be saved as-is.
+const DRAFT_KEY = "health-certificate-draft";
+
+type DraftShape = {
+  formData: {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
+    birthDate: string;
+    age: string;
+    sex: string;
+    purpose: string;
+    hasAllergies: boolean;
+    allergies: string;
+    hasMedications: boolean;
+    medications: string;
+    hasConditions: boolean;
+    conditions: string;
+  };
+};
+
 export default function HealthCertificatePage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,13 +73,36 @@ export default function HealthCertificatePage() {
     conditions: "",
   });
 
-  // Auto-fill form with logged-in user data
+  // Restore draft / auto-fill on mount. Guests are allowed to fill the
+  // form — login is only required at final submit.
   useEffect(() => {
-    const loadUserData = async () => {
+    const init = async () => {
+      // 1. Restore a saved draft first (means the user just came back
+      // from /login).
+      let restoredFromDraft = false;
+      try {
+        const saved = sessionStorage.getItem(DRAFT_KEY);
+        if (saved) {
+          const parsed: DraftShape = JSON.parse(saved);
+          setFormData(parsed.formData);
+          sessionStorage.removeItem(DRAFT_KEY);
+          restoredFromDraft = true;
+
+          toast({
+            title: "Draft restored",
+            description:
+              "We saved your answers before you logged in. Please review and continue.",
+          });
+        }
+      } catch (err) {
+        console.error("Failed to restore health certificate draft:", err);
+      }
+
+      // 2. Auto-fill from profile if logged in (skip if we just restored
+      // a draft, so we don't overwrite what the user already typed).
       try {
         const user = await authClient.getCurrentUser();
-
-        if (user) {
+        if (user && !restoredFromDraft) {
           // Calculate age from birth date if available
           let calculatedAge = "";
           if (user.birth_date) {
@@ -62,7 +110,10 @@ export default function HealthCertificatePage() {
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            if (
+              monthDiff < 0 ||
+              (monthDiff === 0 && today.getDate() < birthDate.getDate())
+            ) {
               age--;
             }
             calculatedAge = age.toString();
@@ -83,29 +134,20 @@ export default function HealthCertificatePage() {
             title: "Welcome Back",
             description: "Your profile information has been pre-filled.",
           });
-        } else {
-          toast({
-            title: "Authentication Required",
-            description: "Please log in to continue.",
-            variant: "destructive",
-          });
-          router.push("/login");
         }
+        // If no user: leave the form blank/editable. Login is only
+        // required later, at final submit.
       } catch (error) {
         console.error("Error loading user data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load your profile information.",
-          variant: "destructive",
-        });
         // Don't redirect on error, might be a temporary network issue
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadUserData();
-  }, [toast, router]);
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateFormData = (field: string, value: string | boolean) => {
     setFormData((prev) => {
@@ -117,7 +159,10 @@ export default function HealthCertificatePage() {
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
         const monthDiff = today.getMonth() - birthDate.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
           age--;
         }
         updated.age = age.toString();
@@ -127,10 +172,19 @@ export default function HealthCertificatePage() {
     });
   };
 
+  const saveDraft = () => {
+    const draft: DraftShape = { formData };
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch (err) {
+      console.error("Failed to save health certificate draft:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // Validate required medical history fields
       if (formData.hasAllergies && !formData.allergies.trim()) {
@@ -163,9 +217,23 @@ export default function HealthCertificatePage() {
         return;
       }
 
+      // 🔒 Auth check happens HERE — only when the user clicks "Submit
+      // Application".
+      const currentUser = await authClient.getCurrentUser();
+      if (!currentUser) {
+        saveDraft();
+        toast({
+          title: "Please log in to submit",
+          description:
+            "Your answers are saved — just log in and we'll bring you right back.",
+        });
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+        return;
+      }
+
       const response = await fetch("/api/health-certificate", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
@@ -190,27 +258,33 @@ export default function HealthCertificatePage() {
       }
 
       if (response.status === 401) {
+        // Session expired between page load and submit.
+        saveDraft();
         toast({
           title: "Session Expired",
-          description: "Please log in again to continue.",
+          description: "Please log in again — your answers are saved.",
           variant: "destructive",
         });
         setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+          router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+        }, 1500);
         return;
       }
 
       if (response.ok) {
+        sessionStorage.removeItem(DRAFT_KEY);
         toast({
           title: "Success!",
-          description: `Your health certificate application has been submitted. Reference: ${data.data?.reference_number || 'N/A'}`,
+          description: `Your health certificate application has been submitted. Reference: ${data.data?.reference_number || "N/A"}`,
         });
-        router.push("/dashboard/citizen/account/applications?success=health-certificate");
+        router.push(
+          "/dashboard/citizen/account/applications?success=health-certificate",
+        );
       } else {
         toast({
           title: "Application Failed",
-          description: data.message || "Failed to submit application. Please try again.",
+          description:
+            data.message || "Failed to submit application. Please try again.",
           variant: "destructive",
         });
       }
@@ -233,11 +307,13 @@ export default function HealthCertificatePage() {
 
   if (isLoading) {
     return (
-      <CitizenLayout>
+      <CitizenLayout requireAuth={false}>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
-            <p className="text-sm text-muted-foreground">Loading your information...</p>
+            <p className="text-sm text-muted-foreground">
+              Loading your information...
+            </p>
           </div>
         </div>
       </CitizenLayout>
@@ -245,7 +321,7 @@ export default function HealthCertificatePage() {
   }
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
         <div className="bg-white border-b sticky top-0 z-10">
           <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
@@ -272,7 +348,8 @@ export default function HealthCertificatePage() {
           {/* Info Banner */}
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800">
-              ℹ️ Your personal information has been pre-filled from your account. You can edit any field if needed.
+              ℹ️ Your personal information has been pre-filled from your
+              account. You can edit any field if needed.
             </p>
           </div>
 

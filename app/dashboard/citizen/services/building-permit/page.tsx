@@ -1,35 +1,84 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Home, User, FileText, Upload, CheckCircle2, X, AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/components/ui/use-toast"
-import CitizenLayout from "@/components/citizenLayout"
-import { authClient } from "@/lib/auth"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  ArrowLeft,
+  Home,
+  User,
+  FileText,
+  Upload,
+  CheckCircle2,
+  X,
+  AlertCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import CitizenLayout from "@/components/citizenLayout";
+import { authClient } from "@/lib/auth";
 
 const steps = [
   { id: 1, name: "Project Details", icon: Home },
   { id: 2, name: "Owner Information", icon: User },
   { id: 3, name: "Documents", icon: Upload },
   { id: 4, name: "Review & Submit", icon: FileText },
-]
+];
+
+// sessionStorage key used to hold a draft of the form while the user is
+// sent to /login and back. NOTE: File objects (buildingPlans / landTitle)
+// cannot be serialized into sessionStorage, so only the text fields +
+// step are saved. If the user had already selected files, we drop them
+// back to the Documents step and ask them to re-attach the files.
+const DRAFT_KEY = "building-permit-draft";
+
+type DraftShape = {
+  step: number;
+  hadFiles: boolean;
+  formData: {
+    projectType: string;
+    projectScope: string;
+    projectDescription: string;
+    lotArea: string;
+    floorArea: string;
+    numberOfFloors: string;
+    estimatedCost: string;
+    ownerName: string;
+    ownerEmail: string;
+    ownerPhone: string;
+    ownerAddress: string;
+    propertyAddress: string;
+    barangay: string;
+  };
+};
 
 export default function BuildingPermitPage() {
-  const router = useRouter()
-  const { toast } = useToast()
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoadingUserData, setIsLoadingUserData] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [buildingPlans, setBuildingPlans] = useState<File | null>(null)
-  const [landTitle, setLandTitle] = useState<File | null>(null)
+  const router = useRouter();
+  const pathname = usePathname();
+  const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingUserData, setIsLoadingUserData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [buildingPlans, setBuildingPlans] = useState<File | null>(null);
+  const [landTitle, setLandTitle] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     projectType: "",
     projectScope: "",
@@ -44,280 +93,344 @@ export default function BuildingPermitPage() {
     ownerAddress: "",
     propertyAddress: "",
     barangay: "",
-  })
+  });
 
-  // Load user data on mount
+  // Load user data / restore draft on mount. Guests are allowed to fill
+  // the form — login is only required at final submit.
   useEffect(() => {
-    const loadUserData = async () => {
+    const init = async () => {
+      // 1. Restore a saved draft first (means the user just came back
+      // from /login mid-way through the form).
+      let restoredFromDraft = false;
       try {
-        const user = await authClient.getCurrentUser()
+        const saved = sessionStorage.getItem(DRAFT_KEY);
+        if (saved) {
+          const parsed: DraftShape = JSON.parse(saved);
+          setFormData(parsed.formData);
+          // Files never survive the redirect, so if the draft was taken
+          // past (or at) the Documents step, send them back there.
+          setCurrentStep(
+            parsed.hadFiles || parsed.step >= 3 ? 3 : parsed.step || 1,
+          );
+          sessionStorage.removeItem(DRAFT_KEY);
+          restoredFromDraft = true;
 
-        if (user) {
+          toast({
+            title: "Draft restored",
+            description: parsed.hadFiles
+              ? "We saved your answers before you logged in. Please re-attach your documents and continue."
+              : "We saved your answers before you logged in. Please review and continue.",
+          });
+        }
+      } catch (err) {
+        console.error("Failed to restore building permit draft:", err);
+      }
+
+      // 2. Auto-fill owner info from profile if logged in (skip if we
+      // just restored a draft, so we don't overwrite typed answers).
+      try {
+        const user = await authClient.getCurrentUser();
+        if (user && !restoredFromDraft) {
           setFormData((prev) => ({
             ...prev,
             ownerName: user.name || "",
             ownerEmail: user.email || "",
             ownerPhone: user.phone_number || "",
             ownerAddress: user.address || "",
-          }))
-
+          }));
           toast({
             title: "Welcome Back",
             description: "Your profile information has been pre-filled.",
-          })
-        } else {
-          toast({
-            title: "Authentication Required",
-            description: "Please log in to continue.",
-            variant: "destructive",
-          })
-          router.push('/login')
+          });
         }
+        // If no user: leave the form blank/editable. Login is only
+        // required later, at final submit.
       } catch (error) {
-        console.error("Error loading user data:", error)
-        toast({
-          title: "Error",
-          description: "Failed to load your profile information.",
-          variant: "destructive",
-        })
+        console.error("Error loading user data:", error);
       } finally {
-        setIsLoadingUserData(false)
+        setIsLoadingUserData(false);
       }
-    }
+    };
 
-    loadUserData()
-  }, [toast, router])
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateFormData = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setError(null)
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setError(null);
+  };
 
-  const handleBuildingPlansChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBuildingPlansChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      
+      const file = e.target.files[0];
+
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "File too large",
           description: "File size must be less than 10MB",
           variant: "destructive",
-        })
-        e.target.value = ""
-        return
+        });
+        e.target.value = "";
+        return;
       }
-      
-      setBuildingPlans(file)
+
+      setBuildingPlans(file);
     }
-  }
+  };
 
   const handleLandTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      
+      const file = e.target.files[0];
+
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "File too large",
           description: "File size must be less than 10MB",
           variant: "destructive",
-        })
-        e.target.value = ""
-        return
+        });
+        e.target.value = "";
+        return;
       }
-      
-      setLandTitle(file)
+
+      setLandTitle(file);
     }
-  }
+  };
 
   const removeBuildingPlans = () => {
-    setBuildingPlans(null)
-  }
+    setBuildingPlans(null);
+  };
 
   const removeLandTitle = () => {
-    setLandTitle(null)
-  }
+    setLandTitle(null);
+  };
 
   const validateStep = () => {
-    setError(null)
-    
+    setError(null);
+
     if (currentStep === 1) {
       if (!formData.projectType) {
-        setError("Project type is required")
-        return false
+        setError("Project type is required");
+        return false;
       }
       if (!formData.projectScope) {
-        setError("Project scope is required")
-        return false
+        setError("Project scope is required");
+        return false;
       }
       if (!formData.projectDescription.trim()) {
-        setError("Project description is required")
-        return false
+        setError("Project description is required");
+        return false;
       }
       if (!formData.numberOfFloors || parseInt(formData.numberOfFloors) < 1) {
-        setError("Number of floors is required")
-        return false
+        setError("Number of floors is required");
+        return false;
       }
       if (!formData.estimatedCost || parseFloat(formData.estimatedCost) <= 0) {
-        setError("Estimated cost is required")
-        return false
+        setError("Estimated cost is required");
+        return false;
       }
     }
-    
+
     if (currentStep === 2) {
       if (!formData.ownerName.trim()) {
-        setError("Owner name is required")
-        return false
+        setError("Owner name is required");
+        return false;
       }
-      if (!formData.ownerEmail.trim() || !/\S+@\S+\.\S+/.test(formData.ownerEmail)) {
-        setError("Valid email is required")
-        return false
+      if (
+        !formData.ownerEmail.trim() ||
+        !/\S+@\S+\.\S+/.test(formData.ownerEmail)
+      ) {
+        setError("Valid email is required");
+        return false;
       }
       if (!formData.ownerPhone.trim()) {
-        setError("Contact number is required")
-        return false
+        setError("Contact number is required");
+        return false;
       }
       if (!formData.ownerAddress.trim()) {
-        setError("Owner address is required")
-        return false
+        setError("Owner address is required");
+        return false;
       }
       if (!formData.propertyAddress.trim()) {
-        setError("Property address is required")
-        return false
+        setError("Property address is required");
+        return false;
       }
       if (!formData.barangay.trim()) {
-        setError("Barangay is required")
-        return false
+        setError("Barangay is required");
+        return false;
       }
     }
-    
+
     if (currentStep === 3) {
       if (!buildingPlans) {
-        setError("Building plans document is required")
-        return false
+        setError("Building plans document is required");
+        return false;
       }
       if (!landTitle) {
-        setError("Land title document is required")
-        return false
+        setError("Land title document is required");
+        return false;
       }
     }
-    
-    return true
-  }
+
+    return true;
+  };
 
   const handleNext = () => {
     if (validateStep()) {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length))
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length));
       toast({
         title: "Step Complete",
         description: `You're on step ${currentStep + 1} of ${steps.length}`,
-      })
+      });
     }
-  }
+  };
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1))
-    setError(null)
-  }
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+    setError(null);
+  };
+
+  const saveDraft = () => {
+    const draft: DraftShape = {
+      step: currentStep,
+      hadFiles: !!(buildingPlans || landTitle),
+      formData,
+    };
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch (err) {
+      console.error("Failed to save building permit draft:", err);
+    }
+  };
 
   const handleSubmit = async () => {
-    if (!validateStep()) return
+    if (!validateStep()) return;
 
-    setIsSubmitting(true)
-    setError(null)
+    // 🔒 Auth check happens HERE — only when the user clicks "Submit
+    // Application" on the final review step.
+    const currentUser = await authClient.getCurrentUser();
+    if (!currentUser) {
+      saveDraft();
+      toast({
+        title: "Please log in to submit",
+        description:
+          "Your answers are saved — just log in and we'll bring you right back. You'll need to re-attach your documents.",
+      });
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      const formDataToSend = new FormData()
-      
+      const formDataToSend = new FormData();
+
       // Append all form fields
-      formDataToSend.append("projectType", formData.projectType)
-      formDataToSend.append("projectScope", formData.projectScope)
-      formDataToSend.append("projectDescription", formData.projectDescription)
-      formDataToSend.append("lotArea", formData.lotArea || "")
-      formDataToSend.append("floorArea", formData.floorArea || "")
-      formDataToSend.append("numberOfFloors", formData.numberOfFloors)
-      formDataToSend.append("estimatedCost", formData.estimatedCost)
-      formDataToSend.append("ownerName", formData.ownerName)
-      formDataToSend.append("ownerEmail", formData.ownerEmail)
-      formDataToSend.append("ownerPhone", formData.ownerPhone)
-      formDataToSend.append("ownerAddress", formData.ownerAddress)
-      formDataToSend.append("propertyAddress", formData.propertyAddress)
-      formDataToSend.append("barangay", formData.barangay)
-      
+      formDataToSend.append("projectType", formData.projectType);
+      formDataToSend.append("projectScope", formData.projectScope);
+      formDataToSend.append("projectDescription", formData.projectDescription);
+      formDataToSend.append("lotArea", formData.lotArea || "");
+      formDataToSend.append("floorArea", formData.floorArea || "");
+      formDataToSend.append("numberOfFloors", formData.numberOfFloors);
+      formDataToSend.append("estimatedCost", formData.estimatedCost);
+      formDataToSend.append("ownerName", formData.ownerName);
+      formDataToSend.append("ownerEmail", formData.ownerEmail);
+      formDataToSend.append("ownerPhone", formData.ownerPhone);
+      formDataToSend.append("ownerAddress", formData.ownerAddress);
+      formDataToSend.append("propertyAddress", formData.propertyAddress);
+      formDataToSend.append("barangay", formData.barangay);
+
       // Append files
       if (buildingPlans) {
-        formDataToSend.append("buildingPlans", buildingPlans)
+        formDataToSend.append("buildingPlans", buildingPlans);
       }
       if (landTitle) {
-        formDataToSend.append("landTitle", landTitle)
+        formDataToSend.append("landTitle", landTitle);
       }
 
       const response = await fetch("/api/building-permit", {
         method: "POST",
         credentials: "include",
         body: formDataToSend,
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.status === 401) {
+        // Session expired between page load and submit.
+        saveDraft();
         toast({
           title: "Session Expired",
-          description: "Please log in again to continue.",
+          description:
+            "Please log in again — your answers are saved. You'll need to re-attach your documents.",
           variant: "destructive",
-        })
+        });
         setTimeout(() => {
-          router.push("/login")
-        }, 2000)
-        return
+          router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+        }, 1500);
+        return;
       }
 
       if (response.ok && data.success) {
+        sessionStorage.removeItem(DRAFT_KEY);
         toast({
           title: "Success!",
-          description: "Your building permit application has been submitted successfully.",
-        })
-        
+          description:
+            "Your building permit application has been submitted successfully.",
+        });
+
         setTimeout(() => {
-          router.push("/dashboard/citizen/account/applications?success=building-permit")
-        }, 1500)
+          router.push(
+            "/dashboard/citizen/account/applications?success=building-permit",
+          );
+        }, 1500);
       } else {
-        const errorMessage = data.message || "Failed to submit application"
-        setError(errorMessage)
+        const errorMessage = data.message || "Failed to submit application";
+        setError(errorMessage);
         toast({
           title: "Application Failed",
           description: errorMessage,
           variant: "destructive",
-        })
+        });
       }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred. Please try again."
-      
-      if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
-        errorMessage = "Network connection error. Please check your internet connection."
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        errorMessage =
+          "Network connection error. Please check your internet connection.";
       }
 
-      console.error("Error submitting application:", error)
-      setError(errorMessage)
+      console.error("Error submitting application:", error);
+      setError(errorMessage);
       toast({
         title: "Error",
         description: errorMessage,
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
         {isLoadingUserData && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading your profile information...</p>
+              <p className="text-gray-600">
+                Loading your profile information...
+              </p>
             </div>
           </div>
         )}
@@ -344,15 +457,25 @@ export default function BuildingPermitPage() {
                   <div className="flex flex-col items-center flex-1">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        currentStep >= step.id ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-500"
+                        currentStep >= step.id
+                          ? "bg-orange-500 text-white"
+                          : "bg-gray-200 text-gray-500"
                       }`}
                     >
-                      {currentStep > step.id ? <CheckCircle2 className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
+                      {currentStep > step.id ? (
+                        <CheckCircle2 className="h-5 w-5" />
+                      ) : (
+                        <step.icon className="h-5 w-5" />
+                      )}
                     </div>
-                    <span className="text-xs mt-2 text-center hidden sm:block">{step.name}</span>
+                    <span className="text-xs mt-2 text-center hidden sm:block">
+                      {step.name}
+                    </span>
                   </div>
                   {index < steps.length - 1 && (
-                    <div className={`h-1 flex-1 mx-2 ${currentStep > step.id ? "bg-orange-500" : "bg-gray-200"}`} />
+                    <div
+                      className={`h-1 flex-1 mx-2 ${currentStep > step.id ? "bg-orange-500" : "bg-gray-200"}`}
+                    />
                   )}
                 </div>
               ))}
@@ -363,7 +486,8 @@ export default function BuildingPermitPage() {
             <CardHeader>
               <CardTitle>{steps[currentStep - 1].name}</CardTitle>
               <CardDescription>
-                {currentStep === 1 && "Provide details about your construction project"}
+                {currentStep === 1 &&
+                  "Provide details about your construction project"}
                 {currentStep === 2 && "Enter property owner information"}
                 {currentStep === 3 && "Upload required documents"}
                 {currentStep === 4 && "Review your application"}
@@ -371,7 +495,8 @@ export default function BuildingPermitPage() {
               {currentStep === 2 && (
                 <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    ℹ️ Your information has been pre-filled from your account. You can edit any field if needed.
+                    ℹ️ Your information has been pre-filled from your account.
+                    You can edit any field if needed.
                   </p>
                 </div>
               )}
@@ -391,13 +516,17 @@ export default function BuildingPermitPage() {
                       <Label htmlFor="projectType">Project Type *</Label>
                       <Select
                         value={formData.projectType}
-                        onValueChange={(value) => updateFormData("projectType", value)}
+                        onValueChange={(value) =>
+                          updateFormData("projectType", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="new-construction">New Construction</SelectItem>
+                          <SelectItem value="new-construction">
+                            New Construction
+                          </SelectItem>
                           <SelectItem value="renovation">Renovation</SelectItem>
                           <SelectItem value="addition">Addition</SelectItem>
                           <SelectItem value="repair">Repair</SelectItem>
@@ -408,13 +537,17 @@ export default function BuildingPermitPage() {
                       <Label htmlFor="projectScope">Project Scope *</Label>
                       <Select
                         value={formData.projectScope}
-                        onValueChange={(value) => updateFormData("projectScope", value)}
+                        onValueChange={(value) =>
+                          updateFormData("projectScope", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select scope" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="residential">Residential</SelectItem>
+                          <SelectItem value="residential">
+                            Residential
+                          </SelectItem>
                           <SelectItem value="commercial">Commercial</SelectItem>
                           <SelectItem value="industrial">Industrial</SelectItem>
                         </SelectContent>
@@ -422,13 +555,17 @@ export default function BuildingPermitPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="projectDescription">Project Description *</Label>
+                    <Label htmlFor="projectDescription">
+                      Project Description *
+                    </Label>
                     <Textarea
                       id="projectDescription"
                       placeholder="Describe the construction project"
                       rows={4}
                       value={formData.projectDescription}
-                      onChange={(e) => updateFormData("projectDescription", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("projectDescription", e.target.value)
+                      }
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -439,7 +576,9 @@ export default function BuildingPermitPage() {
                         type="number"
                         placeholder="0"
                         value={formData.lotArea}
-                        onChange={(e) => updateFormData("lotArea", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("lotArea", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
@@ -449,7 +588,9 @@ export default function BuildingPermitPage() {
                         type="number"
                         placeholder="0"
                         value={formData.floorArea}
-                        onChange={(e) => updateFormData("floorArea", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("floorArea", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
@@ -460,12 +601,16 @@ export default function BuildingPermitPage() {
                         placeholder="0"
                         min="1"
                         value={formData.numberOfFloors}
-                        onChange={(e) => updateFormData("numberOfFloors", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("numberOfFloors", e.target.value)
+                        }
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="estimatedCost">Estimated Cost (PHP) *</Label>
+                    <Label htmlFor="estimatedCost">
+                      Estimated Cost (PHP) *
+                    </Label>
                     <Input
                       id="estimatedCost"
                       type="number"
@@ -473,7 +618,9 @@ export default function BuildingPermitPage() {
                       min="0"
                       step="0.01"
                       value={formData.estimatedCost}
-                      onChange={(e) => updateFormData("estimatedCost", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("estimatedCost", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -487,7 +634,9 @@ export default function BuildingPermitPage() {
                       id="ownerName"
                       placeholder="Enter full name"
                       value={formData.ownerName}
-                      onChange={(e) => updateFormData("ownerName", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("ownerName", e.target.value)
+                      }
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -498,7 +647,9 @@ export default function BuildingPermitPage() {
                         type="email"
                         placeholder="email@example.com"
                         value={formData.ownerEmail}
-                        onChange={(e) => updateFormData("ownerEmail", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("ownerEmail", e.target.value)
+                        }
                       />
                     </div>
                     <div className="space-y-2">
@@ -507,7 +658,9 @@ export default function BuildingPermitPage() {
                         id="ownerPhone"
                         placeholder="09XX XXX XXXX"
                         value={formData.ownerPhone}
-                        onChange={(e) => updateFormData("ownerPhone", e.target.value)}
+                        onChange={(e) =>
+                          updateFormData("ownerPhone", e.target.value)
+                        }
                       />
                     </div>
                   </div>
@@ -518,7 +671,9 @@ export default function BuildingPermitPage() {
                       placeholder="Street, Barangay, City"
                       rows={3}
                       value={formData.ownerAddress}
-                      onChange={(e) => updateFormData("ownerAddress", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("ownerAddress", e.target.value)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -528,7 +683,9 @@ export default function BuildingPermitPage() {
                       placeholder="Street, Barangay, City"
                       rows={3}
                       value={formData.propertyAddress}
-                      onChange={(e) => updateFormData("propertyAddress", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("propertyAddress", e.target.value)
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -537,7 +694,9 @@ export default function BuildingPermitPage() {
                       id="barangay"
                       placeholder="Enter barangay"
                       value={formData.barangay}
-                      onChange={(e) => updateFormData("barangay", e.target.value)}
+                      onChange={(e) =>
+                        updateFormData("barangay", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -550,8 +709,12 @@ export default function BuildingPermitPage() {
                     {!buildingPlans ? (
                       <label className="border-2 border-dashed rounded-lg p-8 text-center block cursor-pointer hover:border-orange-500 transition-colors">
                         <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-sm text-muted-foreground mb-2">Click to upload or drag and drop</p>
-                        <p className="text-xs text-muted-foreground">PDF, PNG, JPG (max 10MB)</p>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          PDF, PNG, JPG (max 10MB)
+                        </p>
                         <Input
                           type="file"
                           className="hidden"
@@ -564,13 +727,19 @@ export default function BuildingPermitPage() {
                         <div className="flex items-center gap-3">
                           <FileText className="h-8 w-8 text-orange-500" />
                           <div>
-                            <p className="text-sm font-medium">{buildingPlans.name}</p>
+                            <p className="text-sm font-medium">
+                              {buildingPlans.name}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               {(buildingPlans.size / 1024 / 1024).toFixed(2)} MB
                             </p>
                           </div>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={removeBuildingPlans}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={removeBuildingPlans}
+                        >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
@@ -581,8 +750,12 @@ export default function BuildingPermitPage() {
                     {!landTitle ? (
                       <label className="border-2 border-dashed rounded-lg p-8 text-center block cursor-pointer hover:border-orange-500 transition-colors">
                         <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-sm text-muted-foreground mb-2">Click to upload or drag and drop</p>
-                        <p className="text-xs text-muted-foreground">PDF, PNG, JPG (max 10MB)</p>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          PDF, PNG, JPG (max 10MB)
+                        </p>
                         <Input
                           type="file"
                           className="hidden"
@@ -595,13 +768,19 @@ export default function BuildingPermitPage() {
                         <div className="flex items-center gap-3">
                           <FileText className="h-8 w-8 text-orange-500" />
                           <div>
-                            <p className="text-sm font-medium">{landTitle.name}</p>
+                            <p className="text-sm font-medium">
+                              {landTitle.name}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               {(landTitle.size / 1024 / 1024).toFixed(2)} MB
                             </p>
                           </div>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={removeLandTitle}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={removeLandTitle}
+                        >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
@@ -617,29 +796,36 @@ export default function BuildingPermitPage() {
                       <h3 className="font-semibold mb-2">Project Details</h3>
                       <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
                         <p>
-                          <span className="font-medium">Type:</span> {formData.projectType}
+                          <span className="font-medium">Type:</span>{" "}
+                          {formData.projectType}
                         </p>
                         <p>
-                          <span className="font-medium">Scope:</span> {formData.projectScope}
+                          <span className="font-medium">Scope:</span>{" "}
+                          {formData.projectScope}
                         </p>
                         <p>
-                          <span className="font-medium">Description:</span> {formData.projectDescription}
+                          <span className="font-medium">Description:</span>{" "}
+                          {formData.projectDescription}
                         </p>
                         {formData.lotArea && (
                           <p>
-                            <span className="font-medium">Lot Area:</span> {formData.lotArea} sq.m
+                            <span className="font-medium">Lot Area:</span>{" "}
+                            {formData.lotArea} sq.m
                           </p>
                         )}
                         {formData.floorArea && (
                           <p>
-                            <span className="font-medium">Floor Area:</span> {formData.floorArea} sq.m
+                            <span className="font-medium">Floor Area:</span>{" "}
+                            {formData.floorArea} sq.m
                           </p>
                         )}
                         <p>
-                          <span className="font-medium">Floors:</span> {formData.numberOfFloors}
+                          <span className="font-medium">Floors:</span>{" "}
+                          {formData.numberOfFloors}
                         </p>
                         <p>
-                          <span className="font-medium">Estimated Cost:</span> PHP {formData.estimatedCost}
+                          <span className="font-medium">Estimated Cost:</span>{" "}
+                          PHP {formData.estimatedCost}
                         </p>
                       </div>
                     </div>
@@ -647,22 +833,28 @@ export default function BuildingPermitPage() {
                       <h3 className="font-semibold mb-2">Owner Information</h3>
                       <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
                         <p>
-                          <span className="font-medium">Name:</span> {formData.ownerName}
+                          <span className="font-medium">Name:</span>{" "}
+                          {formData.ownerName}
                         </p>
                         <p>
-                          <span className="font-medium">Email:</span> {formData.ownerEmail}
+                          <span className="font-medium">Email:</span>{" "}
+                          {formData.ownerEmail}
                         </p>
                         <p>
-                          <span className="font-medium">Phone:</span> {formData.ownerPhone}
+                          <span className="font-medium">Phone:</span>{" "}
+                          {formData.ownerPhone}
                         </p>
                         <p>
-                          <span className="font-medium">Address:</span> {formData.ownerAddress}
+                          <span className="font-medium">Address:</span>{" "}
+                          {formData.ownerAddress}
                         </p>
                         <p>
-                          <span className="font-medium">Property Address:</span> {formData.propertyAddress}
+                          <span className="font-medium">Property Address:</span>{" "}
+                          {formData.propertyAddress}
                         </p>
                         <p>
-                          <span className="font-medium">Barangay:</span> {formData.barangay}
+                          <span className="font-medium">Barangay:</span>{" "}
+                          {formData.barangay}
                         </p>
                       </div>
                     </div>
@@ -670,10 +862,12 @@ export default function BuildingPermitPage() {
                       <h3 className="font-semibold mb-2">Documents</h3>
                       <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
                         <p>
-                          <span className="font-medium">Building Plans:</span> {buildingPlans?.name || "Not uploaded"}
+                          <span className="font-medium">Building Plans:</span>{" "}
+                          {buildingPlans?.name || "Not uploaded"}
                         </p>
                         <p>
-                          <span className="font-medium">Land Title:</span> {landTitle?.name || "Not uploaded"}
+                          <span className="font-medium">Land Title:</span>{" "}
+                          {landTitle?.name || "Not uploaded"}
                         </p>
                       </div>
                     </div>
@@ -683,12 +877,19 @@ export default function BuildingPermitPage() {
 
               <div className="flex gap-3 pt-4">
                 {currentStep > 1 && (
-                  <Button variant="outline" onClick={handleBack} className="flex-1 bg-transparent">
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    className="flex-1 bg-transparent"
+                  >
                     Back
                   </Button>
                 )}
                 {currentStep < steps.length ? (
-                  <Button onClick={handleNext} className="flex-1 bg-orange-500 hover:bg-orange-600">
+                  <Button
+                    onClick={handleNext}
+                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                  >
                     Next
                   </Button>
                 ) : (
@@ -706,5 +907,5 @@ export default function BuildingPermitPage() {
         </div>
       </div>
     </CitizenLayout>
-  )
+  );
 }

@@ -189,16 +189,10 @@ export default function MapPage() {
       <div className="flex flex-col min-h-screen bg-white">
         {/* Header */}
         <header className="bg-orange-600 text-white px-4 py-4">
-          <div className="mb-3 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              aria-label="Go back to previous page"
-              className="inline-flex items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
-              <ChevronLeft className="h-6 w-6" aria-hidden="true" />
-            </button>
-
+          <div className="flex items-center gap-3 mb-3">
+            <Link href="/dashboard/citizen">
+              <ChevronLeft className="w-6 h-6" />
+            </Link>
             <h1 className="text-xl font-bold">City Map</h1>
           </div>
 

@@ -2,7 +2,13 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import { ChevronLeft, MapPin, Upload, AlertCircle } from "lucide-react";
+import {
+  ChevronLeft,
+  MapPin,
+  Upload,
+  AlertCircle,
+  ClipboardList,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
@@ -216,11 +222,20 @@ export default function ReportIssuePage() {
       <div className="flex flex-col min-h-screen bg-white">
         {/* Header */}
         <header className="bg-orange-600 text-white px-4 py-4">
-          <div className="flex items-center gap-3 mb-2">
-            <Link href="/dashboard/citizen/">
-              <ChevronLeft className="w-6 h-6" />
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard/citizen/">
+                <ChevronLeft className="w-6 h-6" />
+              </Link>
+              <h1 className="text-xl font-bold">Report an Issue</h1>
+            </div>
+            <Link
+              href="/dashboard/citizen/view-reports"
+              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition-colors px-3 py-2 rounded-lg text-sm font-semibold"
+            >
+              <ClipboardList className="w-4 h-4" />
+              View Reports
             </Link>
-            <h1 className="text-xl font-bold">Report an Issue</h1>
           </div>
           <p className="text-orange-100 text-sm">
             Help us improve Pamploma Tres City

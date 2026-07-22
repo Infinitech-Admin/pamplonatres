@@ -138,7 +138,7 @@ export default function Home() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/news/published?per_page=3");
+        const response = await fetch("/api/news/published?per_page=20");
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

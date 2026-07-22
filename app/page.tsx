@@ -1,12 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ServicesSection from "@/components/services-section";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Users, Zap, Clock, X, Calendar, User } from "lucide-react";
+import {
+  ArrowRight,
+  Users,
+  Zap,
+  Clock,
+  X,
+  Calendar,
+  User,
+  Maximize2,
+  Minimize2,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 
 interface NewsArticle {
   id: number;
@@ -49,9 +61,58 @@ export default function Home() {
   const [typedText, setTypedText] = useState("");
   const [introVisible, setIntroVisible] = useState(true);
 
+  // Fullscreen video state
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Sound state — video must start muted for autoplay to work in browsers,
+  // person can tap to unmute.
+  const [isMuted, setIsMuted] = useState(true);
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
   const handleVideoEnd = () => {
+    // Don't auto-advance the carousel while the person is watching in
+    // fullscreen — let their clip finish/loop instead of yanking them
+    // to the next video mid-viewing.
+    if (isFullscreen) return;
     setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
   };
+
+  const toggleFullscreen = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        // iOS Safari doesn't support requestFullscreen() on arbitrary
+        // elements — only native fullscreen on the <video> itself.
+        if ((video as any).webkitEnterFullscreen) {
+          (video as any).webkitEnterFullscreen();
+        } else if (video.requestFullscreen) {
+          await video.requestFullscreen();
+        }
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error("Fullscreen request failed:", err);
+    }
+  };
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
 
   // Typewriter intro: types the greeting once, holds briefly, then fades
   // out for good so it stops covering the video.
@@ -156,22 +217,42 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <Header />
 
-      {/* Hero Section — full-bleed video carousel, minimal mark */}
-      <section className="relative w-full h-screen overflow-hidden bg-black">
-        {/* Video Carousel Background */}
+      {/* Hero Section — full-bleed video carousel, minimal mark.
+          The video stays landscape (16:9) at all breakpoints instead of
+          being stretched/cropped to fill a tall portrait phone screen.
+          A blurred copy of the same video fills any leftover space
+          behind it so there's no hard letterbox bars. */}
+      <section className="relative w-full aspect-video max-h-[92svh] sm:max-h-[85svh] lg:h-screen lg:max-h-none lg:aspect-auto overflow-hidden bg-black">
+        {/* Blurred fill layer — only visible where the landscape video
+            doesn't reach the edges (mainly on tall mobile screens) */}
         <div className="absolute inset-0 overflow-hidden">
+          <video
+            key={`bg-${currentVideoIndex}`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60"
+          >
+            <source src={heroVideos[currentVideoIndex]} type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Foreground video — kept in its native landscape ratio */}
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
           <AnimatePresence mode="sync">
             <motion.video
               key={currentVideoIndex}
+              ref={videoRef}
               initial={{ opacity: 0, scale: 1.04 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
               autoPlay
-              muted
+              muted={isMuted}
               playsInline
               onEnded={handleVideoEnd}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="relative w-full h-full lg:w-full lg:h-full object-contain lg:object-cover"
             >
               <source src={heroVideos[currentVideoIndex]} type="video/mp4" />
             </motion.video>
@@ -193,7 +274,7 @@ export default function Home() {
 
               <div className="relative h-full flex items-center justify-center px-6 text-center text-white">
                 <h1
-                  className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-none whitespace-nowrap"
+                  className="font-serif text-2xl sm:text-4xl md:text-5xl tracking-tight leading-tight max-w-[90vw] break-words"
                   style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                 >
                   {typedText}
@@ -212,9 +293,45 @@ export default function Home() {
           )}
         </AnimatePresence>
 
+        {/* Sound + Fullscreen toggle buttons */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center gap-2">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+            onClick={toggleMute}
+            aria-label={isMuted ? "Unmute video" : "Mute video"}
+            className="flex items-center justify-center bg-black/40 backdrop-blur-sm text-white p-2.5 sm:p-3 rounded-full border border-white/20 hover:bg-black/60 transition-colors"
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4" />
+            ) : (
+              <Volume2 className="w-4 h-4" />
+            )}
+          </motion.button>
+
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? "Exit fullscreen" : "Watch fullscreen"}
+            className="flex items-center gap-2 bg-black/40 backdrop-blur-sm text-white text-xs sm:text-sm font-medium px-3 py-2 sm:px-4 sm:py-2.5 rounded-full border border-white/20 hover:bg-black/60 transition-colors"
+          >
+            {isFullscreen ? (
+              <Minimize2 className="w-4 h-4" />
+            ) : (
+              <Maximize2 className="w-4 h-4" />
+            )}
+            <span className="hidden sm:inline">
+              {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            </span>
+          </motion.button>
+        </div>
+
         {/* Carousel dot indicators */}
         {heroVideos.length > 1 && (
-          <div className="absolute bottom-10 left-0 right-0 z-10 flex items-center justify-center gap-3">
+          <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 z-10 flex items-center justify-center gap-3">
             {heroVideos.map((_, i) => (
               <button
                 key={i}

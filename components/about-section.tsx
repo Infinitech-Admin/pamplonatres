@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import React from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Users, Home, Leaf, Award, X, ZoomIn } from "lucide-react"
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Users, Home, Leaf, Award, X, ZoomIn } from "lucide-react";
 
 export default function AboutSection() {
-  const [isImageModalOpen, setIsImageModalOpen] = React.useState(false)
+  const [isImageModalOpen, setIsImageModalOpen] = React.useState(false);
 
   const stats = [
     {
@@ -28,20 +28,23 @@ export default function AboutSection() {
       number: "20+",
       label: "Community Programs",
     },
-  ]
+  ];
 
   const highlights = [
     "Delivering efficient and responsive barangay services",
     "Fostering unity through community events and festivals",
     "Championing environmental sustainability initiatives",
     "Empowering residents through livelihood and skills programs",
-  ]
+  ];
 
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section
+      id="about"
+      className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+    >
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-green-50" />
-      
+
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Stats Grid - Now on Left */}
@@ -52,7 +55,7 @@ export default function AboutSection() {
             className="grid grid-cols-2 gap-6"
           >
             {stats.map((stat, i) => {
-              const Icon = stat.icon
+              const Icon = stat.icon;
               return (
                 <motion.div
                   key={i}
@@ -68,15 +71,17 @@ export default function AboutSection() {
                   <div className="text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
                     {stat.number}
                   </div>
-                  <div className="text-sm font-medium text-gray-600">{stat.label}</div>
+                  <div className="text-sm font-medium text-gray-600">
+                    {stat.label}
+                  </div>
                 </motion.div>
-              )
+              );
             })}
           </motion.div>
 
           {/* Text Content - Now on Right */}
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }} 
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
@@ -89,26 +94,28 @@ export default function AboutSection() {
                 Our Community
               </span>
             </motion.div>
-            
+
             <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
                 Barangay Pamplona Tres
               </span>
             </h2>
-            
+
             <div className="w-20 h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full mb-6" />
-            
+
             <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              Nestled in the bustling city of Las Piñas, Barangay Pamplona Tres is a thriving urban community 
-              where tradition meets progress. Home to over 18,500 residents, we are a diverse neighborhood 
-              united by shared values of cooperation, resilience, and progress.
+              Nestled in the bustling city of Las Piñas, Barangay Pamplona Tres
+              is a thriving urban community where tradition meets progress. Home
+              to over 18,500 residents, we are a diverse neighborhood united by
+              shared values of cooperation, resilience, and progress.
             </p>
-            
+
             <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-              Our barangay is more than just a place—it's a home where families grow, businesses flourish, 
-              and every voice matters. We take pride in:
+              Our barangay is more than just a place—it's a home where families
+              grow, businesses flourish, and every voice matters. We take pride
+              in:
             </p>
-            
+
             <ul className="space-y-4">
               {highlights.map((item, i) => (
                 <motion.li
@@ -121,7 +128,9 @@ export default function AboutSection() {
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 via-orange-500 to-green-500 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform shadow-md">
                     <span className="text-white text-lg font-bold">✓</span>
                   </div>
-                  <span className="text-gray-800 text-lg font-medium">{item}</span>
+                  <span className="text-gray-800 text-lg font-medium">
+                    {item}
+                  </span>
                 </motion.li>
               ))}
             </ul>
@@ -156,15 +165,16 @@ export default function AboutSection() {
                 Meet Our Team
               </span>
             </motion.div>
-            
+
             <h3 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
                 The People Behind Our Community
               </span>
             </h3>
-            
+
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Dedicated leaders and staff working together to serve Barangay Pamplona Tres
+              Dedicated leaders and staff working together to serve Barangay
+              Pamplona Tres
             </p>
           </div>
 
@@ -176,22 +186,22 @@ export default function AboutSection() {
           >
             {/* Placeholder for team image - replace with actual image */}
             <div className="aspect-[21/9] bg-gradient-to-br from-red-100 via-orange-100 to-green-100 relative">
-              <img 
+              <img
                 src="/our-team2.jpg"
                 alt="Barangay Pamplona Tres Team"
                 className="w-full h-full object-cover"
               />
-              
+
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
+
               {/* Zoom icon overlay */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
                   <ZoomIn className="w-8 h-8 text-gray-800" />
                 </div>
               </div>
-              
+
               {/* Border effect */}
               <div className="absolute inset-0 border-4 border-transparent group-hover:border-gradient-to-r group-hover:from-red-400 group-hover:via-orange-400 group-hover:to-green-400 rounded-3xl transition-all duration-300" />
             </div>
@@ -220,23 +230,29 @@ export default function AboutSection() {
           >
             <div className="text-center p-6 rounded-2xl bg-white/60 backdrop-blur-sm shadow-lg">
               <div className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
-                15+
+                11+
               </div>
-              <div className="text-gray-700 font-medium">Barangay Officials</div>
+              <div className="text-gray-700 font-medium">
+                Barangay Officials
+              </div>
             </div>
-            
+
             <div className="text-center p-6 rounded-2xl bg-white/60 backdrop-blur-sm shadow-lg">
               <div className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
-                30+
+                10+
               </div>
-              <div className="text-gray-700 font-medium">Dedicated Staff Members</div>
+              <div className="text-gray-700 font-medium">
+                Dedicated Staff Members
+              </div>
             </div>
-            
+
             <div className="text-center p-6 rounded-2xl bg-white/60 backdrop-blur-sm shadow-lg">
               <div className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
                 24/7
               </div>
-              <div className="text-gray-700 font-medium">Service Commitment</div>
+              <div className="text-gray-700 font-medium">
+                Service Commitment
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -278,7 +294,7 @@ export default function AboutSection() {
                 alt="Barangay Pamplona Tres Team - Full View"
                 className="w-full h-full object-contain rounded-2xl shadow-2xl"
               />
-              
+
               {/* Image caption */}
               <div className="mt-6 text-center">
                 <h4 className="text-2xl md:text-3xl font-bold text-white mb-2">
@@ -298,5 +314,5 @@ export default function AboutSection() {
         )}
       </AnimatePresence>
     </section>
-  )
+  );
 }

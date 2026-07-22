@@ -432,7 +432,7 @@ export default function Home() {
             </div>
           ) : news.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {news.slice(0, 3).map((item, i) => (
+              {news.slice(0, 20).map((item, i) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 30 }}

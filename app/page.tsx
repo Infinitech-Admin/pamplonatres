@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useRef } from "react"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import ServicesSection from "@/components/services-section"
-import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useState, useRef } from "react";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import ServicesSection from "@/components/services-section";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Users,
@@ -19,23 +19,23 @@ import {
   Volume2,
   VolumeX,
   MapPin,
-} from "lucide-react"
-import GallerySection from "@/components/gallery-section"
+} from "lucide-react";
+import GallerySection from "@/components/gallery-section";
 
 interface NewsArticle {
-  id: number
-  title: string
-  content: string
-  category: string
-  image?: string
-  status: string
-  published_at?: string
-  created_at: string
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  image?: string;
+  status: string;
+  published_at?: string;
+  created_at: string;
   author?: {
-    id: number
-    name: string
-    email: string
-  }
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 // Hero background videos, served from /public. Drop your files in
@@ -47,162 +47,162 @@ const heroVideos = [
   "/videos/hero-1.mp4",
   "/videos/hero-2.mp4",
   "/videos/hero-3.mp4",
-]
+];
 
-const heroText = "Welcome to Pamplona Tres"
-const TYPE_SPEED_MS = 65 // per character
-const HOLD_MS = 1400 // how long the finished text stays before fading
+const heroText = "Welcome to Pamplona Tres";
+const TYPE_SPEED_MS = 65; // per character
+const HOLD_MS = 1400; // how long the finished text stays before fading
 
 export default function Home() {
-  const [news, setNews] = useState<NewsArticle[]>([])
-  const [loading, setLoading] = useState(true)
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(
     null,
-  )
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
-  const [typedText, setTypedText] = useState("")
-  const [introVisible, setIntroVisible] = useState(true)
+  );
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [introVisible, setIntroVisible] = useState(true);
 
   // Fullscreen video state
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Sound state — video must start muted for autoplay to work in browsers,
   // person can tap to unmute.
-  const [isMuted, setIsMuted] = useState(true)
+  const [isMuted, setIsMuted] = useState(true);
 
   const toggleMute = () => {
-    const video = videoRef.current
-    if (!video) return
-    video.muted = !video.muted
-    setIsMuted(video.muted)
-  }
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
 
   const handleVideoEnd = () => {
     // Don't auto-advance the carousel while the person is watching in
     // fullscreen — let their clip finish/loop instead of yanking them
     // to the next video mid-viewing.
-    if (isFullscreen) return
-    setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length)
-  }
+    if (isFullscreen) return;
+    setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
+  };
 
   const toggleFullscreen = async () => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
     try {
       if (!document.fullscreenElement) {
         // iOS Safari doesn't support requestFullscreen() on arbitrary
         // elements — only native fullscreen on the <video> itself.
         if ((video as any).webkitEnterFullscreen) {
-          ;(video as any).webkitEnterFullscreen()
+          (video as any).webkitEnterFullscreen();
         } else if (video.requestFullscreen) {
-          await video.requestFullscreen()
+          await video.requestFullscreen();
         }
       } else {
-        await document.exitFullscreen()
+        await document.exitFullscreen();
       }
     } catch (err) {
-      console.error("Fullscreen request failed:", err)
+      console.error("Fullscreen request failed:", err);
     }
-  }
+  };
 
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
-    document.addEventListener("fullscreenchange", handleFsChange)
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
     return () =>
-      document.removeEventListener("fullscreenchange", handleFsChange)
-  }, [])
+      document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
 
   // Typewriter intro: types the greeting once, holds briefly, then fades
   // out for good so it stops covering the video.
   useEffect(() => {
-    let charIndex = 0
+    let charIndex = 0;
     const typingInterval = setInterval(() => {
-      charIndex += 1
-      setTypedText(heroText.slice(0, charIndex))
+      charIndex += 1;
+      setTypedText(heroText.slice(0, charIndex));
 
       if (charIndex >= heroText.length) {
-        clearInterval(typingInterval)
+        clearInterval(typingInterval);
         const holdTimeout = setTimeout(() => {
-          setIntroVisible(false)
-        }, HOLD_MS)
-        return () => clearTimeout(holdTimeout)
+          setIntroVisible(false);
+        }, HOLD_MS);
+        return () => clearTimeout(holdTimeout);
       }
-    }, TYPE_SPEED_MS)
+    }, TYPE_SPEED_MS);
 
-    return () => clearInterval(typingInterval)
-  }, [])
+    return () => clearInterval(typingInterval);
+  }, []);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        setLoading(true)
-        const response = await fetch("/api/news/published?per_page=20")
+        setLoading(true);
+        const response = await fetch("/api/news/published?per_page=20");
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json()
+        const result = await response.json();
 
         if (result.success) {
-          let newsData: NewsArticle[] = []
+          let newsData: NewsArticle[] = [];
 
           if (result.data && typeof result.data === "object") {
             if (Array.isArray(result.data.data)) {
-              newsData = result.data.data
+              newsData = result.data.data;
             } else if (Array.isArray(result.data)) {
-              newsData = result.data
+              newsData = result.data;
             }
           }
 
-          setNews(newsData)
+          setNews(newsData);
         } else {
-          throw new Error(result.message || "Failed to fetch news")
+          throw new Error(result.message || "Failed to fetch news");
         }
       } catch (error) {
-        console.error("[Home] Failed to fetch news:", error)
+        console.error("[Home] Failed to fetch news:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchNews()
-  }, [])
+    fetchNews();
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedArticle(null)
-    }
-    window.addEventListener("keydown", handleEscape)
-    return () => window.removeEventListener("keydown", handleEscape)
-  }, [])
+      if (e.key === "Escape") setSelectedArticle(null);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, []);
 
   useEffect(() => {
     if (selectedArticle) {
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = "unset";
     }
-  }, [selectedArticle])
+  }, [selectedArticle]);
 
   const stats = [
     { label: "Community Members", value: "18,500+", icon: Users },
     { label: "Services Offered", value: "14+", icon: Zap },
     { label: "Requests Processed", value: "500+", icon: Clock },
-  ]
+  ];
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   const getCategoryLabel = (category: string) => {
     const categoryMap: Record<string, string> = {
@@ -211,9 +211,9 @@ export default function Home() {
       alert: "Alert",
       update: "Update",
       news: "News",
-    }
-    return categoryMap[category?.toLowerCase()] || "Update"
-  }
+    };
+    return categoryMap[category?.toLowerCase()] || "Update";
+  };
 
   return (
     <main className="min-h-screen bg-white">
@@ -262,7 +262,11 @@ export default function Home() {
         </div>
 
         {/* Typewriter intro — types once, holds, then fades out for good
-            so the video underneath is left completely unobstructed. */}
+            so the video underneath is left completely unobstructed.
+            Text now carries the brand's red → orange → green gradient
+            (same treatment used on section headings) instead of plain
+            white, with a soft drop-shadow so it still reads clearly
+            over any video frame. */}
         <AnimatePresence>
           {introVisible && (
             <motion.div
@@ -272,12 +276,16 @@ export default function Home() {
               className="absolute inset-0 z-10"
             >
               {/* Contrast wash — fades away together with the text */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/5 to-black/45" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/10 to-black/50" />
 
-              <div className="relative h-full flex items-center justify-center px-6 text-center text-white">
+              <div className="relative h-full flex flex-col items-center justify-center px-6 text-center">
                 <h1
-                  className="font-serif text-2xl sm:text-4xl md:text-5xl tracking-tight leading-tight max-w-[90vw] break-words"
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  className="font-serif text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight max-w-[90vw] break-words bg-gradient-to-r from-red-400 via-orange-300 to-green-400 bg-clip-text text-transparent"
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    filter:
+                      "drop-shadow(0 2px 6px rgba(0,0,0,0.55)) drop-shadow(0 0 24px rgba(0,0,0,0.35))",
+                  }}
                 >
                   {typedText}
                   <motion.span
@@ -287,9 +295,23 @@ export default function Home() {
                       repeat: Infinity,
                       repeatType: "reverse",
                     }}
-                    className="inline-block w-[2px] h-[0.85em] bg-white/80 ml-1 translate-y-[0.08em]"
+                    className="inline-block w-[3px] h-[0.85em] bg-gradient-to-b from-red-400 via-orange-300 to-green-400 ml-1 translate-y-[0.08em] rounded-full"
                   />
                 </h1>
+
+                {/* Gradient accent underline — grows in once the line
+                    finishes typing, echoing the underline used under
+                    "OUR SERVICES" elsewhere on the page. */}
+                <motion.div
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={
+                    typedText.length === heroText.length
+                      ? { scaleX: 1, opacity: 1 }
+                      : { scaleX: 0, opacity: 0 }
+                  }
+                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-5 h-1 w-24 sm:w-32 origin-center rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-green-500 shadow-[0_0_16px_rgba(249,115,22,0.6)]"
+                />
               </div>
             </motion.div>
           )}
@@ -454,7 +476,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, i) => {
-              const Icon = stat.icon
+              const Icon = stat.icon;
               return (
                 <motion.div
                   key={i}
@@ -477,7 +499,7 @@ export default function Home() {
                     {stat.label}
                   </div>
                 </motion.div>
-              )
+              );
             })}
           </div>
         </div>
@@ -744,5 +766,5 @@ export default function Home() {
 
       <Footer />
     </main>
-  )
+  );
 }

@@ -230,7 +230,7 @@ export default function ReportIssuePage() {
               <h1 className="text-xl font-bold">Report an Issue</h1>
             </div>
             <Link
-              href="/dashboard/citizen/view-reports"
+              href="/dashboard/citizen/account/applications"
               className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition-colors px-3 py-2 rounded-lg text-sm font-semibold"
             >
               <ClipboardList className="w-4 h-4" />

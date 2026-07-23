@@ -161,7 +161,7 @@ export default function StudentsPage() {
         {/* Header */}
         <header className="bg-white px-4 py-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <Link href="/">
+            <Link href="/dashboard/citizen">
               <Button variant="ghost" size="icon" className="rounded-full">
                 <ArrowLeft className="w-5 h-5 text-gray-700" />
               </Button>

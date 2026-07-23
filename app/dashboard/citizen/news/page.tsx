@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   Calendar,
@@ -8,57 +8,57 @@ import {
   Share2,
   Bookmark,
   Newspaper,
-} from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import CitizenLayout from "@/components/citizenLayout"
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import CitizenLayout from "@/components/citizenLayout";
 
 interface NewsArticle {
-  id: string
-  title: string
-  excerpt: string
-  content: string
-  category: string
-  image?: string
-  publishedAt: string
-  views: number
-  author: string
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  image?: string;
+  publishedAt: string;
+  views: number;
+  author: string;
 }
 
 interface ApiNewsArticle {
-  id: number
-  title: string
-  description: string
-  content: string
-  image_url: string | null
-  status: string
-  priority: string
-  published_at: string | null
-  created_at: string
-  updated_at: string
+  id: number;
+  title: string;
+  description: string;
+  content: string;
+  image_url: string | null;
+  status: string;
+  priority: string;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export default function NewsPage() {
-  const [news, setNews] = useState<NewsArticle[]>([])
-  const [announcements, setAnnouncements] = useState<NewsArticle[]>([])
-  const [events, setEvents] = useState<NewsArticle[]>([])
-  const [projects, setProjects] = useState<NewsArticle[]>([])
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [announcements, setAnnouncements] = useState<NewsArticle[]>([]);
+  const [events, setEvents] = useState<NewsArticle[]>([]);
+  const [projects, setProjects] = useState<NewsArticle[]>([]);
 
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [loading, setLoading] = useState(true);
 
   const categories = [
     { value: "all", label: "All News" },
     { value: "announcements", label: "Announcements" },
     { value: "events", label: "Events" },
     { value: "projects", label: "Projects" },
-  ]
+  ];
 
   const transformArticle = (
     article: ApiNewsArticle,
     category: string,
   ): NewsArticle => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     return {
       id: `${category}-${article.id}`,
       title: article.title,
@@ -79,8 +79,8 @@ export default function NewsPage() {
           }),
       views: Math.floor(Math.random() * 1000),
       author: "Admin",
-    }
-  }
+    };
+  };
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -92,7 +92,7 @@ export default function NewsPage() {
             fetch("/api/announcements"),
             fetch("/api/events"),
             fetch("/api/projects"),
-          ])
+          ]);
 
         const [newsData, announcementsData, eventsData, projectsData] =
           await Promise.all([
@@ -100,12 +100,12 @@ export default function NewsPage() {
             announcementsRes.json(),
             eventsRes.json(),
             projectsRes.json(),
-          ])
+          ]);
 
         // Transform each category
         const transformedNews = (
           Array.isArray(newsData) ? newsData : newsData.data?.data || []
-        ).map((article: ApiNewsArticle) => transformArticle(article, "news"))
+        ).map((article: ApiNewsArticle) => transformArticle(article, "news"));
 
         const transformedAnnouncements = (
           Array.isArray(announcementsData)
@@ -113,11 +113,11 @@ export default function NewsPage() {
             : announcementsData.announcements || []
         ).map((article: ApiNewsArticle) =>
           transformArticle(article, "announcements"),
-        )
+        );
 
         const transformedEvents = (
           Array.isArray(eventsData) ? eventsData : eventsData.events || []
-        ).map((article: ApiNewsArticle) => transformArticle(article, "events"))
+        ).map((article: ApiNewsArticle) => transformArticle(article, "events"));
 
         const transformedProjects = (
           Array.isArray(projectsData)
@@ -125,42 +125,42 @@ export default function NewsPage() {
             : projectsData.projects || []
         ).map((article: ApiNewsArticle) =>
           transformArticle(article, "projects"),
-        )
+        );
 
-        setNews(transformedNews)
-        setAnnouncements(transformedAnnouncements)
-        setEvents(transformedEvents)
-        setProjects(transformedProjects)
+        setNews(transformedNews);
+        setAnnouncements(transformedAnnouncements);
+        setEvents(transformedEvents);
+        setProjects(transformedProjects);
       } catch (error) {
-        console.error("Error fetching data:", error)
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchAllData()
-  }, [])
+    fetchAllData();
+  }, []);
 
   // Combine all articles based on selected category
   const getFilteredNews = () => {
     switch (selectedCategory) {
       case "all":
-        return [...news, ...announcements, ...events, ...projects]
+        return [...news, ...announcements, ...events, ...projects];
       case "announcements":
-        return announcements
+        return announcements;
       case "events":
-        return events
+        return events;
       case "projects":
-        return projects
+        return projects;
       default:
-        return news
+        return news;
     }
-  }
+  };
 
-  const filteredNews = getFilteredNews()
+  const filteredNews = getFilteredNews();
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       <div className="h-screen overflow-auto bg-gray-50">
         {/* Header */}
         <header className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10 shadow-md">
@@ -280,7 +280,7 @@ export default function NewsPage() {
                           </span>
                           <button
                             onClick={(e) => {
-                              e.preventDefault()
+                              e.preventDefault();
                               // Share functionality
                             }}
                             className="flex items-center gap-1 hover:text-emerald-600 transition-colors"
@@ -289,7 +289,7 @@ export default function NewsPage() {
                           </button>
                           <button
                             onClick={(e) => {
-                              e.preventDefault()
+                              e.preventDefault();
                               // Bookmark functionality
                             }}
                             className="flex items-center gap-1 hover:text-orange-600 transition-colors"
@@ -307,5 +307,5 @@ export default function NewsPage() {
         </main>
       </div>
     </CitizenLayout>
-  )
+  );
 }

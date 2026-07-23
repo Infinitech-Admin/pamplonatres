@@ -124,7 +124,7 @@ export default function ServicesPage() {
     .filter((category) => category.services.length > 0);
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">All Services</h1>

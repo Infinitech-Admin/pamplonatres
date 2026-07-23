@@ -18,6 +18,7 @@ export async function middleware(request: NextRequest) {
     "/cookies",
     "/terms",
     "/privacy",
+    "/dashboard/citizen", // Home tab — viewable without login
   ];
 
   // Path PREFIXES that don't require authentication either.
@@ -26,7 +27,15 @@ export async function middleware(request: NextRequest) {
   // the page itself / the API route), not by the middleware.
   const publicPathPrefixes = [
     "/dashboard/citizen/report-issue",
-    "/dashboard/citizen/services", // covers /services/barangay-clearance, etc.
+    "/dashboard/citizen/services", // covers /services/barangay-clearance, /services/certificate-of-indigency, etc.
+    "/dashboard/citizen/emergency",
+    "/dashboard/citizen/news",
+    "/dashboard/citizen/alerts",
+    "/dashboard/citizen/city-map",
+    "/dashboard/citizen/students",
+    "/dashboard/citizen/startup",
+    "/dashboard/citizen/citizen-guide",
+    "/dashboard/citizen/account", // ✅ added — makes Account browsable too
   ];
 
   const isPublicPath =
@@ -95,13 +104,35 @@ export async function middleware(request: NextRequest) {
             new URL("/dashboard/citizen", request.url),
           );
         }
+
+        // Response was ok but no recognized role came back. Don't guess —
+        // just let them stay on /login rather than forcing a dashboard
+        // redirect or wiping a cookie that might still be fine.
+        return NextResponse.next();
       }
+
+      // Only treat the token as actually invalid when the API explicitly
+      // rejects it (401/403). Anything else (500, wrong endpoint, etc.)
+      // is a server-side problem, not proof the session is bad — don't
+      // punish the user for it by logging them out.
+      if (response.status === 401 || response.status === 403) {
+        const res = NextResponse.next();
+        res.cookies.delete("auth_token");
+        return res;
+      }
+
+      // Some other server error validating the token — leave the cookie
+      // alone and just let them stay on /login for now.
+      return NextResponse.next();
     } catch (error) {
       console.error("Middleware: Error fetching user role:", error);
-    }
 
-    // Default redirect if role check fails
-    return NextResponse.redirect(new URL("/dashboard/citizen", request.url));
+      // Network error reaching the API (e.g. NEXT_PUBLIC_API_URL misconfigured,
+      // backend temporarily down). This says nothing about whether the token
+      // itself is valid, so don't clear it — just let the request continue
+      // instead of forcing a logout.
+      return NextResponse.next();
+    }
   }
 
   // Allow access to public paths

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   MapPin,
@@ -13,30 +13,30 @@ import {
   FireExtinguisher,
   School,
   Landmark,
-} from "lucide-react"
-import Link from "next/link"
-import CitizenLayout from "@/components/citizenLayout"
-import { useRouter } from "next/navigation"
+} from "lucide-react";
+import Link from "next/link";
+import CitizenLayout from "@/components/citizenLayout";
+import { useRouter } from "next/navigation";
 
 interface Location {
-  id: string
-  name: string
-  category: string
-  address: string
-  phone?: string
-  lat: number
-  lng: number
-  icon: string
+  id: string;
+  name: string;
+  category: string;
+  address: string;
+  phone?: string;
+  lat: number;
+  lng: number;
+  icon: string;
 }
 
 export default function MapPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [userLocation, setUserLocation] = useState<{
-    lat: number
-    lng: number
-  } | null>(null)
-  const router = useRouter()
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const router = useRouter();
 
   const categories = [
     { value: "all", label: "All", icon: MapPin, color: "bg-orange-500" },
@@ -66,7 +66,7 @@ export default function MapPage() {
       icon: Landmark,
       color: "bg-teal-600",
     },
-  ]
+  ];
 
   const locations: Location[] = [
     {
@@ -128,7 +128,7 @@ export default function MapPage() {
       lng: 121.179,
       icon: "landmark",
     },
-  ]
+  ];
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -137,34 +137,34 @@ export default function MapPage() {
           setUserLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-          })
+          });
         },
         (error) => {
-          console.error("Error getting location:", error)
+          console.error("Error getting location:", error);
         },
-      )
+      );
     }
-  }, [])
+  }, []);
 
   const filteredLocations = locations.filter((location) => {
     const matchesCategory =
-      selectedCategory === "all" || location.category === selectedCategory
+      selectedCategory === "all" || location.category === selectedCategory;
     const matchesSearch =
       searchQuery === "" ||
       location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      location.address.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesSearch
-  })
+      location.address.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const getLocationIcon = (category: string) => {
-    const cat = categories.find((c) => c.value === category)
-    return cat ? cat.icon : MapPin
-  }
+    const cat = categories.find((c) => c.value === category);
+    return cat ? cat.icon : MapPin;
+  };
 
   const getLocationColor = (category: string) => {
-    const cat = categories.find((c) => c.value === category)
-    return cat ? cat.color : "bg-gray-500"
-  }
+    const cat = categories.find((c) => c.value === category);
+    return cat ? cat.color : "bg-gray-500";
+  };
 
   const calculateDistance = (
     lat1: number,
@@ -172,20 +172,20 @@ export default function MapPage() {
     lat2: number,
     lng2: number,
   ) => {
-    const R = 6371
-    const dLat = ((lat2 - lat1) * Math.PI) / 180
-    const dLng = ((lng2 - lng1) * Math.PI) / 180
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
     const a =
       Math.sin(dLat / 2) ** 2 +
       Math.cos((lat1 * Math.PI) / 180) *
         Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLng / 2) ** 2
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    return (R * c).toFixed(1)
-  }
+        Math.sin(dLng / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(1);
+  };
 
   return (
-    <CitizenLayout>
+    <CitizenLayout requireAuth={false}>
       <div className="flex flex-col min-h-screen bg-white">
         {/* Header */}
         <header className="bg-orange-600 text-white px-4 py-4">
@@ -213,7 +213,7 @@ export default function MapPage() {
         <div className="bg-white border-b border-gray-200 px-4 py-3 overflow-x-auto">
           <div className="flex gap-2">
             {categories.map((category) => {
-              const Icon = category.icon
+              const Icon = category.icon;
               return (
                 <button
                   key={category.value}
@@ -227,7 +227,7 @@ export default function MapPage() {
                   <Icon className="w-4 h-4" />
                   {category.label}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function MapPage() {
 
           <div className="space-y-3">
             {filteredLocations.map((location) => {
-              const Icon = getLocationIcon(location.category)
+              const Icon = getLocationIcon(location.category);
               const distance =
                 userLocation &&
                 calculateDistance(
@@ -276,11 +276,11 @@ export default function MapPage() {
                   userLocation.lng,
                   location.lat,
                   location.lng,
-                )
+                );
 
               const mapsUrl = userLocation
                 ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${location.lat},${location.lng}`
-                : `https://www.google.com/maps?q=${location.lat},${location.lng}`
+                : `https://www.google.com/maps?q=${location.lat},${location.lng}`;
 
               return (
                 <a
@@ -327,11 +327,11 @@ export default function MapPage() {
                     </div>
                   </div>
                 </a>
-              )
+              );
             })}
           </div>
         </main>
       </div>
     </CitizenLayout>
-  )
+  );
 }

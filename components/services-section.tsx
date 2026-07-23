@@ -147,15 +147,15 @@ const categoryOrder = [
 
 const categories = ["All", ...categoryOrder];
 
-const stats = [
-  {
-    label: "Guide Categories",
-    value: `${categoryOrder.length}`,
-    icon: Layers,
-  },
-  { label: "Residents Served", value: "18,500+", icon: Users },
-  { label: "Guides Published", value: `${guides.length}+`, icon: TrendingUp },
-];
+// const stats = [
+//   {
+//     label: "Guide Categories",
+//     value: `${categoryOrder.length}`,
+//     icon: Layers,
+//   },
+//   { label: "Residents Served", value: "18,500+", icon: Users },
+//   { label: "Guides Published", value: `${guides.length}+`, icon: TrendingUp },
+// ];
 
 export default function ServicesSection() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -319,7 +319,7 @@ export default function ServicesSection() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-green-50" />
 
         <div className="max-w-7xl mx-auto relative z-10">
@@ -352,10 +352,10 @@ export default function ServicesSection() {
             })}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 relative overflow-hidden">
+      {/* <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
 
@@ -395,7 +395,7 @@ export default function ServicesSection() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 }

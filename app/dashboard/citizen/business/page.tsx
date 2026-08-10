@@ -83,7 +83,7 @@ export default function BusinessPage() {
           <Card className="mb-6 border-orange-200 bg-orange-50">
             <CardContent className="p-4">
               <h2 className="font-semibold text-gray-900 mb-2">
-                Grow Your Business in Pamploma Tres
+                Grow Your Business in pamplona Tres
               </h2>
               <p className="text-sm text-gray-700">
                 Access permits, licenses, and business support services all in

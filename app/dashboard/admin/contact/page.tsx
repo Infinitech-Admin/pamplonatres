@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { 
-  Search, 
-  Filter, 
-  Eye, 
-  CheckCircle, 
-  XCircle, 
+import { useState, useEffect } from "react";
+import {
+  Search,
+  Filter,
+  Eye,
+  CheckCircle,
+  XCircle,
   Clock,
   ChevronLeft,
   ChevronRight,
@@ -15,59 +15,61 @@ import {
   Send,
   User,
   Calendar,
-  MessageSquare
-} from "lucide-react"
-import AdminLayout from "@/components/adminLayout"
-import { useAuth } from "@/hooks/useAuth"
-import { useToast } from "@/components/ui/use-toast"
+  MessageSquare,
+} from "lucide-react";
+import AdminLayout from "@/components/adminLayout";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ContactMessage {
-  id: number
-  name: string
-  email: string
-  subject: string
-  message: string
-  status: "unread" | "read" | "replied"
-  created_at: string
-  updated_at: string
-  replies?: ContactReply[]
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: "unread" | "read" | "replied";
+  created_at: string;
+  updated_at: string;
+  replies?: ContactReply[];
 }
 
 interface ContactReply {
-  id: number
-  contact_id: number
-  admin_id: number
-  message: string
-  sent_at: string
-  created_at: string
+  id: number;
+  contact_id: number;
+  admin_id: number;
+  message: string;
+  sent_at: string;
+  created_at: string;
   admin: {
-    id: number
-    name: string
-    email: string
-  }
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 interface PaginationData {
-  current_page: number
-  last_page: number
-  per_page: number
-  total: number
-  from: number
-  to: number
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 export default function AdminContactMessagesPage() {
-  const { user, loading: authLoading } = useAuth(true)
-  const { toast } = useToast()
-  
-  const [messages, setMessages] = useState<ContactMessage[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [replyMessage, setReplyMessage] = useState("")
-  const [isSendingReply, setIsSendingReply] = useState(false)
+  const { user, loading: authLoading } = useAuth(true);
+  const { toast } = useToast();
+
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [isSendingReply, setIsSendingReply] = useState(false);
   const [pagination, setPagination] = useState<PaginationData>({
     current_page: 1,
     last_page: 1,
@@ -75,39 +77,39 @@ export default function AdminContactMessagesPage() {
     total: 0,
     from: 0,
     to: 0,
-  })
+  });
 
   useEffect(() => {
     if (!authLoading && user) {
-      fetchMessages()
+      fetchMessages();
     }
-  }, [authLoading, user, pagination.current_page, statusFilter])
+  }, [authLoading, user, pagination.current_page, statusFilter]);
 
   const fetchMessages = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       const params = new URLSearchParams({
         page: pagination.current_page.toString(),
         per_page: pagination.per_page.toString(),
-      })
-      
+      });
+
       if (statusFilter !== "all") {
-        params.append("status", statusFilter)
+        params.append("status", statusFilter);
       }
-      
+
       if (searchQuery) {
-        params.append("search", searchQuery)
+        params.append("search", searchQuery);
       }
 
       const response = await fetch(`/api/contact/admin?${params}`, {
         credentials: "include",
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.success && data.data) {
-          setMessages(data.data.data || [])
+          setMessages(data.data.data || []);
           setPagination({
             current_page: data.data.current_page || 1,
             last_page: data.data.last_page || 1,
@@ -115,38 +117,38 @@ export default function AdminContactMessagesPage() {
             total: data.data.total || 0,
             from: data.data.from || 0,
             to: data.data.to || 0,
-          })
+          });
         }
       } else {
         toast({
           variant: "destructive",
           title: "Error",
           description: "Failed to fetch contact messages.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error fetching messages:", error)
+      console.error("Error fetching messages:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to load contact messages.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleViewMessage = (message: ContactMessage) => {
-    setSelectedMessage(message)
-    setIsModalOpen(true)
-    setReplyMessage("")
-  }
+    setSelectedMessage(message);
+    setIsModalOpen(true);
+    setReplyMessage("");
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedMessage(null)
-    setReplyMessage("")
-  }
+    setIsModalOpen(false);
+    setSelectedMessage(null);
+    setReplyMessage("");
+  };
 
   const handleSendReply = async () => {
     if (!selectedMessage || !replyMessage.trim()) {
@@ -154,86 +156,91 @@ export default function AdminContactMessagesPage() {
         variant: "destructive",
         title: "Error",
         description: "Please enter a reply message.",
-      })
-      return
+      });
+      return;
     }
 
     try {
-      setIsSendingReply(true)
+      setIsSendingReply(true);
 
-      const response = await fetch(`/api/contact/admin/${selectedMessage.id}/reply`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `/api/contact/admin/${selectedMessage.id}/reply`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            message: replyMessage,
+            recipientEmail: selectedMessage.email,
+            recipientName: selectedMessage.name,
+            originalSubject: selectedMessage.subject,
+          }),
         },
-        credentials: "include",
-        body: JSON.stringify({
-          message: replyMessage,
-          recipientEmail: selectedMessage.email,
-          recipientName: selectedMessage.name,
-          originalSubject: selectedMessage.subject,
-        }),
-      })
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
         toast({
           title: "Success",
           description: "Reply sent successfully!",
-        })
-        
-        setReplyMessage("")
-        closeModal()
-        fetchMessages()
+        });
+
+        setReplyMessage("");
+        closeModal();
+        fetchMessages();
       } else {
         toast({
           variant: "destructive",
           title: "Error",
           description: data.message || "Failed to send reply.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error sending reply:", error)
+      console.error("Error sending reply:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to send reply.",
-      })
+      });
     } finally {
-      setIsSendingReply(false)
+      setIsSendingReply(false);
     }
-  }
+  };
 
   const handleSearch = () => {
-    setPagination((prev) => ({ ...prev, current_page: 1 }))
-    fetchMessages()
-  }
+    setPagination((prev) => ({ ...prev, current_page: 1 }));
+    fetchMessages();
+  };
 
   const handlePageChange = (page: number) => {
-    setPagination((prev) => ({ ...prev, current_page: page }))
-  }
+    setPagination((prev) => ({ ...prev, current_page: page }));
+  };
 
   const getStatusBadge = (status: string) => {
     const styles = {
       unread: "bg-orange-100 text-orange-700",
       read: "bg-blue-100 text-blue-700",
       replied: "bg-green-100 text-green-700",
-    }
-    
+    };
+
     const icons = {
       unread: <Clock className="w-3 h-3" />,
       read: <Eye className="w-3 h-3" />,
       replied: <CheckCircle className="w-3 h-3" />,
-    }
+    };
 
     return (
-      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
+      <span
+        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}
+      >
         {icons[status as keyof typeof icons]}
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
-    )
-  }
+    );
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -242,8 +249,8 @@ export default function AdminContactMessagesPage() {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   if (authLoading) {
     return (
@@ -252,7 +259,7 @@ export default function AdminContactMessagesPage() {
           <div className="text-gray-600">Loading...</div>
         </div>
       </AdminLayout>
-    )
+    );
   }
 
   return (
@@ -266,7 +273,9 @@ export default function AdminContactMessagesPage() {
                 <Mail className="w-6 h-6 text-emerald-600" />
                 Contact Messages
               </h1>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Manage and respond to contact inquiries</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                Manage and respond to contact inquiries
+              </p>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
               <MessageSquare className="w-5 h-5 text-emerald-600" />
@@ -301,8 +310,8 @@ export default function AdminContactMessagesPage() {
                     <select
                       value={statusFilter}
                       onChange={(e) => {
-                        setStatusFilter(e.target.value)
-                        setPagination((prev) => ({ ...prev, current_page: 1 }))
+                        setStatusFilter(e.target.value);
+                        setPagination((prev) => ({ ...prev, current_page: 1 }));
                       }}
                       className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
                     >
@@ -345,7 +354,7 @@ export default function AdminContactMessagesPage() {
               </div>
             </div>
 
-            {/* Table */}
+            {/* List */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
@@ -358,81 +367,141 @@ export default function AdminContactMessagesPage() {
                 <div className="flex flex-col items-center justify-center py-12">
                   <Mail className="w-12 h-12 text-gray-400 mb-3" />
                   <p className="text-gray-600 font-medium">No messages found</p>
-                  <p className="text-gray-500 text-sm mt-1">Try adjusting your filters</p>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Try adjusting your filters
+                  </p>
                 </div>
               ) : (
                 <>
-                  {/* Scrollable Table */}
-                  <div className="overflow-x-auto">
-                    <div className="inline-block min-w-full align-middle">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white">
-                          <tr>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">Name</th>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">Email</th>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">Subject</th>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">Message</th>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">Status</th>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">Date</th>
-                            <th className="px-3 sm:px-4 py-3 text-center text-xs font-semibold uppercase whitespace-nowrap sticky right-0 bg-gradient-to-r from-emerald-600 to-orange-500">Actions</th>
+                  {/* Desktop / Tablet Table - hidden on mobile, no swipe needed */}
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
+                            Name
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
+                            Email
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
+                            Subject
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
+                            Message
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
+                            Status
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
+                            Date
+                          </th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold uppercase whitespace-nowrap">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 bg-white">
+                        {messages.map((message) => (
+                          <tr
+                            key={message.id}
+                            className="hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
+                              <div
+                                className="max-w-[150px] truncate"
+                                title={message.name}
+                              >
+                                {message.name}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                              <div
+                                className="max-w-[180px] truncate"
+                                title={message.email}
+                              >
+                                {message.email}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                              <div
+                                className="max-w-[200px] truncate"
+                                title={message.subject}
+                              >
+                                {message.subject}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                              <div
+                                className="max-w-[250px] truncate"
+                                title={message.message}
+                              >
+                                {message.message}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              {getStatusBadge(message.status)}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                              {formatDate(message.created_at)}
+                            </td>
+                            <td className="px-4 py-3 text-center whitespace-nowrap">
+                              <button
+                                onClick={() => handleViewMessage(message)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium hover:bg-emerald-200 transition-colors"
+                              >
+                                <Eye className="w-3 h-3" />
+                                <span>View</span>
+                              </button>
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 bg-white">
-                          {messages.map((message) => (
-                            <tr key={message.id} className="hover:bg-gray-50 transition-colors">
-                              <td className="px-3 sm:px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                <div className="max-w-[150px] truncate" title={message.name}>
-                                  {message.name}
-                                </div>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                                <div className="max-w-[180px] truncate" title={message.email}>
-                                  {message.email}
-                                </div>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                                <div className="max-w-[200px] truncate" title={message.subject}>
-                                  {message.subject}
-                                </div>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                                <div className="max-w-[250px] truncate" title={message.message}>
-                                  {message.message}
-                                </div>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 whitespace-nowrap">
-                                {getStatusBadge(message.status)}
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
-                                {formatDate(message.created_at)}
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 text-center whitespace-nowrap sticky right-0 bg-white">
-                                <button
-                                  onClick={() => handleViewMessage(message)}
-                                  className="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium hover:bg-emerald-200 transition-colors"
-                                >
-                                  <Eye className="w-3 h-3" />
-                                  <span className="hidden sm:inline">View</span>
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
 
-                  {/* Scroll Hint */}
-                  <div className="lg:hidden bg-emerald-50 border-t border-emerald-100 px-4 py-2 text-center">
-                    <p className="text-xs text-emerald-700 flex items-center justify-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-                      </svg>
-                      Swipe left to see more
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </p>
+                  {/* Mobile Cards - no horizontal scroll, no swiping */}
+                  <div className="sm:hidden divide-y divide-gray-200">
+                    {messages.map((message) => (
+                      <div key={message.id} className="p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold text-gray-900 truncate">
+                              {message.subject}
+                            </h3>
+                            <p className="text-xs text-gray-500 truncate">
+                              {message.name}
+                            </p>
+                          </div>
+                          {getStatusBadge(message.status)}
+                        </div>
+
+                        <p className="text-xs text-gray-500 line-clamp-2">
+                          {message.message}
+                        </p>
+
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <div className="flex items-center gap-1.5 truncate max-w-[60%]">
+                            <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span className="truncate">{message.email}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <Calendar className="w-3.5 h-3.5" />
+                            {formatDate(message.created_at)}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-end pt-2 border-t border-gray-100">
+                          <button
+                            onClick={() => handleViewMessage(message)}
+                            className="inline-flex items-center gap-1 px-3 py-2 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium hover:bg-emerald-200 transition-colors"
+                          >
+                            <Eye className="w-4 h-4" />
+                            <span>View</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </>
               )}
@@ -443,50 +512,63 @@ export default function AdminContactMessagesPage() {
               <div className="mt-4 bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                   <p className="text-sm text-gray-600">
-                    Showing {pagination.from} to {pagination.to} of {pagination.total} results
+                    Showing {pagination.from} to {pagination.to} of{" "}
+                    {pagination.total} results
                   </p>
-                  
+
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handlePageChange(pagination.current_page - 1)}
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
                       disabled={pagination.current_page === 1}
                       className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
-                    
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
-                        let pageNum
-                        if (pagination.last_page <= 5) {
-                          pageNum = i + 1
-                        } else if (pagination.current_page <= 3) {
-                          pageNum = i + 1
-                        } else if (pagination.current_page >= pagination.last_page - 2) {
-                          pageNum = pagination.last_page - 4 + i
-                        } else {
-                          pageNum = pagination.current_page - 2 + i
-                        }
 
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                              pagination.current_page === pageNum
-                                ? "bg-emerald-600 text-white"
-                                : "border border-gray-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        )
-                      })}
+                    <div className="flex items-center gap-1">
+                      {Array.from(
+                        { length: Math.min(5, pagination.last_page) },
+                        (_, i) => {
+                          let pageNum;
+                          if (pagination.last_page <= 5) {
+                            pageNum = i + 1;
+                          } else if (pagination.current_page <= 3) {
+                            pageNum = i + 1;
+                          } else if (
+                            pagination.current_page >=
+                            pagination.last_page - 2
+                          ) {
+                            pageNum = pagination.last_page - 4 + i;
+                          } else {
+                            pageNum = pagination.current_page - 2 + i;
+                          }
+
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => handlePageChange(pageNum)}
+                              className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                                pagination.current_page === pageNum
+                                  ? "bg-emerald-600 text-white"
+                                  : "border border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        },
+                      )}
                     </div>
 
                     <button
-                      onClick={() => handlePageChange(pagination.current_page + 1)}
-                      disabled={pagination.current_page === pagination.last_page}
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={
+                        pagination.current_page === pagination.last_page
+                      }
                       className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -503,12 +585,22 @@ export default function AdminContactMessagesPage() {
           <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
             <div className="bg-white sm:rounded-xl shadow-2xl w-full sm:max-w-4xl h-[95vh] sm:h-auto sm:max-h-[90vh] overflow-hidden flex flex-col">
               {/* Modal Header */}
-              <div style={{ background: 'linear-gradient(to right, rgb(5, 150, 105), rgb(249, 115, 22))' }} className="text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-10">
+              <div
+                style={{
+                  background:
+                    "linear-gradient(to right, rgb(5, 150, 105), rgb(249, 115, 22))",
+                }}
+                className="text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-10"
+              >
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <Mail className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                   <div className="min-w-0">
-                    <h2 className="text-lg sm:text-xl font-bold truncate">Contact Message</h2>
-                    <p className="text-xs sm:text-sm text-white/90">Message #{selectedMessage.id}</p>
+                    <h2 className="text-lg sm:text-xl font-bold truncate">
+                      Contact Message
+                    </h2>
+                    <p className="text-xs sm:text-sm text-white/90">
+                      Message #{selectedMessage.id}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -524,7 +616,9 @@ export default function AdminContactMessagesPage() {
                 <div className="space-y-4 sm:space-y-6 pb-4">
                   {/* Status */}
                   <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
-                    <span className="text-sm font-medium text-gray-700 block mb-2">Status</span>
+                    <span className="text-sm font-medium text-gray-700 block mb-2">
+                      Status
+                    </span>
                     {getStatusBadge(selectedMessage.status)}
                   </div>
 
@@ -540,14 +634,19 @@ export default function AdminContactMessagesPage() {
                           <User className="w-3 h-3 sm:w-4 sm:h-4" />
                           Name
                         </label>
-                        <p className="text-sm sm:text-base text-gray-900 font-medium break-words">{selectedMessage.name}</p>
+                        <p className="text-sm sm:text-base text-gray-900 font-medium break-words">
+                          {selectedMessage.name}
+                        </p>
                       </div>
                       <div>
                         <label className="text-xs sm:text-sm font-medium text-gray-500 flex items-center gap-1">
                           <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
                           Email
                         </label>
-                        <a href={`mailto:${selectedMessage.email}`} className="text-sm sm:text-base text-emerald-600 hover:text-emerald-700 font-medium break-all">
+                        <a
+                          href={`mailto:${selectedMessage.email}`}
+                          className="text-sm sm:text-base text-emerald-600 hover:text-emerald-700 font-medium break-all"
+                        >
                           {selectedMessage.email}
                         </a>
                       </div>
@@ -562,13 +661,21 @@ export default function AdminContactMessagesPage() {
                     </h3>
                     <div className="space-y-3">
                       <div>
-                        <label className="text-xs sm:text-sm font-medium text-gray-500">Subject</label>
-                        <p className="text-sm sm:text-base text-gray-900 font-semibold break-words">{selectedMessage.subject}</p>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">
+                          Subject
+                        </label>
+                        <p className="text-sm sm:text-base text-gray-900 font-semibold break-words">
+                          {selectedMessage.subject}
+                        </p>
                       </div>
                       <div>
-                        <label className="text-xs sm:text-sm font-medium text-gray-500">Message</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">
+                          Message
+                        </label>
                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
-                          <p className="text-sm sm:text-base text-gray-900 break-words whitespace-pre-wrap">{selectedMessage.message}</p>
+                          <p className="text-sm sm:text-base text-gray-900 break-words whitespace-pre-wrap">
+                            {selectedMessage.message}
+                          </p>
                         </div>
                       </div>
                       <div>
@@ -576,38 +683,56 @@ export default function AdminContactMessagesPage() {
                           <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                           Received
                         </label>
-                        <p className="text-sm sm:text-base text-gray-900">{formatDate(selectedMessage.created_at)}</p>
+                        <p className="text-sm sm:text-base text-gray-900">
+                          {formatDate(selectedMessage.created_at)}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Previous Replies */}
-                  {selectedMessage.replies && selectedMessage.replies.length > 0 && (
-                    <div>
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                        Previous Replies
-                      </h3>
-                      <div className="space-y-3">
-                        {selectedMessage.replies.map((reply) => (
-                          <div key={reply.id} className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-emerald-600 to-orange-500 text-white rounded-full text-sm font-semibold shadow-sm">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
-                                  </svg>
-                                  Admin - {reply.admin.name}
-                                </span>
+                  {selectedMessage.replies &&
+                    selectedMessage.replies.length > 0 && (
+                      <div>
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                          Previous Replies
+                        </h3>
+                        <div className="space-y-3">
+                          {selectedMessage.replies.map((reply) => (
+                            <div
+                              key={reply.id}
+                              className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-emerald-600 to-orange-500 text-white rounded-full text-sm font-semibold shadow-sm">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                    Admin - {reply.admin.name}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-500">
+                                  {formatDate(reply.sent_at)}
+                                </p>
                               </div>
-                              <p className="text-xs text-gray-500">{formatDate(reply.sent_at)}</p>
+                              <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                                {reply.message}
+                              </p>
                             </div>
-                            <p className="text-sm text-gray-900 whitespace-pre-wrap">{reply.message}</p>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Reply Form */}
                   <div>
@@ -617,7 +742,9 @@ export default function AdminContactMessagesPage() {
                     </h3>
                     <div className="space-y-3">
                       <div>
-                        <label className="text-xs sm:text-sm font-medium text-gray-500">Your Reply</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">
+                          Your Reply
+                        </label>
                         <textarea
                           rows={6}
                           value={replyMessage}
@@ -642,16 +769,31 @@ export default function AdminContactMessagesPage() {
                   >
                     Close
                   </button>
-                  <button 
+                  <button
                     onClick={handleSendReply}
                     disabled={isSendingReply || !replyMessage.trim()}
                     className="w-full sm:w-auto px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isSendingReply ? (
                       <>
-                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        <svg
+                          className="animate-spin h-4 w-4"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
                         </svg>
                         Sending...
                       </>
@@ -669,5 +811,5 @@ export default function AdminContactMessagesPage() {
         )}
       </div>
     </AdminLayout>
-  )
+  );
 }

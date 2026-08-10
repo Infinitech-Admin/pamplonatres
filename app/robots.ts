@@ -1,31 +1,31 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/admin/', '/api/private/', '/_next/', '/private/'],
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/admin/", "/api/private/", "/_next/", "/private/"],
       },
       {
-        userAgent: 'Googlebot',
-        allow: '/',
+        userAgent: "Googlebot",
+        allow: "/",
         crawlDelay: 0,
       },
       {
-        userAgent: 'Googlebot-Image',
-        allow: '/',
+        userAgent: "Googlebot-Image",
+        allow: "/",
       },
       {
-        userAgent: 'Bingbot',
-        allow: '/',
+        userAgent: "Bingbot",
+        allow: "/",
         crawlDelay: 0,
       },
     ],
     sitemap: [
-      'https://Pamploma Tres-city.vercel.app/sitemap.xml',
-      'https://Pamploma Tres-city.vercel.app/sitemap-0.xml',
+      "https://pamplona Tres-city.vercel.app/sitemap.xml",
+      "https://pamplona Tres-city.vercel.app/sitemap-0.xml",
     ],
-  }
+  };
 }

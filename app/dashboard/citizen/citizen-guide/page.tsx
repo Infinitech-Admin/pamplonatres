@@ -30,12 +30,12 @@ export default function CitizenGuidePage() {
         {
           title: "How to Register",
           content:
-            "Learn how to register as a citizen of Pamploma Tres City and access all services.",
+            "Learn how to register as a citizen of Pamplona Tres and access all services.",
           fullContent: (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
-                To register as a citizen of Pamploma Tres City and access all
-                online services, follow these simple steps:
+                To register as a citizen of Pamplona Tres and access all online
+                services, follow these simple steps:
               </p>
               <div className="space-y-3">
                 <div>
@@ -94,11 +94,11 @@ export default function CitizenGuidePage() {
         {
           title: "Business Permit Application",
           content:
-            "Step-by-step guide to apply for a business permit in Pamploma Tres City.",
+            "Step-by-step guide to apply for a business permit in pamplona Tres City.",
           fullContent: (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
-                Applying for a business permit in Pamploma Tres City is now
+                Applying for a business permit in pamplona Tres City is now
                 easier with our online application system.
               </p>
               <div className="space-y-3">
@@ -158,7 +158,7 @@ export default function CitizenGuidePage() {
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
                 A building permit is required for any construction, renovation,
-                or structural modification in Pamploma Tres City.
+                or structural modification in pamplona Tres City.
               </p>
               <div className="space-y-3">
                 <div>
@@ -252,7 +252,7 @@ export default function CitizenGuidePage() {
                     <li>
                       Proof of business registration (for business owners)
                     </li>
-                    <li>Proof of residency in Pamploma Tres City</li>
+                    <li>Proof of residency in pamplona Tres City</li>
                   </ul>
                 </div>
                 <div>
@@ -312,7 +312,7 @@ export default function CitizenGuidePage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Pamploma Tres City Police Station
+                    pamplona Tres City Police Station
                   </h4>
                   <p className="text-lg font-semibold text-gray-700">
                     (043) 288-2222
@@ -321,7 +321,7 @@ export default function CitizenGuidePage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Pamploma Tres Fire Station
+                    pamplona Tres Fire Station
                   </h4>
                   <p className="text-lg font-semibold text-gray-700">
                     (043) 288-3333
@@ -332,7 +332,7 @@ export default function CitizenGuidePage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Pamploma Tres City Hospital
+                    pamplona Tres City Hospital
                   </h4>
                   <p className="text-lg font-semibold text-gray-700">
                     (043) 288-4444
@@ -354,7 +354,7 @@ export default function CitizenGuidePage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Red Cross Pamploma Tres
+                    Red Cross pamplona Tres
                   </h4>
                   <p className="text-lg font-semibold text-gray-700">
                     (043) 288-6666
@@ -379,7 +379,7 @@ export default function CitizenGuidePage() {
           fullContent: (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
-                Pamploma Tres City is prone to typhoons, floods, and
+                pamplona Tres City is prone to typhoons, floods, and
                 earthquakes. Being prepared can save lives.
               </p>
               <div className="space-y-3">
@@ -448,11 +448,11 @@ export default function CitizenGuidePage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Evacuation Centers in Pamploma Tres
+                    Evacuation Centers in pamplona Tres
                   </h4>
                   <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    <li>Pamploma Tres City Sports Complex</li>
-                    <li>Pamploma Tres National High School</li>
+                    <li>pamplona Tres City Sports Complex</li>
+                    <li>pamplona Tres National High School</li>
                     <li>Various Barangay Halls (check with your barangay)</li>
                   </ul>
                 </div>
@@ -492,7 +492,7 @@ export default function CitizenGuidePage() {
           <Card className="mb-6 border-orange-200 bg-orange-50">
             <CardContent className="p-4">
               <h2 className="font-semibold text-gray-900 mb-2">
-                Welcome to Pamploma Tres City!
+                Welcome to pamplona Tres City!
               </h2>
               <p className="text-sm text-gray-700">
                 This guide will help you navigate city services, understand

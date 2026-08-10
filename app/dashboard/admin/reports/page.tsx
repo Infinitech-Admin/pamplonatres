@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   Search,
   Filter,
@@ -9,85 +9,85 @@ import {
   ChevronRight,
   AlertCircle,
   Clock,
-  
   CheckCircle,
   XCircle,
   MapPin,
   User,
   Calendar,
-} from "lucide-react"
-import Image from "next/image"
-import AdminLayout from "@/components/adminLayout"
-import { useAuth } from "@/hooks/useAuth"
-import { useToast } from "@/components/ui/use-toast"
+} from "lucide-react";
+import Image from "next/image";
+import AdminLayout from "@/components/adminLayout";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Report {
-  id: number
-  report_id: string
-  user_id: number
+  id: number;
+  report_id: string;
+  user_id: number;
   user?: {
-    id: number
-    name: string
-    email: string
-  }
-  title: string
-  description: string
-  category: string
-  location: string
-  urgency: "low" | "medium" | "high"
-  status: "pending" | "in_progress" | "resolved" | "rejected"
-  timestamp?: string
-  created_at: string
-  updated_at: string
+    id: number;
+    name: string;
+    email: string;
+  };
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  urgency: "low" | "medium" | "high";
+  status: "pending" | "in_progress" | "resolved" | "rejected";
+  timestamp?: string;
+  created_at: string;
+  updated_at: string;
   files?: Array<{
-    id: number
-    path: string
-    type: string
-  }>
+    id: number;
+    path: string;
+    type: string;
+  }>;
 }
 
 interface PaginationData {
-  current_page: number
-  last_page: number
-  per_page: number
-  total: number
-  from: number
-  to: number
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 export default function AdminReportsPage() {
-  const { user, loading: authLoading } = useAuth(true)
-  const { toast } = useToast()
+  const { user, loading: authLoading } = useAuth(true);
+  const { toast } = useToast();
 
-  const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000"
+  const IMAGE_BASE_URL =
+    process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000";
 
   const getImageUrl = (path?: string) => {
-    if (!path) return "/placeholder-image.jpg"
-    
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-      return path
-    }
-    
-    if (path.startsWith("storage/")) {
-      return `${IMAGE_BASE_URL}/${path}`
-    }
-    
-    if (!path.startsWith("/")) {
-      return `${IMAGE_BASE_URL}/storage/${path}`
-    }
-    
-    return `${IMAGE_BASE_URL}${path}`
-  }
+    if (!path) return "/placeholder-image.jpg";
 
-  const [reports, setReports] = useState<Report[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [urgencyFilter, setUrgencyFilter] = useState("all")
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path;
+    }
+
+    if (path.startsWith("storage/")) {
+      return `${IMAGE_BASE_URL}/${path}`;
+    }
+
+    if (!path.startsWith("/")) {
+      return `${IMAGE_BASE_URL}/storage/${path}`;
+    }
+
+    return `${IMAGE_BASE_URL}${path}`;
+  };
+
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [urgencyFilter, setUrgencyFilter] = useState("all");
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const [pagination, setPagination] = useState<PaginationData>({
     current_page: 1,
@@ -96,76 +96,108 @@ export default function AdminReportsPage() {
     total: 0,
     from: 0,
     to: 0,
-  })
+  });
 
   const categories = [
     { value: "road", label: "Road", color: "bg-blue-100 text-blue-700" },
-    { value: "streetlight", label: "Street Light", color: "bg-yellow-100 text-yellow-700" },
-    { value: "garbage", label: "Garbage", color: "bg-green-100 text-green-700" },
+    {
+      value: "streetlight",
+      label: "Street Light",
+      color: "bg-yellow-100 text-yellow-700",
+    },
+    {
+      value: "garbage",
+      label: "Garbage",
+      color: "bg-green-100 text-green-700",
+    },
     { value: "water", label: "Water", color: "bg-cyan-100 text-cyan-700" },
-    { value: "drainage", label: "Drainage", color: "bg-purple-100 text-purple-700" },
+    {
+      value: "drainage",
+      label: "Drainage",
+      color: "bg-purple-100 text-purple-700",
+    },
     { value: "other", label: "Other", color: "bg-gray-100 text-gray-700" },
-  ]
+  ];
 
   const statuses = [
-    { value: "pending", label: "Pending", color: "bg-yellow-100 text-yellow-700", icon: Clock },
-    { value: "in_progress", label: "In Progress", color: "bg-blue-100 text-blue-700", icon: AlertCircle },
-    { value: "resolved", label: "Resolved", color: "bg-green-100 text-green-700", icon: CheckCircle },
-    { value: "rejected", label: "Rejected", color: "bg-red-100 text-red-700", icon: XCircle },
-  ]
+    {
+      value: "pending",
+      label: "Pending",
+      color: "bg-yellow-100 text-yellow-700",
+      icon: Clock,
+    },
+    {
+      value: "in_progress",
+      label: "In Progress",
+      color: "bg-blue-100 text-blue-700",
+      icon: AlertCircle,
+    },
+    {
+      value: "resolved",
+      label: "Resolved",
+      color: "bg-green-100 text-green-700",
+      icon: CheckCircle,
+    },
+    {
+      value: "rejected",
+      label: "Rejected",
+      color: "bg-red-100 text-red-700",
+      icon: XCircle,
+    },
+  ];
 
   const urgencies = [
     { value: "low", label: "Low", color: "text-green-600" },
     { value: "medium", label: "Medium", color: "text-yellow-600" },
     { value: "high", label: "High", color: "text-red-600" },
-  ]
+  ];
 
   useEffect(() => {
     if (!authLoading && user) {
-      fetchReports()
+      fetchReports();
     }
-  }, [authLoading, user])
+  }, [authLoading, user]);
 
   useEffect(() => {
     if (!authLoading && user) {
-      fetchReports()
+      fetchReports();
     }
-  }, [pagination.current_page, categoryFilter, statusFilter, urgencyFilter])
+  }, [pagination.current_page, categoryFilter, statusFilter, urgencyFilter]);
 
   const fetchReports = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       const params = new URLSearchParams({
         page: pagination.current_page.toString(),
         per_page: pagination.per_page.toString(),
-      })
+      });
 
       if (categoryFilter !== "all") {
-        params.append("category", categoryFilter)
+        params.append("category", categoryFilter);
       }
 
       if (statusFilter !== "all") {
-        params.append("status", statusFilter)
+        params.append("status", statusFilter);
       }
 
       if (urgencyFilter !== "all") {
-        params.append("urgency", urgencyFilter)
+        params.append("urgency", urgencyFilter);
       }
 
       if (searchQuery) {
-        params.append("search", searchQuery)
+        params.append("search", searchQuery);
       }
 
       const response = await fetch(`/api/admin/reports?${params}`, {
         credentials: "include",
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
 
         if (data.success && data.data) {
-          setReports(data.data.data || data.data || [])
+          setReports(data.data.data || data.data || []);
           if (data.data.current_page) {
             setPagination({
               current_page: data.data.current_page || 1,
@@ -174,38 +206,41 @@ export default function AdminReportsPage() {
               total: data.data.total || 0,
               from: data.data.from || 0,
               to: data.data.to || 0,
-            })
+            });
           }
         }
       } else {
-        const errorData = await response.json()
-        console.error("Error response:", errorData)
+        const errorData = await response.json();
+        console.error("Error response:", errorData);
         toast({
           variant: "destructive",
           title: "Error",
           description: errorData.message || "Failed to fetch reports.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error fetching reports:", error)
+      console.error("Error fetching reports:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to load reports.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleViewReport = (report: Report) => {
-    setSelectedReport(report)
-    setIsModalOpen(true)
-  }
+    setSelectedReport(report);
+    setIsModalOpen(true);
+  };
 
-  const handleUpdateStatus = async (reportId: number, newStatus: Report["status"]) => {
+  const handleUpdateStatus = async (
+    reportId: number,
+    newStatus: Report["status"],
+  ) => {
     try {
-      setIsUpdating(true)
+      setIsUpdating(true);
 
       const response = await fetch(`/api/admin/reports/${reportId}/status`, {
         method: "PATCH",
@@ -214,85 +249,93 @@ export default function AdminReportsPage() {
         },
         credentials: "include",
         body: JSON.stringify({ status: newStatus }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: "Success",
           description: "Report status updated successfully.",
-        })
-        
-        setReports(reports.map(r => 
-          r.id === reportId ? { ...r, status: newStatus } : r
-        ))
-        
+        });
+
+        setReports(
+          reports.map((r) =>
+            r.id === reportId ? { ...r, status: newStatus } : r,
+          ),
+        );
+
         if (selectedReport?.id === reportId) {
-          setSelectedReport({ ...selectedReport, status: newStatus })
+          setSelectedReport({ ...selectedReport, status: newStatus });
         }
       } else {
         toast({
           variant: "destructive",
           title: "Error",
           description: data.message || "Failed to update status.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error updating status:", error)
+      console.error("Error updating status:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to update status.",
-      })
+      });
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedReport(null)
-  }
+    setIsModalOpen(false);
+    setSelectedReport(null);
+  };
 
   const handleSearch = () => {
-    setPagination((prev) => ({ ...prev, current_page: 1 }))
-    fetchReports()
-  }
+    setPagination((prev) => ({ ...prev, current_page: 1 }));
+    fetchReports();
+  };
 
   const handlePageChange = (page: number) => {
-    setPagination((prev) => ({ ...prev, current_page: page }))
-  }
+    setPagination((prev) => ({ ...prev, current_page: page }));
+  };
 
   const getCategoryBadge = (category: string) => {
-    const cat = categories.find((c) => c.value === category)
+    const cat = categories.find((c) => c.value === category);
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${cat?.color || "bg-gray-100 text-gray-700"}`}>
+      <span
+        className={`px-2 py-1 text-xs font-medium rounded-full ${cat?.color || "bg-gray-100 text-gray-700"}`}
+      >
         {cat?.label || category}
       </span>
-    )
-  }
+    );
+  };
 
   const getStatusBadge = (status: string) => {
-    const stat = statuses.find((s) => s.value === status)
-    const Icon = stat?.icon || Clock
+    const stat = statuses.find((s) => s.value === status);
+    const Icon = stat?.icon || Clock;
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1 ${stat?.color || "bg-gray-100 text-gray-700"}`}>
+      <span
+        className={`px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1 ${stat?.color || "bg-gray-100 text-gray-700"}`}
+      >
         <Icon className="w-3 h-3" />
         {stat?.label || status}
       </span>
-    )
-  }
+    );
+  };
 
   const getUrgencyBadge = (urgency: string) => {
-    const urg = urgencies.find((u) => u.value === urgency)
+    const urg = urgencies.find((u) => u.value === urgency);
     return (
-      <span className={`text-xs font-semibold ${urg?.color || "text-gray-600"}`}>
+      <span
+        className={`text-xs font-semibold ${urg?.color || "text-gray-600"}`}
+      >
         {urg?.label || urgency}
       </span>
-    )
-  }
+    );
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -301,8 +344,8 @@ export default function AdminReportsPage() {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   if (authLoading) {
     return (
@@ -312,7 +355,7 @@ export default function AdminReportsPage() {
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -326,8 +369,12 @@ export default function AdminReportsPage() {
                   <AlertCircle className="w-6 h-6 text-orange-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Reports Management</h1>
-                  <p className="text-sm text-gray-500">Manage citizen reports and issues</p>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Reports Management
+                  </h1>
+                  <p className="text-sm text-gray-500">
+                    Manage citizen reports and issues
+                  </p>
                 </div>
               </div>
             </div>
@@ -355,8 +402,8 @@ export default function AdminReportsPage() {
                 <select
                   value={categoryFilter}
                   onChange={(e) => {
-                    setCategoryFilter(e.target.value)
-                    setPagination((prev) => ({ ...prev, current_page: 1 }))
+                    setCategoryFilter(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
                   }}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
                 >
@@ -374,8 +421,8 @@ export default function AdminReportsPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => {
-                    setStatusFilter(e.target.value)
-                    setPagination((prev) => ({ ...prev, current_page: 1 }))
+                    setStatusFilter(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
                   }}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
                 >
@@ -393,8 +440,8 @@ export default function AdminReportsPage() {
                 <select
                   value={urgencyFilter}
                   onChange={(e) => {
-                    setUrgencyFilter(e.target.value)
-                    setPagination((prev) => ({ ...prev, current_page: 1 }))
+                    setUrgencyFilter(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
                   }}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
                 >
@@ -420,7 +467,9 @@ export default function AdminReportsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <p className="text-xs text-gray-500 mb-1">Total Reports</p>
-              <p className="text-2xl font-bold text-gray-900">{pagination.total}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {pagination.total}
+              </p>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <p className="text-xs text-gray-500 mb-1">Pending</p>
@@ -442,7 +491,7 @@ export default function AdminReportsPage() {
             </div>
           </div>
 
-          {/* Reports Table */}
+          {/* Reports List */}
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {loading ? (
               <div className="flex items-center justify-center py-12">
@@ -454,12 +503,15 @@ export default function AdminReportsPage() {
             ) : reports.length === 0 ? (
               <div className="text-center py-12">
                 <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No reports found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No reports found
+                </h3>
                 <p className="text-gray-500">No citizen reports available</p>
               </div>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                {/* Desktop / Tablet Table - hidden on mobile, no swipe needed */}
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
@@ -491,9 +543,14 @@ export default function AdminReportsPage() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {reports.map((report) => (
-                        <tr key={report.id} className="hover:bg-gray-50 transition-colors">
+                        <tr
+                          key={report.id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-mono text-gray-900">{report.report_id}</div>
+                            <div className="text-sm font-mono text-gray-900">
+                              {report.report_id}
+                            </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
@@ -505,8 +562,12 @@ export default function AdminReportsPage() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{report.user?.name || "N/A"}</div>
-                            <div className="text-xs text-gray-500">{report.user?.email || ""}</div>
+                            <div className="text-sm text-gray-900">
+                              {report.user?.name || "N/A"}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {report.user?.email || ""}
+                            </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {getCategoryBadge(report.category)}
@@ -517,11 +578,20 @@ export default function AdminReportsPage() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <select
                               value={report.status}
-                              onChange={(e) => handleUpdateStatus(report.id, e.target.value as Report["status"])}
+                              onChange={(e) =>
+                                handleUpdateStatus(
+                                  report.id,
+                                  e.target.value as Report["status"],
+                                )
+                              }
                               disabled={isUpdating}
                               className="text-xs font-medium rounded-full px-2 py-1 border-0 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                               style={{
-                                backgroundColor: statuses.find(s => s.value === report.status)?.color.split(' ')[0].replace('bg-', '') || '#f3f4f6',
+                                backgroundColor:
+                                  statuses
+                                    .find((s) => s.value === report.status)
+                                    ?.color.split(" ")[0]
+                                    .replace("bg-", "") || "#f3f4f6",
                               }}
                             >
                               {statuses.map((stat) => (
@@ -549,16 +619,84 @@ export default function AdminReportsPage() {
                   </table>
                 </div>
 
+                {/* Mobile Cards - no horizontal scroll, no swiping */}
+                <div className="sm:hidden divide-y divide-gray-200">
+                  {reports.map((report) => (
+                    <div key={report.id} className="p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-gray-900 truncate">
+                            {report.title}
+                          </h3>
+                          <p className="text-xs text-gray-500 font-mono">
+                            {report.report_id}
+                          </p>
+                        </div>
+                        {getCategoryBadge(report.category)}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {report.location}
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex items-center gap-1.5">
+                          <User className="w-3.5 h-3.5" />
+                          {report.user?.name || "N/A"}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {formatDate(report.created_at)}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
+                        <div className="flex items-center gap-2">
+                          {getUrgencyBadge(report.urgency)}
+                          <select
+                            value={report.status}
+                            onChange={(e) =>
+                              handleUpdateStatus(
+                                report.id,
+                                e.target.value as Report["status"],
+                              )
+                            }
+                            disabled={isUpdating}
+                            className="text-xs font-medium rounded-full px-2 py-1 border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
+                          >
+                            {statuses.map((stat) => (
+                              <option key={stat.value} value={stat.value}>
+                                {stat.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <button
+                          onClick={() => handleViewReport(report)}
+                          className="inline-flex items-center gap-1 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors flex-shrink-0"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span>View</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 {/* Pagination */}
                 {!loading && reports.length > 0 && (
-                  <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-sm text-gray-700">
-                      Showing {pagination.from} to {pagination.to} of {pagination.total} results
+                      Showing {pagination.from} to {pagination.to} of{" "}
+                      {pagination.total} results
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handlePageChange(pagination.current_page - 1)}
+                        onClick={() =>
+                          handlePageChange(pagination.current_page - 1)
+                        }
                         disabled={pagination.current_page === 1}
                         className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
@@ -566,37 +704,47 @@ export default function AdminReportsPage() {
                       </button>
 
                       <div className="flex items-center gap-1">
-                        {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
-                          let pageNum
-                          if (pagination.last_page <= 5) {
-                            pageNum = i + 1
-                          } else if (pagination.current_page <= 3) {
-                            pageNum = i + 1
-                          } else if (pagination.current_page >= pagination.last_page - 2) {
-                            pageNum = pagination.last_page - 4 + i
-                          } else {
-                            pageNum = pagination.current_page - 2 + i
-                          }
+                        {Array.from(
+                          { length: Math.min(5, pagination.last_page) },
+                          (_, i) => {
+                            let pageNum;
+                            if (pagination.last_page <= 5) {
+                              pageNum = i + 1;
+                            } else if (pagination.current_page <= 3) {
+                              pageNum = i + 1;
+                            } else if (
+                              pagination.current_page >=
+                              pagination.last_page - 2
+                            ) {
+                              pageNum = pagination.last_page - 4 + i;
+                            } else {
+                              pageNum = pagination.current_page - 2 + i;
+                            }
 
-                          return (
-                            <button
-                              key={pageNum}
-                              onClick={() => handlePageChange(pageNum)}
-                              className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                                pagination.current_page === pageNum
-                                  ? "bg-orange-600 text-white"
-                                  : "border border-gray-300 hover:bg-gray-50"
-                              }`}
-                            >
-                              {pageNum}
-                            </button>
-                          )
-                        })}
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => handlePageChange(pageNum)}
+                                className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                                  pagination.current_page === pageNum
+                                    ? "bg-orange-600 text-white"
+                                    : "border border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          },
+                        )}
                       </div>
 
                       <button
-                        onClick={() => handlePageChange(pagination.current_page + 1)}
-                        disabled={pagination.current_page === pagination.last_page}
+                        onClick={() =>
+                          handlePageChange(pagination.current_page + 1)
+                        }
+                        disabled={
+                          pagination.current_page === pagination.last_page
+                        }
                         className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         <ChevronRight className="w-4 h-4" />
@@ -615,8 +763,12 @@ export default function AdminReportsPage() {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
               <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Report Details</h2>
-                  <p className="text-sm text-gray-500 mt-1">{selectedReport.report_id}</p>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Report Details
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {selectedReport.report_id}
+                  </p>
                 </div>
                 <button
                   onClick={closeModal}
@@ -634,34 +786,53 @@ export default function AdminReportsPage() {
                       <User className="w-5 h-5 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{selectedReport.user?.name || "Unknown"}</p>
-                      <p className="text-xs text-gray-500">{selectedReport.user?.email || ""}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {selectedReport.user?.name || "Unknown"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {selectedReport.user?.email || ""}
+                      </p>
                     </div>
                   </div>
 
                   {/* Report Info */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Title</label>
-                      <p className="text-base text-gray-900">{selectedReport.title}</p>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Title
+                      </label>
+                      <p className="text-base text-gray-900">
+                        {selectedReport.title}
+                      </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Category</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Category
+                      </label>
                       <div>{getCategoryBadge(selectedReport.category)}</div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Urgency</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Urgency
+                      </label>
                       <div>{getUrgencyBadge(selectedReport.urgency)}</div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Status
+                      </label>
                       <div className="flex items-center gap-2">
                         <select
                           value={selectedReport.status}
-                          onChange={(e) => handleUpdateStatus(selectedReport.id, e.target.value as Report["status"])}
+                          onChange={(e) =>
+                            handleUpdateStatus(
+                              selectedReport.id,
+                              e.target.value as Report["status"],
+                            )
+                          }
                           disabled={isUpdating}
                           className="text-sm font-medium rounded-lg px-3 py-1.5 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
                         >
@@ -675,7 +846,9 @@ export default function AdminReportsPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Location</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Location
+                      </label>
                       <p className="text-base text-gray-900 flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-gray-400" />
                         {selectedReport.location}
@@ -683,14 +856,20 @@ export default function AdminReportsPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Description</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Description
+                      </label>
                       <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-base text-gray-900 whitespace-pre-wrap">{selectedReport.description}</p>
+                        <p className="text-base text-gray-900 whitespace-pre-wrap">
+                          {selectedReport.description}
+                        </p>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Created At</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Created At
+                      </label>
                       <p className="text-sm text-gray-900 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
                         {formatDate(selectedReport.created_at)}
@@ -698,7 +877,9 @@ export default function AdminReportsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">Last Updated</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                        Last Updated
+                      </label>
                       <p className="text-sm text-gray-900 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
                         {formatDate(selectedReport.updated_at)}
@@ -709,11 +890,16 @@ export default function AdminReportsPage() {
                   {/* Files */}
                   {selectedReport.files && selectedReport.files.length > 0 && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-2">Attachments</label>
+                      <label className="block text-sm font-medium text-gray-500 mb-2">
+                        Attachments
+                      </label>
                       <div className="grid grid-cols-2 gap-4">
                         {selectedReport.files.map((file) => (
-                          <div key={file.id} className="relative h-32 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                            {file.type === 'image' ? (
+                          <div
+                            key={file.id}
+                            className="relative h-32 rounded-lg overflow-hidden bg-gray-100 border border-gray-200"
+                          >
+                            {file.type === "image" ? (
                               <Image
                                 src={getImageUrl(file.path)}
                                 alt="Report attachment"
@@ -721,18 +907,23 @@ export default function AdminReportsPage() {
                                 className="object-cover"
                                 unoptimized
                                 onError={(e) => {
-                                  console.error("Image load error for:", file.path)
-                                  const target = e.target as HTMLImageElement
-                                  target.src = "/placeholder-image.jpg"
+                                  console.error(
+                                    "Image load error for:",
+                                    file.path,
+                                  );
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = "/placeholder-image.jpg";
                                 }}
                               />
                             ) : (
                               <div className="flex items-center justify-center h-full">
                                 <div className="text-center">
-                                  <p className="text-sm text-gray-500">Video File</p>
-                                  <a 
-                                    href={getImageUrl(file.path)} 
-                                    target="_blank" 
+                                  <p className="text-sm text-gray-500">
+                                    Video File
+                                  </p>
+                                  <a
+                                    href={getImageUrl(file.path)}
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-blue-600 hover:underline"
                                   >
@@ -762,5 +953,5 @@ export default function AdminReportsPage() {
         )}
       </div>
     </AdminLayout>
-  )
+  );
 }

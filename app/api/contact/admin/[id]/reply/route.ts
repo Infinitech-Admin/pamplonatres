@@ -1,44 +1,48 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import nodemailer from "nodemailer"
+import { type NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import nodemailer from "nodemailer";
 
-const LARAVEL_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+const LARAVEL_API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get("auth_token")?.value
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
 
     if (!token) {
       return NextResponse.json(
         { success: false, message: "Not authenticated" },
-        { status: 401 }
-      )
+        { status: 401 },
+      );
     }
 
-    const body = await request.json()
-    const { message, recipientEmail, recipientName, originalSubject } = body
-    const { id } = await params
+    const body = await request.json();
+    const { message, recipientEmail, recipientName, originalSubject } = body;
+    const { id } = await params;
 
     // Save reply to Laravel backend first
-    const response = await fetch(`${LARAVEL_API_URL}/admin/contacts/${id}/reply`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-        "X-Requested-With": "XMLHttpRequest",
+    const response = await fetch(
+      `${LARAVEL_API_URL}/admin/contacts/${id}/reply`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify({ message }),
       },
-      body: JSON.stringify({ message }),
-    })
+    );
 
-    const data = await response.json()
+    const data = await response.json();
 
     if (!data.success) {
-      return NextResponse.json(data, { status: response.status })
+      return NextResponse.json(data, { status: response.status });
     }
 
     // Send email using Nodemailer
@@ -51,10 +55,10 @@ export async function POST(
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
         },
-      })
+      });
 
       await transporter.sendMail({
-        from: `"Pamploma Tres Government" <${process.env.SMTP_FROM}>`,
+        from: `"pamplona Tres Government" <${process.env.SMTP_FROM}>`,
         to: recipientEmail,
         subject: `Re: ${originalSubject}`,
         html: `
@@ -73,12 +77,12 @@ export async function POST(
           <body>
             <div class="container">
               <div class="header">
-                <h2 style="margin: 0;">Pamploma Tres Government</h2>
+                <h2 style="margin: 0;">pamplona Tres Government</h2>
                 <p style="margin: 5px 0 0 0; opacity: 0.9;">Response to Your Inquiry</p>
               </div>
               <div class="content">
                 <p>Dear ${recipientName},</p>
-                <p>Thank you for contacting Pamploma Tres Government. We have reviewed your message regarding: <strong>${originalSubject}</strong></p>
+                <p>Thank you for contacting pamplona Tres Government. We have reviewed your message regarding: <strong>${originalSubject}</strong></p>
                 
                 <div class="message">
                   <h3 style="margin-top: 0; color: #059669;">Our Response:</h3>
@@ -88,40 +92,40 @@ export async function POST(
                 <p>If you have any further questions or concerns, please don't hesitate to reach out to us.</p>
                 
                 <p>Best regards,<br>
-                <strong>Pamploma Tres Government</strong></p>
+                <strong>pamplona Tres Government</strong></p>
               </div>
               <div class="footer">
-                <p>This is an automated response from Pamploma Tres Government.<br>
+                <p>This is an automated response from pamplona Tres Government.<br>
                 Please do not reply directly to this email.</p>
-                <p>© ${new Date().getFullYear()} Pamploma Tres Government. All rights reserved.</p>
+                <p>© ${new Date().getFullYear()} pamplona Tres Government. All rights reserved.</p>
               </div>
             </div>
           </body>
           </html>
         `,
-        text: `Dear ${recipientName},\n\nThank you for contacting Pamploma Tres Government. We have reviewed your message regarding: ${originalSubject}\n\nOur Response:\n${message}\n\nIf you have any further questions or concerns, please don't hesitate to reach out to us.\n\nBest regards,\nPamploma Tres City Government`,
-      })
+        text: `Dear ${recipientName},\n\nThank you for contacting pamplona Tres Government. We have reviewed your message regarding: ${originalSubject}\n\nOur Response:\n${message}\n\nIf you have any further questions or concerns, please don't hesitate to reach out to us.\n\nBest regards,\npamplona Tres City Government`,
+      });
 
       return NextResponse.json({
         success: true,
         message: "Reply sent successfully",
         data: data.data,
-      })
+      });
     } catch (emailError) {
-      console.error("Email sending error:", emailError)
+      console.error("Email sending error:", emailError);
       // Reply was saved but email failed
       return NextResponse.json({
         success: true,
         message: "Reply saved but email sending failed",
         data: data.data,
         emailError: true,
-      })
+      });
     }
   } catch (error) {
-    console.error("API route error:", error)
+    console.error("API route error:", error);
     return NextResponse.json(
       { success: false, message: "Failed to send reply" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

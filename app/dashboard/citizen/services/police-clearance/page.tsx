@@ -27,7 +27,7 @@ export default function PoliceClearanceGuide() {
               Police Clearance Guide
             </h1>
             <p className="text-gray-600">
-              Learn how to obtain your police clearance certificate in Pamploma
+              Learn how to obtain your police clearance certificate in pamplona
               Tres City
             </p>
           </div>
@@ -40,7 +40,7 @@ export default function PoliceClearanceGuide() {
                   <CardTitle className="text-lg">Important Notice</CardTitle>
                   <CardDescription>
                     Police clearance is processed directly by the Philippine
-                    National Police (PNP). The City Government of Pamploma Tres
+                    National Police (PNP). The City Government of pamplona Tres
                     does not issue police clearance certificates.
                   </CardDescription>
                 </div>
@@ -141,18 +141,18 @@ export default function PoliceClearanceGuide() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-orange-600" />
-                Where to Apply in Pamploma Tres City
+                Where to Apply in pamplona Tres City
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-orange-50 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2 flex items-center gap-2">
                   <Shield className="w-4 h-4" />
-                  Pamploma Tres City Police Station
+                  pamplona Tres City Police Station
                 </h4>
                 <div className="space-y-1 text-sm text-gray-700">
                   <p>
-                    <strong>Address:</strong> Pamploma Tres City Police Station,
+                    <strong>Address:</strong> pamplona Tres City Police Station,
                     Oriental Mindoro
                   </p>
                   <p>
@@ -185,7 +185,7 @@ export default function PoliceClearanceGuide() {
                   },
                   {
                     title: "Visit Police Station",
-                    desc: "Go to Pamploma Tres City Police Station or your barangay police station",
+                    desc: "Go to pamplona Tres City Police Station or your barangay police station",
                   },
                   {
                     title: "Fill Out Application Form",

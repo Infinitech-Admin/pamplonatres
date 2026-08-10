@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -9,7 +9,7 @@ export async function GET() {
         id: "1",
         title: "Typhoon Warning",
         message:
-          "Tropical Storm approaching Pamploma Tres. Residents are advised to prepare emergency kits and stay updated.",
+          "Tropical Storm approaching pamplona Tres. Residents are advised to prepare emergency kits and stay updated.",
         type: "emergency",
         category: "Weather",
         timestamp: "2 hours ago",
@@ -19,7 +19,8 @@ export async function GET() {
       {
         id: "2",
         title: "Road Closure Notice",
-        message: "Main Street will be closed for repairs from Jan 15-20. Please use alternative routes.",
+        message:
+          "Main Street will be closed for repairs from Jan 15-20. Please use alternative routes.",
         type: "warning",
         category: "Traffic",
         timestamp: "5 hours ago",
@@ -29,7 +30,8 @@ export async function GET() {
       {
         id: "3",
         title: "Community Clean-up Drive",
-        message: "Join us this Saturday for a city-wide clean-up drive. Meet at City Hall at 7:00 AM.",
+        message:
+          "Join us this Saturday for a city-wide clean-up drive. Meet at City Hall at 7:00 AM.",
         type: "info",
         category: "Events",
         timestamp: "1 day ago",
@@ -39,7 +41,8 @@ export async function GET() {
       {
         id: "4",
         title: "Water Service Restored",
-        message: "Water service in Brgy. Centro has been fully restored. Thank you for your patience.",
+        message:
+          "Water service in Brgy. Centro has been fully restored. Thank you for your patience.",
         type: "success",
         category: "Utilities",
         timestamp: "2 days ago",
@@ -49,21 +52,25 @@ export async function GET() {
       {
         id: "5",
         title: "COVID-19 Vaccination Schedule",
-        message: "Free COVID-19 booster shots available at City Health Center. Walk-ins welcome Mon-Fri 8AM-4PM.",
+        message:
+          "Free COVID-19 booster shots available at City Health Center. Walk-ins welcome Mon-Fri 8AM-4PM.",
         type: "info",
         category: "Health",
         timestamp: "3 days ago",
         read: true,
         priority: "medium",
       },
-    ]
+    ];
 
     return NextResponse.json({
       success: true,
       alerts: mockAlerts,
-    })
+    });
   } catch (error) {
-    console.error("[v0] Error fetching alerts:", error)
-    return NextResponse.json({ success: false, message: "Failed to fetch alerts" }, { status: 500 })
+    console.error("[v0] Error fetching alerts:", error);
+    return NextResponse.json(
+      { success: false, message: "Failed to fetch alerts" },
+      { status: 500 },
+    );
   }
 }

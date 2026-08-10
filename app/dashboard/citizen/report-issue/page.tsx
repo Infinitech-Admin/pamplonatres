@@ -238,7 +238,7 @@ export default function ReportIssuePage() {
             </Link>
           </div>
           <p className="text-orange-100 text-sm">
-            Help us improve Pamploma Tres City
+            Help us improve pamplona Tres City
           </p>
         </header>
 

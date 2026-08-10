@@ -29,7 +29,7 @@ export default function FireSafetyGuide() {
             </h1>
             <p className="text-gray-600">
               Learn how to get your Fire Safety Inspection Certificate (FSIC) in
-              Pamploma Tres City
+              pamplona Tres City
             </p>
           </div>
 
@@ -42,8 +42,8 @@ export default function FireSafetyGuide() {
                   <CardDescription>
                     Fire Safety Inspection Certificate (FSIC) is processed
                     directly by the Bureau of Fire Protection (BFP). The City
-                    Government of Pamploma Tres does not issue FSIC. Please
-                    visit the BFP Pamploma Tres City Fire Station.
+                    Government of pamplona Tres does not issue FSIC. Please
+                    visit the BFP pamplona Tres City Fire Station.
                   </CardDescription>
                 </div>
               </div>
@@ -210,14 +210,14 @@ export default function FireSafetyGuide() {
               <div className="bg-orange-50 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2 flex items-center gap-2">
                   <Flame className="w-4 h-4" />
-                  Bureau of Fire Protection - Pamploma Tres City
+                  Bureau of Fire Protection - pamplona Tres City
                 </h4>
                 <div className="space-y-1 text-sm text-gray-700">
                   <p>
-                    <strong>Office:</strong> BFP Pamploma Tres City Fire Station
+                    <strong>Office:</strong> BFP pamplona Tres City Fire Station
                   </p>
                   <p>
-                    <strong>Address:</strong> Pamploma Tres City, Oriental
+                    <strong>Address:</strong> pamplona Tres City, Oriental
                     Mindoro
                   </p>
                   <p>
@@ -225,7 +225,7 @@ export default function FireSafetyGuide() {
                     5:00 PM
                   </p>
                   <p className="text-xs text-gray-600 mt-2">
-                    Note: Contact the BFP Pamploma Tres office for exact
+                    Note: Contact the BFP pamplona Tres office for exact
                     location and to schedule your inspection
                   </p>
                 </div>
@@ -245,8 +245,8 @@ export default function FireSafetyGuide() {
                     desc: "Gather all necessary documents and ensure fire safety equipment is installed",
                   },
                   {
-                    title: "Visit BFP Pamploma Tres",
-                    desc: "Go to BFP Pamploma Tres Fire Station and submit application form with requirements",
+                    title: "Visit BFP pamplona Tres",
+                    desc: "Go to BFP pamplona Tres Fire Station and submit application form with requirements",
                   },
                   {
                     title: "Pay Inspection Fee",
@@ -307,7 +307,7 @@ export default function FireSafetyGuide() {
                   <strong>Large Establishments:</strong> ₱5,000 and above
                 </p>
                 <p className="text-xs text-gray-600 mt-3">
-                  Note: Exact fees should be confirmed with BFP Pamploma Tres
+                  Note: Exact fees should be confirmed with BFP pamplona Tres
                   office as rates may vary
                 </p>
               </div>

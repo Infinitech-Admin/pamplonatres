@@ -1,30 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react"
-import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import CitizenLayout from "@/components/citizenLayout"
+import { useState } from "react";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import CitizenLayout from "@/components/citizenLayout";
 
 export default function StudentsPage() {
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const toggleItem = (category: string, index: number) => {
-    const key = `${category}-${index}`
-    setExpandedItems(prev => ({
+    const key = `${category}-${index}`;
+    setExpandedItems((prev) => ({
       ...prev,
-      [key]: !prev[key]
-    }))
-  }
+      [key]: !prev[key],
+    }));
+  };
 
   const studentServices = [
     {
       category: "Scholarships",
       items: [
-        { 
-          name: "City Scholarship Program", 
-          description: "Apply for city-funded scholarships", 
+        {
+          name: "City Scholarship Program",
+          description: "Apply for city-funded scholarships",
           icon: "🎓",
           requirements: [
             "Valid Student ID",
@@ -33,12 +35,12 @@ export default function StudentsPage() {
             "Income Tax Return or Certificate of Indigency",
             "Grade Report (for renewal)",
             "Birth Certificate (PSA)",
-            "2x2 ID Photo (2 copies)"
-          ]
+            "2x2 ID Photo (2 copies)",
+          ],
         },
-        { 
-          name: "Merit Scholarship", 
-          description: "For outstanding students", 
+        {
+          name: "Merit Scholarship",
+          description: "For outstanding students",
           icon: "🏆",
           requirements: [
             "Academic Excellence Certificate",
@@ -47,12 +49,12 @@ export default function StudentsPage() {
             "Proof of Residency",
             "Recommendation Letter from School",
             "Birth Certificate (PSA)",
-            "2x2 ID Photo (2 copies)"
-          ]
+            "2x2 ID Photo (2 copies)",
+          ],
         },
-        { 
-          name: "Financial Assistance", 
-          description: "Educational financial aid", 
+        {
+          name: "Financial Assistance",
+          description: "Educational financial aid",
           icon: "💰",
           requirements: [
             "Certificate of Indigency",
@@ -61,40 +63,40 @@ export default function StudentsPage() {
             "Income Documents of Parents/Guardians",
             "Birth Certificate (PSA)",
             "Valid ID of Parent/Guardian",
-            "2x2 ID Photo (2 copies)"
-          ]
+            "2x2 ID Photo (2 copies)",
+          ],
         },
       ],
     },
     {
       category: "Student Services",
       items: [
-        { 
-          name: "Student ID Application", 
-          description: "Get your student ID", 
+        {
+          name: "Student ID Application",
+          description: "Get your student ID",
           icon: "🪪",
           requirements: [
             "Certificate of Enrollment",
             "Proof of Residency",
             "Birth Certificate (PSA)",
             "2x2 ID Photo (2 copies)",
-            "Valid School ID"
-          ]
+            "Valid School ID",
+          ],
         },
-        { 
-          name: "Library Card", 
-          description: "Access city library resources", 
+        {
+          name: "Library Card",
+          description: "Access city library resources",
           icon: "📚",
           requirements: [
             "Valid Student ID or School ID",
             "Proof of Residency",
             "1x1 ID Photo (1 copy)",
-            "Parent/Guardian Consent (for minors)"
-          ]
+            "Parent/Guardian Consent (for minors)",
+          ],
         },
-        { 
-          name: "Internship Programs", 
-          description: "City government internships", 
+        {
+          name: "Internship Programs",
+          description: "City government internships",
           icon: "💼",
           requirements: [
             "Endorsement Letter from School",
@@ -104,17 +106,17 @@ export default function StudentsPage() {
             "Medical Certificate",
             "Police Clearance",
             "2x2 ID Photo (2 copies)",
-            "Valid ID"
-          ]
+            "Valid ID",
+          ],
         },
       ],
     },
     {
       category: "Youth Programs",
       items: [
-        { 
-          name: "Skills Training", 
-          description: "Free skills development programs", 
+        {
+          name: "Skills Training",
+          description: "Free skills development programs",
           icon: "🛠️",
           requirements: [
             "Certificate of Enrollment or Student ID",
@@ -122,12 +124,12 @@ export default function StudentsPage() {
             "Birth Certificate",
             "Parent/Guardian Consent (for minors)",
             "1x1 ID Photo (2 copies)",
-            "Medical Certificate (if required)"
-          ]
+            "Medical Certificate (if required)",
+          ],
         },
-        { 
-          name: "Sports Programs", 
-          description: "Youth sports and athletics", 
+        {
+          name: "Sports Programs",
+          description: "Youth sports and athletics",
           icon: "⚽",
           requirements: [
             "Medical Certificate",
@@ -135,12 +137,12 @@ export default function StudentsPage() {
             "Birth Certificate",
             "Parent/Guardian Consent (for minors)",
             "1x1 ID Photo (2 copies)",
-            "School ID or Student ID"
-          ]
+            "School ID or Student ID",
+          ],
         },
-        { 
-          name: "Arts & Culture", 
-          description: "Cultural programs for youth", 
+        {
+          name: "Arts & Culture",
+          description: "Cultural programs for youth",
           icon: "🎨",
           requirements: [
             "Proof of Residency",
@@ -148,12 +150,12 @@ export default function StudentsPage() {
             "Parent/Guardian Consent (for minors)",
             "1x1 ID Photo (2 copies)",
             "Portfolio (if applicable)",
-            "School ID or Student ID"
-          ]
+            "School ID or Student ID",
+          ],
         },
       ],
     },
-  ]
+  ];
 
   return (
     <CitizenLayout>
@@ -166,7 +168,9 @@ export default function StudentsPage() {
                 <ArrowLeft className="w-5 h-5 text-gray-700" />
               </Button>
             </Link>
-            <h1 className="text-xl font-bold text-gray-900">Student Services</h1>
+            <h1 className="text-xl font-bold text-gray-900">
+              Student Services
+            </h1>
           </div>
         </header>
 
@@ -174,21 +178,26 @@ export default function StudentsPage() {
         <main className="flex-1 px-4 py-6 pb-24 overflow-y-auto">
           <Card className="mb-6 border-orange-200 bg-orange-50">
             <CardContent className="p-4">
-              <h2 className="font-semibold text-gray-900 mb-2">Empowering Pamploma Tres Youth</h2>
+              <h2 className="font-semibold text-gray-900 mb-2">
+                Empowering pamplona Tres Youth
+              </h2>
               <p className="text-sm text-gray-700">
-                Access scholarships, educational programs, and youth development opportunities.
+                Access scholarships, educational programs, and youth development
+                opportunities.
               </p>
             </CardContent>
           </Card>
 
           {studentServices.map((section, sectionIdx) => (
             <div key={sectionIdx} className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">{section.category}</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                {section.category}
+              </h2>
               <div className="space-y-3">
                 {section.items.map((item, itemIdx) => {
-                  const key = `${section.category}-${itemIdx}`
-                  const isExpanded = expandedItems[key]
-                  
+                  const key = `${section.category}-${itemIdx}`;
+                  const isExpanded = expandedItems[key];
+
                   return (
                     <Card key={itemIdx} className="border-gray-200">
                       <CardContent className="p-4">
@@ -197,33 +206,48 @@ export default function StudentsPage() {
                             {item.icon}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                            <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                            
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
+                            <h3 className="font-semibold text-gray-900">
+                              {item.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2">
+                              {item.description}
+                            </p>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 p-0 h-auto font-medium"
-                              onClick={() => toggleItem(section.category, itemIdx)}
+                              onClick={() =>
+                                toggleItem(section.category, itemIdx)
+                              }
                             >
                               {isExpanded ? (
                                 <>
-                                  Hide Requirements <ChevronUp className="w-4 h-4 ml-1" />
+                                  Hide Requirements{" "}
+                                  <ChevronUp className="w-4 h-4 ml-1" />
                                 </>
                               ) : (
                                 <>
-                                  View Requirements <ChevronDown className="w-4 h-4 ml-1" />
+                                  View Requirements{" "}
+                                  <ChevronDown className="w-4 h-4 ml-1" />
                                 </>
                               )}
                             </Button>
 
                             {isExpanded && (
                               <div className="mt-3 pt-3 border-t border-gray-200">
-                                <h4 className="text-sm font-semibold text-gray-900 mb-2">Requirements:</h4>
+                                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                                  Requirements:
+                                </h4>
                                 <ul className="space-y-1.5">
                                   {item.requirements.map((req, reqIdx) => (
-                                    <li key={reqIdx} className="text-sm text-gray-700 flex items-start gap-2">
-                                      <span className="text-orange-600 mt-0.5">•</span>
+                                    <li
+                                      key={reqIdx}
+                                      className="text-sm text-gray-700 flex items-start gap-2"
+                                    >
+                                      <span className="text-orange-600 mt-0.5">
+                                        •
+                                      </span>
                                       <span>{req}</span>
                                     </li>
                                   ))}
@@ -234,7 +258,7 @@ export default function StudentsPage() {
                         </div>
                       </CardContent>
                     </Card>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -242,5 +266,5 @@ export default function StudentsPage() {
         </main>
       </div>
     </CitizenLayout>
-  )
+  );
 }

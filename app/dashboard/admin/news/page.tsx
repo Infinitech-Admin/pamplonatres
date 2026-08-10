@@ -1,5 +1,5 @@
-"use client"
-import { useState, useEffect } from "react"
+"use client";
+import { useState, useEffect } from "react";
 import {
   Search,
   Filter,
@@ -15,66 +15,69 @@ import {
   Upload,
   AlertCircle,
   Image as ImageIcon,
-} from "lucide-react"
-import Image from "next/image"
-import AdminLayout from "@/components/adminLayout"
-import { useAuth } from "@/hooks/useAuth"
-import { useToast } from "@/components/ui/use-toast"
+} from "lucide-react";
+import Image from "next/image";
+import AdminLayout from "@/components/adminLayout";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface News {
-  id: number
-  title: string
-  content: string
-  category: string
-  status: "draft" | "published" | "archived"
-  image_url?: string
-  published_at?: string
-  created_at: string
-  updated_at: string
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  status: "draft" | "published" | "archived";
+  image_url?: string;
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface PaginationData {
-  current_page: number
-  last_page: number
-  per_page: number
-  total: number
-  from: number
-  to: number
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 export default function AdminNewsPage() {
-  const { user, loading: authLoading } = useAuth(true)
-  const { toast } = useToast()
+  const { user, loading: authLoading } = useAuth(true);
+  const { toast } = useToast();
 
-  const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000"
+  const IMAGE_URL =
+    process.env.NEXT_PUBLIC_IMAGE_URL || "http://localhost:8000";
 
   // Helper function to get full image URL
   const getImageUrl = (imageUrl?: string) => {
-    if (!imageUrl) return ""
-    
+    if (!imageUrl) return "";
+
     // If the URL already includes http:// or https://, return as is
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-      return imageUrl
+      return imageUrl;
     }
-    
+
     // If it starts with a slash, concatenate with IMAGE_URL
     if (imageUrl.startsWith("/")) {
-      return `${IMAGE_URL}${imageUrl}`
+      return `${IMAGE_URL}${imageUrl}`;
     }
-    
-    // For relative paths like 'images/news/file.png', add leading slash
-    return `${IMAGE_URL}/${imageUrl}`
-  }
 
-  const [news, setNews] = useState<News[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedNews, setSelectedNews] = useState<News | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalMode, setModalMode] = useState<"view" | "create" | "edit">("view")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    // For relative paths like 'images/news/file.png', add leading slash
+    return `${IMAGE_URL}/${imageUrl}`;
+  };
+
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedNews, setSelectedNews] = useState<News | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"view" | "create" | "edit">(
+    "view",
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [pagination, setPagination] = useState<PaginationData>({
     current_page: 1,
@@ -83,7 +86,7 @@ export default function AdminNewsPage() {
     total: 0,
     from: 0,
     to: 0,
-  })
+  });
 
   const [formData, setFormData] = useState({
     title: "",
@@ -91,64 +94,88 @@ export default function AdminNewsPage() {
     category: "",
     status: "draft" as News["status"],
     published_at: "",
-  })
+  });
 
-  const [image, setImage] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string>("")
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string>("");
 
   const categories = [
-    { value: "Development", label: "Development", color: "bg-green-100 text-green-700" },
-    { value: "Business", label: "Business", color: "bg-blue-100 text-blue-700" },
+    {
+      value: "Development",
+      label: "Development",
+      color: "bg-green-100 text-green-700",
+    },
+    {
+      value: "Business",
+      label: "Business",
+      color: "bg-blue-100 text-blue-700",
+    },
     { value: "Health", label: "Health", color: "bg-red-100 text-red-700" },
-    { value: "Education", label: "Education", color: "bg-purple-100 text-purple-700" },
-    { value: "Environment", label: "Environment", color: "bg-emerald-100 text-emerald-700" },
-    { value: "Community", label: "Community", color: "bg-orange-100 text-orange-700" },
-    { value: "Infrastructure", label: "Infrastructure", color: "bg-gray-100 text-gray-700" },
+    {
+      value: "Education",
+      label: "Education",
+      color: "bg-purple-100 text-purple-700",
+    },
+    {
+      value: "Environment",
+      label: "Environment",
+      color: "bg-emerald-100 text-emerald-700",
+    },
+    {
+      value: "Community",
+      label: "Community",
+      color: "bg-orange-100 text-orange-700",
+    },
+    {
+      value: "Infrastructure",
+      label: "Infrastructure",
+      color: "bg-gray-100 text-gray-700",
+    },
     { value: "Events", label: "Events", color: "bg-pink-100 text-pink-700" },
-  ]
+  ];
 
   useEffect(() => {
     if (!authLoading && user) {
-      fetchNews()
+      fetchNews();
     }
-  }, [authLoading, user])
+  }, [authLoading, user]);
 
   useEffect(() => {
     if (!authLoading && user) {
-      fetchNews()
+      fetchNews();
     }
-  }, [pagination.current_page, categoryFilter, statusFilter])
+  }, [pagination.current_page, categoryFilter, statusFilter]);
 
   const fetchNews = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       const params = new URLSearchParams({
         page: pagination.current_page.toString(),
         per_page: pagination.per_page.toString(),
-      })
+      });
 
       if (categoryFilter !== "all") {
-        params.append("category", categoryFilter)
+        params.append("category", categoryFilter);
       }
 
       if (statusFilter !== "all") {
-        params.append("status", statusFilter)
+        params.append("status", statusFilter);
       }
 
       if (searchQuery) {
-        params.append("search", searchQuery)
+        params.append("search", searchQuery);
       }
 
       const response = await fetch(`/api/admin/news?${params}`, {
         credentials: "include",
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
 
         if (data.success && data.data) {
-          setNews(data.data.data || [])
+          setNews(data.data.data || []);
           setPagination({
             current_page: data.data.current_page || 1,
             last_page: data.data.last_page || 1,
@@ -156,31 +183,31 @@ export default function AdminNewsPage() {
             total: data.data.total || 0,
             from: data.data.from || 0,
             to: data.data.to || 0,
-          })
+          });
         }
       } else {
-        const errorData = await response.json()
-        console.error("Error response:", errorData)
+        const errorData = await response.json();
+        console.error("Error response:", errorData);
         toast({
           variant: "destructive",
           title: "Error",
           description: errorData.message || "Failed to fetch news.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error fetching news:", error)
+      console.error("Error fetching news:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to load news.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
 
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
@@ -188,29 +215,29 @@ export default function AdminNewsPage() {
           variant: "destructive",
           title: "File too large",
           description: "Image must be less than 10MB.",
-        })
-        return
+        });
+        return;
       }
 
-      setImage(file)
-      const reader = new FileReader()
+      setImage(file);
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const removeImage = () => {
-    setImage(null)
-    setPreview("")
-  }
+    setImage(null);
+    setPreview("");
+  };
 
   const handleViewNews = (newsItem: News) => {
-    setSelectedNews(newsItem)
-    setModalMode("view")
-    setIsModalOpen(true)
-  }
+    setSelectedNews(newsItem);
+    setModalMode("view");
+    setIsModalOpen(true);
+  };
 
   const handleCreateNew = () => {
     setFormData({
@@ -219,42 +246,42 @@ export default function AdminNewsPage() {
       category: "",
       status: "draft",
       published_at: "",
-    })
-    setImage(null)
-    setPreview("")
-    setSelectedNews(null)
-    setModalMode("create")
-    setIsModalOpen(true)
-  }
+    });
+    setImage(null);
+    setPreview("");
+    setSelectedNews(null);
+    setModalMode("create");
+    setIsModalOpen(true);
+  };
 
   const handleEdit = (newsItem: News) => {
-    setSelectedNews(newsItem)
+    setSelectedNews(newsItem);
     setFormData({
       title: newsItem.title,
       content: newsItem.content,
       category: newsItem.category,
       status: newsItem.status,
       published_at: newsItem.published_at || "",
-    })
-    setPreview(getImageUrl(newsItem.image_url))
-    setImage(null)
-    setModalMode("edit")
-    setIsModalOpen(true)
-  }
+    });
+    setPreview(getImageUrl(newsItem.image_url));
+    setImage(null);
+    setModalMode("edit");
+    setIsModalOpen(true);
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedNews(null)
+    setIsModalOpen(false);
+    setSelectedNews(null);
     setFormData({
       title: "",
       content: "",
       category: "",
       status: "draft",
       published_at: "",
-    })
-    setImage(null)
-    setPreview("")
-  }
+    });
+    setImage(null);
+    setPreview("");
+  };
 
   const handleSubmit = async () => {
     try {
@@ -263,138 +290,145 @@ export default function AdminNewsPage() {
           variant: "destructive",
           title: "Error",
           description: "Please fill in all required fields.",
-        })
-        return
+        });
+        return;
       }
 
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
-      const formDataToSend = new FormData()
-      formDataToSend.append("title", formData.title)
-      formDataToSend.append("content", formData.content)
-      formDataToSend.append("category", formData.category)
-      formDataToSend.append("status", formData.status)
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("content", formData.content);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("status", formData.status);
 
       if (formData.published_at) {
-        formDataToSend.append("published_at", formData.published_at)
+        formDataToSend.append("published_at", formData.published_at);
       }
 
       if (image) {
-        formDataToSend.append("image", image)
+        formDataToSend.append("image", image);
       }
 
-      const url = modalMode === "create" ? "/api/admin/news" : `/api/admin/news/${selectedNews?.id}`
-     const method = "POST" 
+      const url =
+        modalMode === "create"
+          ? "/api/admin/news"
+          : `/api/admin/news/${selectedNews?.id}`;
+      const method = "POST";
 
       const response = await fetch(url, {
         method,
         credentials: "include",
         body: formDataToSend,
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: "Success",
           description: `News ${modalMode === "create" ? "created" : "updated"} successfully.`,
-        })
-        closeModal()
-        fetchNews()
+        });
+        closeModal();
+        fetchNews();
       } else {
         toast({
           variant: "destructive",
           title: "Error",
           description: data.message || "Failed to save news.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error saving news:", error)
+      console.error("Error saving news:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to save news.",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this news article?")) {
-      return
+      return;
     }
 
     try {
       const response = await fetch(`/api/admin/news/${id}`, {
         method: "DELETE",
         credentials: "include",
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
         toast({
           title: "Success",
           description: "News deleted successfully.",
-        })
-        fetchNews()
+        });
+        fetchNews();
       } else {
         toast({
           variant: "destructive",
           title: "Error",
           description: data.message || "Failed to delete news.",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error deleting news:", error)
+      console.error("Error deleting news:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to delete news.",
-      })
+      });
     }
-  }
+  };
 
   const handleSearch = () => {
-    setPagination((prev) => ({ ...prev, current_page: 1 }))
-    fetchNews()
-  }
+    setPagination((prev) => ({ ...prev, current_page: 1 }));
+    fetchNews();
+  };
 
   const handlePageChange = (page: number) => {
-    setPagination((prev) => ({ ...prev, current_page: page }))
-  }
+    setPagination((prev) => ({ ...prev, current_page: page }));
+  };
 
   const getCategoryBadge = (category: string) => {
-    const cat = categories.find((c) => c.value === category)
+    const cat = categories.find((c) => c.value === category);
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${cat?.color || "bg-gray-100 text-gray-700"}`}>
+      <span
+        className={`px-2 py-1 text-xs font-medium rounded-full ${cat?.color || "bg-gray-100 text-gray-700"}`}
+      >
         {category}
       </span>
-    )
-  }
+    );
+  };
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       draft: "bg-gray-100 text-gray-700",
       published: "bg-green-100 text-green-700",
       archived: "bg-yellow-100 text-yellow-700",
-    }
+    };
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status] || styles.draft}`}>
+      <span
+        className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status] || styles.draft}`}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
-    )
-  }
+    );
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   if (authLoading) {
     return (
@@ -404,7 +438,7 @@ export default function AdminNewsPage() {
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -418,8 +452,12 @@ export default function AdminNewsPage() {
                   <Newspaper className="w-6 h-6 text-orange-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">News Management</h1>
-                  <p className="text-sm text-gray-500">Manage news articles and updates</p>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    News Management
+                  </h1>
+                  <p className="text-sm text-gray-500">
+                    Manage news articles and updates
+                  </p>
                 </div>
               </div>
               <button
@@ -459,8 +497,8 @@ export default function AdminNewsPage() {
                 <select
                   value={categoryFilter}
                   onChange={(e) => {
-                    setCategoryFilter(e.target.value)
-                    setPagination((prev) => ({ ...prev, current_page: 1 }))
+                    setCategoryFilter(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
                   }}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
                 >
@@ -478,8 +516,8 @@ export default function AdminNewsPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => {
-                    setStatusFilter(e.target.value)
-                    setPagination((prev) => ({ ...prev, current_page: 1 }))
+                    setStatusFilter(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
                   }}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
                 >
@@ -502,7 +540,9 @@ export default function AdminNewsPage() {
           <div className="grid grid-cols-3 gap-4 sm:hidden">
             <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
               <p className="text-xs text-gray-500 mb-1">Total</p>
-              <p className="text-2xl font-bold text-gray-900">{pagination.total}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {pagination.total}
+              </p>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
               <p className="text-xs text-gray-500 mb-1">Published</p>
@@ -529,8 +569,12 @@ export default function AdminNewsPage() {
             ) : news.length === 0 ? (
               <div className="text-center py-12">
                 <Newspaper className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No news found</h3>
-                <p className="text-gray-500 mb-4">Create your first news article</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No news found
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  Create your first news article
+                </p>
                 <button
                   onClick={handleCreateNew}
                   className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
@@ -540,7 +584,8 @@ export default function AdminNewsPage() {
               </div>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                {/* Desktop / Tablet Table - hidden on mobile */}
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
@@ -563,7 +608,10 @@ export default function AdminNewsPage() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {news.map((newsItem) => (
-                        <tr key={newsItem.id} className="hover:bg-gray-50 transition-colors">
+                        <tr
+                          key={newsItem.id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               {newsItem.image_url && (
@@ -590,7 +638,9 @@ export default function AdminNewsPage() {
                             {getStatusBadge(newsItem.status)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {newsItem.published_at ? formatDate(newsItem.published_at) : "-"}
+                            {newsItem.published_at
+                              ? formatDate(newsItem.published_at)
+                              : "-"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <div className="flex items-center gap-2">
@@ -623,15 +673,85 @@ export default function AdminNewsPage() {
                   </table>
                 </div>
 
+                {/* Mobile Cards - no horizontal scroll, no swiping */}
+                <div className="sm:hidden divide-y divide-gray-200">
+                  {news.map((newsItem) => (
+                    <div key={newsItem.id} className="p-4 space-y-3">
+                      <div className="flex items-start gap-3">
+                        {newsItem.image_url ? (
+                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                            <Image
+                              src={getImageUrl(newsItem.image_url)}
+                              alt={newsItem.title}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                              unoptimized
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                            <ImageIcon className="w-6 h-6 text-gray-400" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
+                            {newsItem.title}
+                          </h3>
+                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            {getCategoryBadge(newsItem.category)}
+                            {getStatusBadge(newsItem.status)}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {newsItem.published_at
+                            ? formatDate(newsItem.published_at)
+                            : "Not published"}
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <button
+                            onClick={() => handleViewNews(newsItem)}
+                            className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                            title="View"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(newsItem)}
+                            className="p-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(newsItem.id)}
+                            className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 {!loading && news.length > 0 && (
                   <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-sm text-gray-700">
-                      Showing {pagination.from} to {pagination.to} of {pagination.total} results
+                      Showing {pagination.from} to {pagination.to} of{" "}
+                      {pagination.total} results
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handlePageChange(pagination.current_page - 1)}
+                        onClick={() =>
+                          handlePageChange(pagination.current_page - 1)
+                        }
                         disabled={pagination.current_page === 1}
                         className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
@@ -639,37 +759,47 @@ export default function AdminNewsPage() {
                       </button>
 
                       <div className="flex items-center gap-1">
-                        {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
-                          let pageNum
-                          if (pagination.last_page <= 5) {
-                            pageNum = i + 1
-                          } else if (pagination.current_page <= 3) {
-                            pageNum = i + 1
-                          } else if (pagination.current_page >= pagination.last_page - 2) {
-                            pageNum = pagination.last_page - 4 + i
-                          } else {
-                            pageNum = pagination.current_page - 2 + i
-                          }
+                        {Array.from(
+                          { length: Math.min(5, pagination.last_page) },
+                          (_, i) => {
+                            let pageNum;
+                            if (pagination.last_page <= 5) {
+                              pageNum = i + 1;
+                            } else if (pagination.current_page <= 3) {
+                              pageNum = i + 1;
+                            } else if (
+                              pagination.current_page >=
+                              pagination.last_page - 2
+                            ) {
+                              pageNum = pagination.last_page - 4 + i;
+                            } else {
+                              pageNum = pagination.current_page - 2 + i;
+                            }
 
-                          return (
-                            <button
-                              key={pageNum}
-                              onClick={() => handlePageChange(pageNum)}
-                              className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                                pagination.current_page === pageNum
-                                  ? "bg-orange-600 text-white"
-                                  : "border border-gray-300 hover:bg-gray-50"
-                              }`}
-                            >
-                              {pageNum}
-                            </button>
-                          )
-                        })}
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => handlePageChange(pageNum)}
+                                className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                                  pagination.current_page === pageNum
+                                    ? "bg-orange-600 text-white"
+                                    : "border border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          },
+                        )}
                       </div>
 
                       <button
-                        onClick={() => handlePageChange(pagination.current_page + 1)}
-                        disabled={pagination.current_page === pagination.last_page}
+                        onClick={() =>
+                          handlePageChange(pagination.current_page + 1)
+                        }
+                        disabled={
+                          pagination.current_page === pagination.last_page
+                        }
                         className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         <ChevronRight className="w-4 h-4" />
@@ -688,10 +818,16 @@ export default function AdminNewsPage() {
               <div className="border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between flex-shrink-0">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">
-                    {modalMode === "create" ? "Create News Article" : modalMode === "edit" ? "Edit News Article" : "News Details"}
+                    {modalMode === "create"
+                      ? "Create News Article"
+                      : modalMode === "edit"
+                        ? "Edit News Article"
+                        : "News Details"}
                   </h2>
                   {selectedNews && (
-                    <p className="text-sm text-gray-500 mt-1">ID #{selectedNews.id}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      ID #{selectedNews.id}
+                    </p>
                   )}
                 </div>
                 <button
@@ -719,31 +855,47 @@ export default function AdminNewsPage() {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Title</label>
-                        <p className="text-base text-gray-900">{selectedNews.title}</p>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">
+                          Title
+                        </label>
+                        <p className="text-base text-gray-900">
+                          {selectedNews.title}
+                        </p>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1">Category</label>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">
+                            Category
+                          </label>
                           <div>{getCategoryBadge(selectedNews.category)}</div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1">Status</label>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">
+                            Status
+                          </label>
                           <div>{getStatusBadge(selectedNews.status)}</div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1">Published</label>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">
+                            Published
+                          </label>
                           <p className="text-base text-gray-900">
-                            {selectedNews.published_at ? formatDate(selectedNews.published_at) : "-"}
+                            {selectedNews.published_at
+                              ? formatDate(selectedNews.published_at)
+                              : "-"}
                           </p>
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Content</label>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">
+                          Content
+                        </label>
                         <div className="p-4 bg-gray-50 rounded-lg">
-                          <p className="text-base text-gray-900 whitespace-pre-wrap">{selectedNews.content}</p>
+                          <p className="text-base text-gray-900 whitespace-pre-wrap">
+                            {selectedNews.content}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -757,7 +909,9 @@ export default function AdminNewsPage() {
                       <input
                         type="text"
                         value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, title: e.target.value })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                         placeholder="Enter news title"
                       />
@@ -772,7 +926,9 @@ export default function AdminNewsPage() {
                           <button
                             key={cat.value}
                             type="button"
-                            onClick={() => setFormData({ ...formData, category: cat.value })}
+                            onClick={() =>
+                              setFormData({ ...formData, category: cat.value })
+                            }
                             className={`px-3 py-2 rounded-lg border-2 font-medium text-xs transition-all ${
                               formData.category === cat.value
                                 ? `${cat.color} border-current`
@@ -791,7 +947,9 @@ export default function AdminNewsPage() {
                       </label>
                       <textarea
                         value={formData.content}
-                        onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, content: e.target.value })
+                        }
                         rows={6}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
                         placeholder="Write your article content here..."
@@ -824,8 +982,12 @@ export default function AdminNewsPage() {
                         <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
                           <div className="flex flex-col items-center">
                             <Upload className="w-12 h-12 text-gray-400 mb-2" />
-                            <p className="text-sm font-medium text-gray-600">Upload featured image</p>
-                            <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (max 10MB)</p>
+                            <p className="text-sm font-medium text-gray-600">
+                              Upload featured image
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              PNG, JPG, GIF (max 10MB)
+                            </p>
                           </div>
                           <input
                             type="file"
@@ -845,7 +1007,10 @@ export default function AdminNewsPage() {
                         <select
                           value={formData.status}
                           onChange={(e) =>
-                            setFormData({ ...formData, status: e.target.value as News["status"] })
+                            setFormData({
+                              ...formData,
+                              status: e.target.value as News["status"],
+                            })
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                         >
@@ -866,12 +1031,17 @@ export default function AdminNewsPage() {
                               type="datetime-local"
                               value={formData.published_at}
                               onChange={(e) =>
-                                setFormData({ ...formData, published_at: e.target.value })
+                                setFormData({
+                                  ...formData,
+                                  published_at: e.target.value,
+                                })
                               }
                               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             />
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">Leave empty to publish now</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Leave empty to publish now
+                          </p>
                         </div>
                       )}
                     </div>
@@ -931,10 +1101,14 @@ export default function AdminNewsPage() {
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                               ></path>
                             </svg>
-                            {modalMode === "create" ? "Creating..." : "Saving..."}
+                            {modalMode === "create"
+                              ? "Creating..."
+                              : "Saving..."}
                           </>
+                        ) : modalMode === "create" ? (
+                          "Create Article"
                         ) : (
-                          modalMode === "create" ? "Create Article" : "Save Changes"
+                          "Save Changes"
                         )}
                       </button>
                     </>
@@ -946,5 +1120,5 @@ export default function AdminNewsPage() {
         )}
       </div>
     </AdminLayout>
-  )
+  );
 }

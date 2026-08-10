@@ -71,9 +71,9 @@ export default function MapPage() {
   const locations: Location[] = [
     {
       id: "1",
-      name: "Pamploma Tres City Hospital",
+      name: "pamplona Tres City Hospital",
       category: "hospital",
-      address: "J.P. Rizal St, Pamploma Tres City",
+      address: "J.P. Rizal St, pamplona Tres City",
       phone: "(043) 288-8888",
       lat: 13.4119,
       lng: 121.1803,
@@ -81,9 +81,9 @@ export default function MapPage() {
     },
     {
       id: "2",
-      name: "Pamploma Tres City Police Station",
+      name: "pamplona Tres City Police Station",
       category: "police",
-      address: "Guinobatan, Pamploma Tres City",
+      address: "Guinobatan, pamplona Tres City",
       phone: "(043) 288-6666",
       lat: 13.4125,
       lng: 121.1795,
@@ -91,9 +91,9 @@ export default function MapPage() {
     },
     {
       id: "3",
-      name: "Pamploma Tres Fire Station",
+      name: "pamplona Tres Fire Station",
       category: "fire",
-      address: "Guinobatan, Pamploma Tres City",
+      address: "Guinobatan, pamplona Tres City",
       phone: "(043) 288-7777",
       lat: 13.413,
       lng: 121.181,
@@ -101,9 +101,9 @@ export default function MapPage() {
     },
     {
       id: "4",
-      name: "Pamploma Tres City Hall",
+      name: "pamplona Tres City Hall",
       category: "government",
-      address: "Guinobatan, Pamploma Tres City",
+      address: "Guinobatan, pamplona Tres City",
       phone: "(043) 288-5555",
       lat: 13.4115,
       lng: 121.18,
@@ -113,7 +113,7 @@ export default function MapPage() {
       id: "5",
       name: "Oriental Mindoro National Highschool",
       category: "school",
-      address: "Camilmil, Pamploma Tres City",
+      address: "Camilmil, pamplona Tres City",
       phone: "(043) 288-4444",
       lat: 13.41,
       lng: 121.182,
@@ -121,9 +121,9 @@ export default function MapPage() {
     },
     {
       id: "6",
-      name: "Pamploma Tres City Public Market",
+      name: "pamplona Tres City Public Market",
       category: "landmark",
-      address: "San Vicente Central, Pamploma Tres City",
+      address: "San Vicente Central, pamplona Tres City",
       lat: 13.412,
       lng: 121.179,
       icon: "landmark",
@@ -235,7 +235,7 @@ export default function MapPage() {
         {/* Default Map Embed */}
         <div className="relative h-64 border-b border-gray-200">
           <iframe
-            src="https://www.google.com/maps?q=Pamploma Tres+City+Hall,+Pamploma Tres+City,+Oriental+Mindoro&z=15&output=embed"
+            src="https://www.google.com/maps?q=pamplona Tres+City+Hall,+pamplona Tres+City,+Oriental+Mindoro&z=15&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0 }}

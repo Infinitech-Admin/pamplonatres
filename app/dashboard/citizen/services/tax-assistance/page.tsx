@@ -167,7 +167,7 @@ export default function TaxAssistanceGuide() {
         {
           title: "Real Property Tax",
           content:
-            "Learn about property tax assessment, payment procedures, and available discounts in Pamploma Tres City.",
+            "Learn about property tax assessment, payment procedures, and available discounts in pamplona Tres City.",
           fullContent: (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
@@ -183,7 +183,7 @@ export default function TaxAssistanceGuide() {
                   <p className="text-sm text-gray-600">
                     RPT is a local tax imposed on real property (land,
                     buildings, machinery) based on its assessed value. The tax
-                    rate in Pamploma Tres City is determined by local ordinance.
+                    rate in pamplona Tres City is determined by local ordinance.
                   </p>
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export default function TaxAssistanceGuide() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">
-                    Tax Rates in Pamploma Tres City
+                    Tax Rates in pamplona Tres City
                   </h4>
                   <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
                     <li>Basic Real Property Tax: 1-2% of assessed value</li>
@@ -310,7 +310,7 @@ export default function TaxAssistanceGuide() {
                     Payment Plan Options
                   </h4>
                   <p className="text-sm text-gray-600 mb-2">
-                    Pamploma Tres City offers installment plans for taxpayers
+                    pamplona Tres City offers installment plans for taxpayers
                     with delinquent accounts:
                   </p>
                   <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -368,11 +368,11 @@ export default function TaxAssistanceGuide() {
         {
           title: "Business Tax Incentives",
           content:
-            "Explore available tax incentives for businesses in Pamploma Tres City.",
+            "Explore available tax incentives for businesses in pamplona Tres City.",
           fullContent: (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
-                Pamploma Tres City offers various tax incentives to encourage
+                pamplona Tres City offers various tax incentives to encourage
                 business development and job creation.
               </p>
               <div className="space-y-3">
@@ -427,7 +427,7 @@ export default function TaxAssistanceGuide() {
                     Eligibility Requirements
                   </h4>
                   <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    <li>Registered business in Pamploma Tres City</li>
+                    <li>Registered business in pamplona Tres City</li>
                     <li>Compliance with all local and national regulations</li>
                     <li>Updated tax payments and business permits</li>
                     <li>Meets specific criteria for the incentive program</li>
@@ -559,7 +559,7 @@ export default function TaxAssistanceGuide() {
                     5:00 PM
                   </p>
                   <p className="text-gray-700">
-                    <strong>Contact:</strong> (043) 288-7777 | tax@Pamploma
+                    <strong>Contact:</strong> (043) 288-7777 | tax@pamplona
                     Trescity.gov.ph
                   </p>
                 </div>

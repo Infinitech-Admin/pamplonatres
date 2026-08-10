@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import React from 'react';
-import { Shield, Bell, LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { authClient } from '@/lib/auth';
-import { useToast } from '@/components/ui/use-toast';
+import React from "react";
+import { Shield, Bell, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function AdminHeader() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function AdminHeader() {
   const handleLogout = async () => {
     try {
       await authClient.logout();
-      
+
       toast({
         title: "✓ Logged Out Successfully",
         description: "You have been securely logged out.",
@@ -22,12 +22,11 @@ export default function AdminHeader() {
       });
 
       setTimeout(() => {
-        router.push('/login');
+        router.push("/login");
       }, 500);
-      
     } catch (error) {
-      console.error('Logout error:', error);
-      
+      console.error("Logout error:", error);
+
       toast({
         variant: "destructive",
         title: "Logout Failed",
@@ -51,7 +50,7 @@ export default function AdminHeader() {
               <Shield className="text-white" size={20} />
             </div>
             <div>
-              <h1 className="font-bold text-sm">Pamploma Tres City</h1>
+              <h1 className="font-bold text-sm">pamplona Tres City</h1>
               <p className="text-xs text-gray-500">Admin Panel</p>
             </div>
           </div>
@@ -60,7 +59,7 @@ export default function AdminHeader() {
               <Bell size={20} />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <button 
+            <button
               onClick={handleLogout}
               className="p-2 text-slate-800 hover:bg-slate-50 rounded-lg"
             >

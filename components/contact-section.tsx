@@ -1,19 +1,23 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { motion } from "framer-motion"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
-import { useState } from "react"
+import { motion } from "framer-motion";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { useState } from "react";
 
 export default function ContactSection() {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" })
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Form submitted:", formData)
-    setFormData({ name: "", email: "", message: "" })
-  }
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    setFormData({ name: "", email: "", message: "" });
+  };
 
   const contactInfo = [
     {
@@ -24,14 +28,14 @@ export default function ContactSection() {
     {
       icon: Mail,
       title: "Email",
-      info: "info@Pamploma Trescity.gov.ph",
+      info: "info@pamplona Trescity.gov.ph",
     },
     {
       icon: MapPin,
       title: "Address",
-      info: "Pamploma Tres City, Oriental Mindoro",
+      info: "pamplona Tres City, Oriental Mindoro",
     },
-  ]
+  ];
 
   return (
     <section id="contact" className="px-4 sm:px-6 lg:px-8">
@@ -43,15 +47,18 @@ export default function ContactSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="mb-16 text-center"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold gradient-text mb-4">Get In Touch</h2>
+          <h2 className="text-4xl sm:text-5xl font-bold gradient-text mb-4">
+            Get In Touch
+          </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Have questions? We'd love to hear from you. Send us a message anytime.
+            Have questions? We'd love to hear from you. Send us a message
+            anytime.
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {contactInfo.map((item, i) => {
-            const Icon = item.icon
+            const Icon = item.icon;
             return (
               <motion.div
                 key={i}
@@ -70,7 +77,7 @@ export default function ContactSection() {
                 <h3 className="text-lg font-bold mb-2">{item.title}</h3>
                 <p className="text-gray-600">{item.info}</p>
               </motion.div>
-            )
+            );
           })}
         </div>
 
@@ -87,14 +94,18 @@ export default function ContactSection() {
               type="text"
               placeholder="Your Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="px-4 py-3 rounded-lg bg-white border border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors"
             />
             <input
               type="email"
               placeholder="Your Email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="px-4 py-3 rounded-lg bg-white border border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors"
             />
           </div>
@@ -102,7 +113,9 @@ export default function ContactSection() {
             placeholder="Your Message"
             rows={5}
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, message: e.target.value })
+            }
             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors mb-6"
           />
           <motion.button
@@ -116,5 +129,5 @@ export default function ContactSection() {
         </motion.form>
       </div>
     </section>
-  )
+  );
 }

@@ -175,7 +175,7 @@ export default function NewsPage() {
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold">City News</h1>
                 <p className="text-white/90 text-xs sm:text-sm mt-0.5">
-                  Latest updates from Pamploma Tres City
+                  Latest updates from pamplona Tres City
                 </p>
               </div>
             </div>

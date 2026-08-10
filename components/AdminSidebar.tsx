@@ -69,9 +69,13 @@ export default function AdminSidebar() {
   const navigationItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/admin" },
     { icon: Newspaper, label: "News", path: "/dashboard/admin/news" },
-    { icon: Newspaper, label: "Announcements", path: "/dashboard/admin/announcements" },
+    {
+      icon: Newspaper,
+      label: "Announcements",
+      path: "/dashboard/admin/announcements",
+    },
     { icon: Mail, label: "Contact Messages", path: "/dashboard/admin/contact" },
-        { icon: Mail, label: "Reports", path: "/dashboard/admin/reports" },
+    { icon: Mail, label: "Reports", path: "/dashboard/admin/reports" },
   ];
 
   // ------------------------
@@ -79,40 +83,83 @@ export default function AdminSidebar() {
   // ------------------------
 
   const governmentServices = [
-    { icon: FileText, label: "Business Permit", path: "/dashboard/admin/business-permit" },
-    { icon: Building, label: "Building Permit", path: "/dashboard/admin/building-permit" },
-    { icon: Heart, label: "Marriage License", path: "/dashboard/admin/marriage-license" },
+    {
+      icon: FileText,
+      label: "Business Permit",
+      path: "/dashboard/admin/business-permit",
+    },
+    {
+      icon: Building,
+      label: "Building Permit",
+      path: "/dashboard/admin/building-permit",
+    },
+    {
+      icon: Heart,
+      label: "Marriage License",
+      path: "/dashboard/admin/marriage-license",
+    },
   ];
 
   const civilRegistry = [
     { icon: ScrollText, label: "Cedula", path: "/dashboard/admin/cedula" },
-    { icon: MapPin, label: "Residency Certificate", path: "/dashboard/admin/residency-certificate" },
-    { icon: Home, label: "Indigency Certificate", path: "/dashboard/admin/indigency-certificate" },
-    { icon: HandHelping, label: "Good Moral Certificate", path: "/dashboard/admin/good-moral-certificate" },
+    {
+      icon: MapPin,
+      label: "Residency Certificate",
+      path: "/dashboard/admin/residency-certificate",
+    },
+    {
+      icon: Home,
+      label: "Indigency Certificate",
+      path: "/dashboard/admin/indigency-certificate",
+    },
+    {
+      icon: HandHelping,
+      label: "Good Moral Certificate",
+      path: "/dashboard/admin/good-moral-certificate",
+    },
   ];
 
   const healthServices = [
-    { icon: UserCheck, label: "Health Certificate", path: "/dashboard/admin/health-certificate" },
-    { icon: Heart, label: "Medical Assistance", path: "/dashboard/admin/medical-assistance" },
-    { icon: Ambulance, label: "Ambulance Request", path: "/dashboard/admin/ambulance-request" },
+    {
+      icon: UserCheck,
+      label: "Health Certificate",
+      path: "/dashboard/admin/health-certificate",
+    },
+    {
+      icon: Heart,
+      label: "Medical Assistance",
+      path: "/dashboard/admin/medical-assistance",
+    },
+    {
+      icon: Ambulance,
+      label: "Ambulance Request",
+      path: "/dashboard/admin/ambulance-request",
+    },
   ];
 
   const publicSafety = [
-    { icon: FileText, label: "Barangay Clearance", path: "/dashboard/admin/barangay-clearance" },
-    { icon: ShieldCheck, label: "Barangay Blotter", path: "/dashboard/admin/barangay-blotter" },
+    {
+      icon: FileText,
+      label: "Barangay Clearance",
+      path: "/dashboard/admin/barangay-clearance",
+    },
+    {
+      icon: ShieldCheck,
+      label: "Barangay Blotter",
+      path: "/dashboard/admin/barangay-blotter",
+    },
   ];
 
   return (
     <aside className="hidden lg:block fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-emerald-600 to-orange-500 text-white shadow-2xl z-50 overflow-y-auto">
       <div className="p-6 flex flex-col min-h-full">
-
         {/* Logo Section */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
             <Shield className="text-slate-800" size={20} />
           </div>
           <div>
-            <h1 className="font-bold text-base">Pamploma Tres City</h1>
+            <h1 className="font-bold text-base">pamplona Tres City</h1>
             <p className="text-xs text-slate-200">Admin Panel</p>
           </div>
         </div>
@@ -138,7 +185,9 @@ export default function AdminSidebar() {
 
           {/* Government Services Section */}
           <div className="pt-3 mt-2 border-t border-white/20">
-            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">GOVERNMENT SERVICES</h3>
+            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">
+              GOVERNMENT SERVICES
+            </h3>
             {governmentServices.map((item, index) => {
               const active = isActive(item.path);
 
@@ -159,7 +208,9 @@ export default function AdminSidebar() {
 
           {/* Civil Registry Services Section */}
           <div className="pt-3 mt-2 border-t border-white/20">
-            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">CIVIL REGISTRY SERVICES</h3>
+            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">
+              CIVIL REGISTRY SERVICES
+            </h3>
             {civilRegistry.map((item, index) => {
               const active = isActive(item.path);
 
@@ -180,7 +231,9 @@ export default function AdminSidebar() {
 
           {/* Health Services Section */}
           <div className="pt-3 mt-2 border-t border-white/20">
-            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">HEALTH SERVICES</h3>
+            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">
+              HEALTH SERVICES
+            </h3>
             {healthServices.map((item, index) => {
               const active = isActive(item.path);
 
@@ -201,7 +254,9 @@ export default function AdminSidebar() {
 
           {/* Public Safety Section */}
           <div className="pt-3 mt-2 border-t border-white/20">
-            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">PUBLIC SAFETY</h3>
+            <h3 className="text-xs font-semibold text-white/70 px-3 mb-1">
+              PUBLIC SAFETY
+            </h3>
             {publicSafety.map((item, index) => {
               const active = isActive(item.path);
 

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Bell, Search, ArrowRight } from "lucide-react"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import Link from "next/link"
-import { useState } from "react"
+import { motion } from "framer-motion";
+import { Bell, Search, ArrowRight } from "lucide-react";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import Link from "next/link";
+import { useState } from "react";
 
 const announcements = [
   {
@@ -31,9 +31,9 @@ const announcements = [
   {
     id: 3,
     title: "Community Event",
-    excerpt: "Join us for the Annual Pamploma Tres City Festival this weekend!",
+    excerpt: "Join us for the Annual pamplona Tres City Festival this weekend!",
     content:
-      "Join us for the Annual Pamploma Tres City Festival this weekend! Enjoy food, music, and community activities for the whole family.",
+      "Join us for the Annual pamplona Tres City Festival this weekend! Enjoy food, music, and community activities for the whole family.",
     category: "Event",
     date: "Nov 11, 2024",
     featured: false,
@@ -42,7 +42,8 @@ const announcements = [
     id: 4,
     title: "Emergency Services Update",
     excerpt: "Enhanced 911 response system now available 24/7.",
-    content: "Our enhanced 911 response system is now fully operational and available 24/7 for all city residents.",
+    content:
+      "Our enhanced 911 response system is now fully operational and available 24/7 for all city residents.",
     category: "Important",
     date: "Nov 10, 2024",
     featured: false,
@@ -51,26 +52,28 @@ const announcements = [
     id: 5,
     title: "Community Cleanup Drive",
     excerpt: "Join us for a city-wide cleanup initiative.",
-    content: "Join us for a city-wide cleanup initiative. Meet at Central Park at 8 AM on Saturday.",
+    content:
+      "Join us for a city-wide cleanup initiative. Meet at Central Park at 8 AM on Saturday.",
     category: "Event",
     date: "Nov 9, 2024",
     featured: false,
   },
-]
+];
 
 export default function AnnouncementsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredAnnouncements = announcements.filter((ann) => {
     const matchesSearch =
       ann.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ann.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = !selectedCategory || ann.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+      ann.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      !selectedCategory || ann.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  const categories = [...new Set(announcements.map((ann) => ann.category))]
+  const categories = [...new Set(announcements.map((ann) => ann.category))];
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -85,7 +88,9 @@ export default function AnnouncementsPage() {
             className="flex items-center gap-4 mb-6"
           >
             <Bell className="w-10 h-10" />
-            <h1 className="text-4xl md:text-5xl font-bold">Latest Announcements</h1>
+            <h1 className="text-4xl md:text-5xl font-bold">
+              Latest Announcements
+            </h1>
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -93,7 +98,8 @@ export default function AnnouncementsPage() {
             transition={{ delay: 0.1, duration: 0.6 }}
             className="text-xl text-white/90 max-w-2xl"
           >
-            Stay informed with the most recent updates and important notices from Pamploma Tres City Government.
+            Stay informed with the most recent updates and important notices
+            from pamplona Tres City Government.
           </motion.p>
         </div>
       </section>
@@ -167,10 +173,16 @@ export default function AnnouncementsPage() {
                     <span className="px-4 py-2 rounded-full bg-white/95 text-gray-900 text-sm font-bold">
                       {announcement.category}
                     </span>
-                    <span className="text-white/80 text-sm">{announcement.date}</span>
+                    <span className="text-white/80 text-sm">
+                      {announcement.date}
+                    </span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{announcement.title}</h2>
-                  <p className="text-lg text-white/95 mb-6 leading-relaxed">{announcement.content}</p>
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                    {announcement.title}
+                  </h2>
+                  <p className="text-lg text-white/95 mb-6 leading-relaxed">
+                    {announcement.content}
+                  </p>
                   <motion.button
                     whileHover={{ x: 5 }}
                     className="text-white font-bold flex items-center gap-2 hover:gap-3 transition-all"
@@ -211,9 +223,15 @@ export default function AnnouncementsPage() {
                       </span>
                       <div className="w-2 h-2 rounded-full bg-white" />
                     </div>
-                    <span className="text-xs text-white/70">{announcement.date}</span>
-                    <h3 className="text-lg font-bold text-white mb-3 mt-3 line-clamp-2">{announcement.title}</h3>
-                    <p className="text-white/90 text-sm mb-6 line-clamp-3">{announcement.excerpt}</p>
+                    <span className="text-xs text-white/70">
+                      {announcement.date}
+                    </span>
+                    <h3 className="text-lg font-bold text-white mb-3 mt-3 line-clamp-2">
+                      {announcement.title}
+                    </h3>
+                    <p className="text-white/90 text-sm mb-6 line-clamp-3">
+                      {announcement.excerpt}
+                    </p>
                     <motion.div
                       animate={{ x: 0 }}
                       className="text-white font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
@@ -225,7 +243,9 @@ export default function AnnouncementsPage() {
             </motion.div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-lg text-gray-500">No announcements found matching your search.</p>
+              <p className="text-lg text-gray-500">
+                No announcements found matching your search.
+              </p>
             </div>
           )}
         </div>
@@ -240,9 +260,12 @@ export default function AnnouncementsPage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Need City Services?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Need City Services?
+            </h2>
             <p className="text-lg text-white/90 mb-8">
-              Explore our comprehensive range of government services available to all residents.
+              Explore our comprehensive range of government services available
+              to all residents.
             </p>
             <Link href="/services">
               <motion.button
@@ -259,5 +282,5 @@ export default function AnnouncementsPage() {
 
       <Footer />
     </main>
-  )
+  );
 }

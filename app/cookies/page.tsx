@@ -16,7 +16,7 @@ export default function CookiesPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent mb-4">
+            <h1 className="text-4xl font-bold text-orange-600 mb-4">
               Cookie Policy
             </h1>
             <p className="text-foreground/60">Last updated: November 2024</p>

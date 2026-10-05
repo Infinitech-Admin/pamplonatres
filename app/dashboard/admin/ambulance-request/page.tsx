@@ -316,7 +316,7 @@ export default function AdminAmbulanceRequestsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
 
@@ -330,7 +330,7 @@ export default function AdminAmbulanceRequestsPage() {
                         setStatusFilter(e.target.value);
                         setPagination((prev) => ({ ...prev, current_page: 1 }));
                       }}
-                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="all">All Status</option>
                       <option value="pending">Pending</option>
@@ -344,7 +344,7 @@ export default function AdminAmbulanceRequestsPage() {
 
                   <button
                     onClick={handleSearch}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
                   >
                     Search
                   </button>
@@ -383,7 +383,7 @@ export default function AdminAmbulanceRequestsPage() {
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500 mx-auto mb-3"></div>
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-500 mx-auto mb-3"></div>
                     <p className="text-gray-600 text-sm">Loading requests...</p>
                   </div>
                 </div>
@@ -401,7 +401,7 @@ export default function AdminAmbulanceRequestsPage() {
                   <div className="hidden sm:block overflow-x-auto">
                     <div className="inline-block min-w-full align-middle">
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white">
+                        <thead className="bg-green-600/90 text-white">
                           <tr>
                             <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
                               Request ID
@@ -424,7 +424,7 @@ export default function AdminAmbulanceRequestsPage() {
                             <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold uppercase whitespace-nowrap">
                               Requested
                             </th>
-                            <th className="px-3 sm:px-4 py-3 text-center text-xs font-semibold uppercase whitespace-nowrap sticky right-0 bg-gradient-to-r from-emerald-600 to-orange-500">
+                            <th className="px-3 sm:px-4 py-3 text-center text-xs font-semibold uppercase whitespace-nowrap sticky right-0 bg-green-600/90">
                               Actions
                             </th>
                           </tr>
@@ -477,7 +477,7 @@ export default function AdminAmbulanceRequestsPage() {
                               <td className="px-3 sm:px-4 py-3 text-center whitespace-nowrap sticky right-0 bg-white">
                                 <button
                                   onClick={() => handleViewRequest(request)}
-                                  className="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium hover:bg-emerald-200 transition-colors"
+                                  className="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors"
                                 >
                                   <Eye className="w-3 h-3" />
                                   <span className="hidden sm:inline">View</span>
@@ -529,7 +529,7 @@ export default function AdminAmbulanceRequestsPage() {
                           <span className="text-xs text-gray-500">
                             {formatDate(request.requested_at)}
                           </span>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs font-medium">
                             <Eye className="w-3 h-3" />
                             View
                           </span>
@@ -585,7 +585,7 @@ export default function AdminAmbulanceRequestsPage() {
                               onClick={() => handlePageChange(pageNum)}
                               className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
                                 pagination.current_page === pageNum
-                                  ? "bg-emerald-600 text-white"
+                                  ? "bg-green-600 text-white"
                                   : "border border-gray-300 hover:bg-gray-50"
                               }`}
                             >
@@ -667,7 +667,7 @@ export default function AdminAmbulanceRequestsPage() {
                   {/* Patient Information */}
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                       Patient Information
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -687,7 +687,7 @@ export default function AdminAmbulanceRequestsPage() {
                         </label>
                         <a
                           href={`tel:${selectedRequest.phone}`}
-                          className="text-sm sm:text-base text-emerald-600 hover:text-emerald-700 font-medium"
+                          className="text-sm sm:text-base text-green-600 hover:text-green-700 font-medium"
                         >
                           {selectedRequest.phone}
                         </a>
@@ -698,7 +698,7 @@ export default function AdminAmbulanceRequestsPage() {
                   {/* Location */}
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                       Location
                     </h3>
                     <div className="space-y-3">
@@ -724,7 +724,7 @@ export default function AdminAmbulanceRequestsPage() {
                               href={`https://www.google.com/maps?q=${selectedRequest.latitude},${selectedRequest.longitude}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm text-emerald-600 hover:text-emerald-700 underline flex items-center gap-1 mt-1"
+                              className="text-sm text-green-600 hover:text-green-700 underline flex items-center gap-1 mt-1"
                             >
                               <Navigation className="w-4 h-4" />
                               Open in Google Maps
@@ -738,7 +738,7 @@ export default function AdminAmbulanceRequestsPage() {
                   {selectedRequest.notes && (
                     <div>
                       <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                        <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                         Additional Notes
                       </h3>
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4">
@@ -752,7 +752,7 @@ export default function AdminAmbulanceRequestsPage() {
                   {/* Timeline */}
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                       Timeline
                     </h3>
                     <div className="space-y-2">

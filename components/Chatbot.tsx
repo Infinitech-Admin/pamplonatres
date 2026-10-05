@@ -324,7 +324,7 @@ export default function Chatbot() {
       {/* Floating Chatbot Button */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className="fixed bottom-6 right-6 bg-gradient-to-r from-orange-600 to-orange-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 group"
+        className="fixed bottom-6 right-6 bg-orange-500/90 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 group"
         aria-label="Open Chatbot"
       >
         {isChatOpen ? (
@@ -350,7 +350,7 @@ export default function Chatbot() {
       {isChatOpen && (
         <div className="fixed bottom-24 right-6 w-96 h-[550px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200">
           {/* Chat Header */}
-          <div className="bg-gradient-to-r from-orange-600 to-orange-500 text-white p-4 flex items-center gap-3">
+          <div className="bg-orange-500/90 text-white p-4 flex items-center gap-3">
             <div className="bg-white p-2 rounded-full">
               <Image
                 src="/pamplona_tres.png"
@@ -383,7 +383,7 @@ export default function Chatbot() {
                   <div
                     className={`max-w-[85%] p-3 rounded-2xl break-words ${
                       message.type === "user"
-                        ? "bg-orange-600 text-white rounded-br-none"
+                        ? "bg-orange-500 text-white rounded-br-none"
                         : "bg-white text-gray-800 shadow-sm rounded-bl-none"
                     }`}
                   >
@@ -425,7 +425,7 @@ export default function Chatbot() {
               />
               <button
                 onClick={() => handleSendMessage()}
-                className="bg-orange-600 text-white p-2 rounded-full hover:bg-orange-700 transition-colors"
+                className="bg-orange-500 text-white p-2 rounded-full hover:bg-orange-700 transition-colors"
               >
                 <Send className="w-5 h-5" />
               </button>

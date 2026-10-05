@@ -888,7 +888,7 @@ export default function BuildingPermitPage() {
                 {currentStep < steps.length ? (
                   <Button
                     onClick={handleNext}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-orange-500 hover:bg-orange-500"
                   >
                     Next
                   </Button>
@@ -896,7 +896,7 @@ export default function BuildingPermitPage() {
                   <Button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-orange-500 hover:bg-orange-500"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Application"}
                   </Button>

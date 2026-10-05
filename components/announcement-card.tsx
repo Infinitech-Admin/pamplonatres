@@ -79,7 +79,7 @@ export default function AnnouncementsPage() {
     <main className="min-h-screen flex flex-col">
       <Header />
 
-      <section className="bg-gradient-to-br from-orange-600 to-emerald-600 text-white py-20 px-4 sm:px-6 lg:px-8">
+      <section className="bg-orange-500/90 text-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -129,7 +129,7 @@ export default function AnnouncementsPage() {
               onClick={() => setSelectedCategory(null)}
               className={`px-4 py-2 rounded-full font-medium transition-all ${
                 selectedCategory === null
-                  ? "bg-gradient-to-r from-orange-600 to-emerald-600 text-white"
+                  ? "bg-orange-500/90 text-white"
                   : "bg-white border border-gray-300 text-gray-700 hover:border-orange-300"
               }`}
             >
@@ -143,7 +143,7 @@ export default function AnnouncementsPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-full font-medium transition-all ${
                   selectedCategory === cat
-                    ? "bg-gradient-to-r from-orange-600 to-emerald-600 text-white"
+                    ? "bg-orange-500/90 text-white"
                     : "bg-white border border-gray-300 text-gray-700 hover:border-orange-300"
                 }`}
               >
@@ -167,7 +167,7 @@ export default function AnnouncementsPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                   viewport={{ once: true }}
-                  className="bg-gradient-to-br from-orange-500 to-emerald-500 rounded-2xl p-12 text-white hover:shadow-xl transition-shadow"
+                  className="bg-orange-500/90 rounded-2xl p-12 text-white hover:shadow-xl transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-6">
                     <span className="px-4 py-2 rounded-full bg-white/95 text-gray-900 text-sm font-bold">
@@ -215,7 +215,7 @@ export default function AnnouncementsPage() {
                     transition={{ delay: i * 0.05, duration: 0.5 }}
                     viewport={{ once: true }}
                     whileHover={{ y: -8 }}
-                    className="bg-gradient-to-br from-orange-500 to-emerald-500 rounded-xl p-6 text-white hover:shadow-xl transition-all group cursor-pointer"
+                    className="bg-orange-500/90 rounded-xl p-6 text-white hover:shadow-xl transition-all group cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <span className="px-3 py-1 rounded-full bg-white/95 text-gray-900 text-xs font-bold">
@@ -252,7 +252,7 @@ export default function AnnouncementsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-orange-600 to-emerald-600">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-orange-500/90">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

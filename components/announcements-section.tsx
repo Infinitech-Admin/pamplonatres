@@ -153,12 +153,12 @@ export default function AnnouncementsSection() {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      Alert: "bg-gradient-to-r from-red-500 to-orange-500 text-white",
-      Event: "bg-gradient-to-r from-orange-500 to-red-400 text-white",
-      Update: "bg-gradient-to-r from-green-500 to-orange-400 text-white",
-      Development: "bg-gradient-to-r from-red-400 to-green-500 text-white",
-      Health: "bg-gradient-to-r from-green-600 to-green-400 text-white",
-      Notice: "bg-gradient-to-r from-orange-600 to-red-500 text-white",
+      Alert: "bg-orange-500/90 text-white",
+      Event: "bg-orange-500/90 text-white",
+      Update: "bg-orange-500/90 text-white",
+      Development: "bg-orange-500/90 text-white",
+      Health: "bg-orange-500/90 text-white",
+      Notice: "bg-orange-500/90 text-white",
     };
     return (
       colors[category as keyof typeof colors] ||
@@ -177,10 +177,10 @@ export default function AnnouncementsSection() {
   return (
     <div className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-green-50" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-red-200/30 via-orange-200/30 to-green-200/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute inset-0 bg-orange-50/60" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-orange-50/60 rounded-full blur-3xl animate-pulse" />
       <div
-        className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-green-200/30 via-orange-200/30 to-red-200/30 rounded-full blur-3xl animate-pulse"
+        className="absolute bottom-0 left-0 w-96 h-96 bg-orange-50/60 rounded-full blur-3xl animate-pulse"
         style={{ animationDelay: "1s" }}
       />
 
@@ -199,11 +199,11 @@ export default function AnnouncementsSection() {
           >
             <div className="relative">
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full blur-xl opacity-60"
+                className="absolute inset-0 bg-orange-500/90 rounded-full blur-xl opacity-60"
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <div className="relative w-16 h-16 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center shadow-xl">
+              <div className="relative w-16 h-16 bg-orange-500/90 rounded-full flex items-center justify-center shadow-xl">
                 <Bell className="w-8 h-8 text-white" />
               </div>
             </div>
@@ -215,7 +215,7 @@ export default function AnnouncementsSection() {
             transition={{ delay: 0.2 }}
             className="text-4xl md:text-5xl font-bold mb-4"
           >
-            <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+            <span className="text-orange-600">
               Community Announcements
             </span>
           </motion.h2>
@@ -224,7 +224,7 @@ export default function AnnouncementsSection() {
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
             transition={{ delay: 0.3 }}
-            className="w-32 h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full mx-auto mb-4"
+            className="w-32 h-1.5 bg-orange-500/90 rounded-full mx-auto mb-4"
           />
 
           <motion.p
@@ -263,13 +263,13 @@ export default function AnnouncementsSection() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-16"
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-orange-500/90 rounded-full flex items-center justify-center mx-auto mb-4">
               <X className="w-8 h-8 text-white" />
             </div>
             <p className="text-red-700 mb-6 font-semibold text-lg">{error}</p>
             <button
               onClick={fetchAnnouncements}
-              className="px-8 py-4 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white rounded-full hover:shadow-2xl transition-all font-semibold text-lg hover:scale-105"
+              className="px-8 py-4 bg-orange-500/90 text-white rounded-full hover:shadow-2xl transition-all font-semibold text-lg hover:scale-105"
             >
               Try Again
             </button>
@@ -289,7 +289,7 @@ export default function AnnouncementsSection() {
                   viewport={{ once: true }}
                   whileHover={{ y: -12, scale: 1.02 }}
                   onClick={() => setSelectedAnnouncement(announcement)}
-                  className="group relative p-6 rounded-3xl bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-gradient-to-r hover:from-red-400 hover:via-orange-400 hover:to-green-400 shadow-lg hover:shadow-2xl transition-all cursor-pointer overflow-hidden"
+                  className="group relative p-6 rounded-3xl bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-gradient-to-r shadow-lg hover:shadow-2xl transition-all cursor-pointer overflow-hidden"
                 >
                   {/* Hover Gradient Effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-orange-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -306,7 +306,7 @@ export default function AnnouncementsSection() {
                       <motion.div
                         animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="w-3 h-3 rounded-full bg-gradient-to-r from-red-500 to-orange-500"
+                        className="w-3 h-3 rounded-full bg-orange-500/90"
                       />
                     </div>
 
@@ -337,12 +337,12 @@ export default function AnnouncementsSection() {
               className="relative rounded-3xl bg-white border-4 border-transparent bg-clip-padding p-10 md:p-16 text-center shadow-2xl overflow-hidden"
               style={{
                 background:
-                  "linear-gradient(white, white) padding-box, linear-gradient(to right, #dc2626, #ea580c, #059669) border-box",
+                  "linear-gradient(white, white) padding-box, linear-gradient(to right, #dc2626, #F97316, #16A34A) border-box",
               }}
             >
               {/* Gradient Background */}
               <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-600 to-green-600" />
+                <div className="absolute inset-0 bg-orange-500/90" />
               </div>
 
               <div className="relative z-10">
@@ -353,12 +353,12 @@ export default function AnnouncementsSection() {
                     repeat: Infinity,
                     ease: "linear",
                   }}
-                  className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 rounded-full flex items-center justify-center shadow-lg"
+                  className="w-20 h-20 mx-auto mb-6 bg-orange-500/90 rounded-full flex items-center justify-center shadow-lg"
                 >
                   <Sparkles className="w-10 h-10 text-white" />
                 </motion.div>
 
-                <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-orange-600">
                   Never Miss an Update
                 </h2>
                 <p className="text-gray-700 mb-8 max-w-2xl mx-auto text-lg font-medium">
@@ -380,7 +380,7 @@ export default function AnnouncementsSection() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     disabled={subscribing}
-                    className="px-8 py-4 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white font-bold rounded-full hover:shadow-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shadow-xl text-lg"
+                    className="px-8 py-4 bg-orange-500/90 text-white font-bold rounded-full hover:shadow-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shadow-xl text-lg"
                   >
                     {subscribing ? (
                       <>
@@ -404,10 +404,10 @@ export default function AnnouncementsSection() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-20"
           >
-            <div className="w-24 h-24 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <div className="w-24 h-24 bg-orange-500/90 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
               <Bell className="w-12 h-12 text-white" />
             </div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
+            <h3 className="text-2xl font-bold text-orange-600 mb-3">
               No Announcements Yet
             </h3>
             <p className="text-gray-600 text-lg">
@@ -436,7 +436,7 @@ export default function AnnouncementsSection() {
               className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
             >
               {/* Modal Header */}
-              <div className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white px-8 py-6 flex items-center justify-between">
+              <div className="bg-orange-500/90 text-white px-8 py-6 flex items-center justify-between">
                 <div className="flex items-center gap-4 min-w-0 flex-1">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                     <Bell className="w-6 h-6" />
@@ -477,7 +477,7 @@ export default function AnnouncementsSection() {
 
                   {/* Title */}
                   <div>
-                    <h3 className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
+                    <h3 className="text-3xl font-bold text-orange-600 mb-3">
                       {selectedAnnouncement.title}
                     </h3>
                     <p className="text-gray-700 text-lg leading-relaxed">
@@ -488,10 +488,10 @@ export default function AnnouncementsSection() {
                   {/* Content */}
                   <div>
                     <h4 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1 h-5 bg-gradient-to-b from-red-500 via-orange-500 to-green-500 rounded-full" />
+                      <div className="w-1 h-5 bg-orange-500/90 rounded-full" />
                       Full Details
                     </h4>
-                    <div className="p-6 bg-gradient-to-br from-red-50 via-orange-50 to-green-50 rounded-2xl border-2 border-gray-200">
+                    <div className="p-6 bg-orange-50/60 rounded-2xl border-2 border-gray-200">
                       <p className="text-gray-900 whitespace-pre-wrap leading-relaxed text-base">
                         {selectedAnnouncement.content}
                       </p>
@@ -501,12 +501,12 @@ export default function AnnouncementsSection() {
               </div>
 
               {/* Modal Footer */}
-              <div className="border-t-2 border-gray-200 px-8 py-6 bg-gradient-to-r from-red-50 via-orange-50 to-green-50">
+              <div className="border-t-2 border-gray-200 px-8 py-6 bg-orange-50/60">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedAnnouncement(null)}
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white rounded-full hover:shadow-2xl transition-all font-bold text-lg"
+                  className="w-full sm:w-auto px-8 py-4 bg-orange-500/90 text-white rounded-full hover:shadow-2xl transition-all font-bold text-lg"
                 >
                   Close
                 </motion.button>

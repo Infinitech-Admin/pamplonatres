@@ -17,10 +17,10 @@ import CitizenLayout from "@/components/citizenLayout";
 export default function PoliceClearanceGuide() {
   return (
     <CitizenLayout requireAuth={false}>
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 py-8 px-4">
+      <div className="min-h-screen bg-orange-50/60 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -213,7 +213,7 @@ export default function PoliceClearanceGuide() {
                   },
                 ].map((step, index) => (
                   <li key={index} className="flex gap-3 text-sm">
-                    <span className="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
                       {index + 1}
                     </span>
                     <div>

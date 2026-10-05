@@ -22,7 +22,7 @@ export default function HeroSection() {
         style={{
           position: "absolute",
           inset: 0,
-          background: `linear-gradient(135deg, rgba(234, 88, 12, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%)`,
+          background: `linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(22, 163, 74, 0.08) 100%)`,
           zIndex: 0,
         }}
       />
@@ -38,7 +38,7 @@ export default function HeroSection() {
             left: "5%",
             width: "300px",
             height: "300px",
-            backgroundColor: "#EA580C",
+            backgroundColor: "#F97316",
             borderRadius: "50%",
             mixBlendMode: "multiply",
             filter: "blur(80px)",
@@ -54,7 +54,7 @@ export default function HeroSection() {
             right: "5%",
             width: "300px",
             height: "300px",
-            backgroundColor: "#059669",
+            backgroundColor: "#16A34A",
             borderRadius: "50%",
             mixBlendMode: "multiply",
             filter: "blur(80px)",
@@ -93,12 +93,12 @@ export default function HeroSection() {
                 padding: "8px 16px",
                 borderRadius: "9999px",
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
-                border: `2px solid #EA580C`,
+                border: `2px solid #F97316`,
                 backdropFilter: "blur(10px)",
               }}
             >
-              <Sparkles style={{ width: "16px", height: "16px", color: "#EA580C" }} />
-              <span style={{ color: "#EA580C", fontWeight: 600, fontSize: "14px" }}>
+              <Sparkles style={{ width: "16px", height: "16px", color: "#F97316" }} />
+              <span style={{ color: "#F97316", fontWeight: 600, fontSize: "14px" }}>
                 Welcome to Barangay Pamplona Tres
               </span>
             </span>
@@ -114,7 +114,7 @@ export default function HeroSection() {
             fontWeight: "bold",
             marginBottom: "24px",
             lineHeight: 1.2,
-            background: `linear-gradient(to right, #EA580C, #059669)`,
+            background: `linear-gradient(to right, #F97316, #16A34A)`,
             backgroundClip: "text",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -158,11 +158,11 @@ export default function HeroSection() {
                 paddingBottom: "12px",
                 borderRadius: "8px",
                 border: "none",
-                background: "linear-gradient(to right, #EA580C, #f97316)",
+                background: "linear-gradient(to right, #F97316, #f97316)",
                 color: "white",
                 fontWeight: 600,
                 cursor: "pointer",
-                boxShadow: "0 10px 15px rgba(234, 88, 12, 0.2)",
+                boxShadow: "0 10px 15px rgba(249, 115, 22, 0.2)",
               }}
             >
               Explore Services
@@ -178,9 +178,9 @@ export default function HeroSection() {
                 paddingTop: "12px",
                 paddingBottom: "12px",
                 borderRadius: "8px",
-                border: "2px solid #059669",
+                border: "2px solid #16A34A",
                 background: "white",
-                color: "#059669",
+                color: "#16A34A",
                 fontWeight: 600,
                 cursor: "pointer",
               }}

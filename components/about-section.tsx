@@ -43,7 +43,7 @@ export default function AboutSection() {
       className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
     >
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-green-50" />
+      <div className="absolute inset-0 bg-orange-50/60" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -63,12 +63,12 @@ export default function AboutSection() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.15, duration: 0.5 }}
                   whileHover={{ y: -8, scale: 1.05 }}
-                  className="p-8 rounded-2xl bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all border-2 border-transparent hover:border-gradient-to-r hover:from-red-400 hover:via-orange-400 hover:to-green-400 text-center group"
+                  className="p-8 rounded-2xl bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all border-2 border-transparent hover:border-gradient-to-r text-center group"
                 >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 via-orange-500 to-green-500 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-full bg-orange-500/90 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
+                  <div className="text-4xl font-bold text-orange-600 mb-2">
                     {stat.number}
                   </div>
                   <div className="text-sm font-medium text-gray-600">
@@ -90,18 +90,18 @@ export default function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               className="inline-block mb-4"
             >
-              <span className="px-4 py-2 rounded-full bg-gradient-to-r from-red-100 via-orange-100 to-green-100 text-sm font-semibold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+              <span className="px-4 py-2 rounded-full bg-orange-50/60 text-sm font-semibold text-orange-600">
                 Our Community
               </span>
             </motion.div>
 
             <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+              <span className="text-orange-600">
                 Barangay Pamplona Tres
               </span>
             </h2>
 
-            <div className="w-20 h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full mb-6" />
+            <div className="w-20 h-1.5 bg-orange-500/90 rounded-full mb-6" />
 
             <p className="text-lg text-gray-700 mb-6 leading-relaxed">
               Nestled in the bustling city of Las Piñas, Barangay Pamplona Tres
@@ -125,7 +125,7 @@ export default function AboutSection() {
                   transition={{ delay: i * 0.15, duration: 0.5 }}
                   className="flex items-start gap-4 group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 via-orange-500 to-green-500 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform shadow-md">
+                  <div className="w-8 h-8 rounded-lg bg-orange-500/90 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform shadow-md">
                     <span className="text-white text-lg font-bold">✓</span>
                   </div>
                   <span className="text-gray-800 text-lg font-medium">
@@ -141,7 +141,7 @@ export default function AboutSection() {
               transition={{ delay: 0.6 }}
               className="mt-10"
             >
-              <button className="px-8 py-4 rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white font-semibold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all">
+              <button className="px-8 py-4 rounded-full bg-orange-500/90 text-white font-semibold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all">
                 Learn More About Us
               </button>
             </motion.div>
@@ -161,13 +161,13 @@ export default function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               className="inline-block mb-4"
             >
-              <span className="px-4 py-2 rounded-full bg-gradient-to-r from-red-100 via-orange-100 to-green-100 text-sm font-semibold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+              <span className="px-4 py-2 rounded-full bg-orange-50/60 text-sm font-semibold text-orange-600">
                 Meet Our Team
               </span>
             </motion.div>
 
             <h3 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+              <span className="text-orange-600">
                 The People Behind Our Community
               </span>
             </h3>
@@ -185,7 +185,7 @@ export default function AboutSection() {
             onClick={() => setIsImageModalOpen(true)}
           >
             {/* Placeholder for team image - replace with actual image */}
-            <div className="aspect-[21/9] bg-gradient-to-br from-red-100 via-orange-100 to-green-100 relative">
+            <div className="aspect-[21/9] bg-orange-50/60 relative">
               <img
                 src="/our-team2.jpg"
                 alt="Barangay Pamplona Tres Team"
@@ -229,7 +229,7 @@ export default function AboutSection() {
             className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6"
           >
             <div className="text-center p-6 rounded-2xl bg-white/60 backdrop-blur-sm shadow-lg">
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
+              <div className="text-3xl font-bold text-orange-600 mb-2">
                 11+
               </div>
               <div className="text-gray-700 font-medium">
@@ -238,7 +238,7 @@ export default function AboutSection() {
             </div>
 
             <div className="text-center p-6 rounded-2xl bg-white/60 backdrop-blur-sm shadow-lg">
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
+              <div className="text-3xl font-bold text-orange-600 mb-2">
                 10+
               </div>
               <div className="text-gray-700 font-medium">
@@ -247,7 +247,7 @@ export default function AboutSection() {
             </div>
 
             <div className="text-center p-6 rounded-2xl bg-white/60 backdrop-blur-sm shadow-lg">
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
+              <div className="text-3xl font-bold text-orange-600 mb-2">
                 24/7
               </div>
               <div className="text-gray-700 font-medium">

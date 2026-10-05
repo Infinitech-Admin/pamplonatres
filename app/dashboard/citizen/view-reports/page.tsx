@@ -85,7 +85,7 @@ export default function MyReportsPage() {
     < CitizenLayout>
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-orange-600 text-white px-4 py-4">
+      <header className="bg-orange-500 text-white px-4 py-4">
         <div className="flex items-center gap-3 mb-2">
           <Link href="/dashboard/citizen/">
             <ChevronLeft className="w-6 h-6" />
@@ -108,7 +108,7 @@ export default function MyReportsPage() {
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-colors ${
-                filter === tab.value ? "bg-orange-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                filter === tab.value ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
               {tab.label}
@@ -135,7 +135,7 @@ export default function MyReportsPage() {
             <p className="text-gray-600 text-center mb-6 max-w-sm">
               {filter === "all" ? "You haven't submitted any reports yet." : `No ${filter} reports at the moment.`}
             </p>
-            <Link href="/dashboard/citizen/report-issue" className="bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold">
+            <Link href="/dashboard/citizen/report-issue" className="bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold">
               Submit a Report
             </Link>
           </div>

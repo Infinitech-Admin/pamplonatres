@@ -628,7 +628,7 @@ export default function CedulaPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-orange-500 hover:bg-orange-600"
+                  className="w-full bg-orange-500 hover:bg-orange-500"
                 >
                   {isSubmitting ? (
                     <>

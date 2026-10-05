@@ -45,7 +45,7 @@ export default function CookieConsent() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-lg shadow-lg p-4 md:p-6 text-white">
+        <div className="bg-orange-500/90 rounded-lg shadow-lg p-4 md:p-6 text-white">
           <div className="flex items-start gap-4">
             {/* Cookie Icon */}
             <Cookie className="w-6 h-6 flex-shrink-0 mt-1" />

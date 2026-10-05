@@ -486,14 +486,14 @@ export default function MarriageLicenseGuidePage() {
                 {currentStep < steps.length ? (
                   <Button
                     onClick={handleNext}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-orange-500 hover:bg-orange-500"
                   >
                     Next
                   </Button>
                 ) : (
                   <Button
                     onClick={() => setCurrentStep(1)}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-orange-500 hover:bg-orange-500"
                   >
                     Back to Start
                   </Button>

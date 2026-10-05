@@ -192,7 +192,7 @@ export default function AmbulanceRequestPage() {
 
       <div className="flex flex-col min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-gradient-to-r from-green-600 via-yellow-500 to-orange-500 text-white px-6 py-5 shadow-lg sticky top-0 z-10">
+        <header className="bg-orange-500/90 text-white px-6 py-5 shadow-lg sticky top-0 z-10">
           <div className="flex items-center gap-4">
             <Link href="/emergency" className="hover:bg-white/20 p-2 rounded-lg transition-all active:scale-95">
               <ChevronLeft className="w-6 h-6" />
@@ -214,7 +214,7 @@ export default function AmbulanceRequestPage() {
             {/* Left Column - Info Cards */}
             <div className="lg:col-span-1 space-y-4">
               {/* Location Card */}
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl p-5 shadow-lg">
+              <div className="bg-orange-500/90 text-white rounded-2xl p-5 shadow-lg">
                 <div className="flex items-start gap-3 mb-3">
                   <div className="bg-white/20 p-2 rounded-lg">
                     <MapPin className="w-5 h-5" />
@@ -241,7 +241,7 @@ export default function AmbulanceRequestPage() {
               </div>
 
               {/* Profile Card */}
-              <div className="bg-gradient-to-r from-green-500 to-yellow-500 text-white rounded-2xl p-5 shadow-lg">
+              <div className="bg-orange-500/90 text-white rounded-2xl p-5 shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/20 p-2 rounded-lg">
                     <User className="w-5 h-5" />
@@ -258,7 +258,7 @@ export default function AmbulanceRequestPage() {
                 <p className="text-sm font-semibold text-gray-700 mb-3 text-center">📞 Emergency Hotline</p>
                 <a
                   href="tel:(043)288-8888"
-                  className="flex items-center justify-center gap-3 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:from-green-700 hover:to-green-800 transition-all"
+                  className="flex items-center justify-center gap-3 bg-orange-500/90 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
                 >
                   <Phone className="w-5 h-5" />
                   (043) 288-8888
@@ -266,7 +266,7 @@ export default function AmbulanceRequestPage() {
               </div>
 
               {/* Warning */}
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-orange-300 rounded-2xl p-4">
+              <div className="bg-orange-50/60 border-2 border-orange-300 rounded-2xl p-4">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                   <div>
@@ -281,7 +281,7 @@ export default function AmbulanceRequestPage() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                 {/* Form Header */}
-                <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4">
+                <div className="bg-orange-500/90 px-6 py-4">
                   <h2 className="text-white font-bold text-xl flex items-center gap-2">
                     <Clock className="w-6 h-6" />
                     Request Details
@@ -340,7 +340,7 @@ export default function AmbulanceRequestPage() {
                           onClick={() => setFormData({ ...formData, emergency: type.value })}
                           className={`p-4 rounded-xl border-2 transition-all ${
                             formData.emergency === type.value
-                              ? "bg-gradient-to-br from-orange-500 to-orange-600 text-white border-transparent shadow-lg scale-105"
+                              ? "bg-orange-500/90 text-white border-transparent shadow-lg scale-105"
                               : "bg-white border-gray-200 hover:border-orange-300 hover:shadow-md"
                           }`}
                         >
@@ -371,7 +371,7 @@ export default function AmbulanceRequestPage() {
                   <button
                     type="submit"
                     disabled={loading || !location || isLoadingUserData}
-                    className="w-full bg-gradient-to-r from-green-600 via-yellow-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:from-green-700 hover:via-yellow-600 hover:to-orange-700 active:scale-98 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full bg-orange-500/90 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl active:scale-98 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>

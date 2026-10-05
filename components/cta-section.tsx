@@ -22,7 +22,7 @@ export default function CTASection() {
             animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
             transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY }}
             style={{
-              backgroundImage: "linear-gradient(90deg, #1f2937, #ea580c, #059669, #1f2937)",
+              backgroundImage: "linear-gradient(90deg, #1f2937, #F97316, #16A34A, #1f2937)",
               backgroundSize: "200% auto",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -44,10 +44,10 @@ export default function CTASection() {
               <motion.button
                 whileHover={{
                   scale: 1.05,
-                  boxShadow: "0 20px 40px rgba(234, 88, 12, 0.3)",
+                  boxShadow: "0 20px 40px rgba(249, 115, 22, 0.3)",
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full border-2 border-orange-600 bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold relative overflow-hidden"
+                className="px-8 py-3 rounded-full border-2 border-orange-600 bg-orange-500/90 text-white font-bold relative overflow-hidden"
               >
                 <span className="relative z-10">Services</span>
               </motion.button>

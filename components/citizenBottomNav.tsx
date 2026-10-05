@@ -97,7 +97,7 @@ export default function CitizenBottomNav() {
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40">
       {/* Quick Access Expandable Panel */}
       <div
-        className={`bg-gradient-to-br from-emerald-50 to-orange-50 border-t border-gray-200 shadow-lg transition-all duration-300 overflow-hidden ${
+        className={`bg-green-600/90 border-t border-gray-200 shadow-lg transition-all duration-300 overflow-hidden ${
           showQuickAccess ? "max-h-96" : "max-h-0"
         }`}
       >
@@ -112,7 +112,7 @@ export default function CitizenBottomNav() {
                   onClick={() => handleNavigation(item.path)}
                   className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${
                     active
-                      ? "bg-gradient-to-br from-emerald-500 to-orange-500 shadow-md"
+                      ? "bg-green-600/90 shadow-md"
                       : "bg-white hover:bg-gray-50"
                   }`}
                 >

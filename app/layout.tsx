@@ -162,7 +162,7 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ea580c" },
+    { media: "(prefers-color-scheme: light)", color: "#F97316" },
     { media: "(prefers-color-scheme: dark)", color: "#dc2626" },
   ],
   width: "device-width",
@@ -376,7 +376,7 @@ export default function RootLayout({
         <link rel="alternate" hrefLang="fil-ph" href="https://pamplonatres-laspinas.vercel.app/fil" />
         <link rel="alternate" hrefLang="x-default" href="https://pamplonatres-laspinas.vercel.app/" />
       </head>
-      <body className={`${geist.className} antialiased bg-gradient-to-br from-red-50 via-orange-50 to-green-50`}>
+      <body className={`${geist.className} antialiased bg-orange-50/60`}>
         <ServiceWorkerProvider />
         {children}
         <Toaster />

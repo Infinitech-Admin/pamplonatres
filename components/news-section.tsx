@@ -130,13 +130,13 @@ export default function NewsSection() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-16"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-orange-500/90 rounded-full flex items-center justify-center mx-auto mb-4">
                 <X className="w-8 h-8 text-white" />
               </div>
               <p className="text-red-700 mb-6 font-semibold text-lg">Failed to load news: {error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-8 py-4 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white rounded-full hover:shadow-2xl transition-all font-semibold text-lg hover:scale-105"
+                className="px-8 py-4 bg-orange-500/90 text-white rounded-full hover:shadow-2xl transition-all font-semibold text-lg hover:scale-105"
               >
                 Try Again
               </button>
@@ -147,10 +147,10 @@ export default function NewsSection() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-20"
             >
-              <div className="w-24 h-24 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+              <div className="w-24 h-24 bg-orange-500/90 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
                 <Newspaper className="w-12 h-12 text-white" />
               </div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
+              <h3 className="text-2xl font-bold text-orange-600 mb-3">
                 No News Available
               </h3>
               <p className="text-gray-600 text-lg">Check back later for community updates and stories.</p>
@@ -172,7 +172,7 @@ export default function NewsSection() {
                   <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-orange-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                   {/* Image */}
-                  <div className="relative h-56 overflow-hidden bg-gradient-to-br from-red-100 via-orange-100 to-green-100 flex items-center justify-center">
+                  <div className="relative h-56 overflow-hidden bg-orange-50/60 flex items-center justify-center">
                     <img
                       src={getImageUrl(article.image)}
                       alt={article.title}
@@ -183,7 +183,7 @@ export default function NewsSection() {
                     />
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white shadow-lg">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase bg-orange-500/90 text-white shadow-lg">
                         {article.category}
                       </span>
                     </div>
@@ -208,7 +208,7 @@ export default function NewsSection() {
 
                     <motion.div
                       whileHover={{ x: 5 }}
-                      className="inline-flex items-center gap-2 text-sm font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent"
+                      className="inline-flex items-center gap-2 text-sm font-bold text-orange-600"
                     >
                       Read Full Story
                       <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,7 +255,7 @@ export default function NewsSection() {
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-64 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-xl"></div>
+                  <div className="w-full h-64 bg-orange-500/90 rounded-xl"></div>
                 )}
                 
                 {/* Close Button */}
@@ -271,7 +271,7 @@ export default function NewsSection() {
 
                 {/* Category Badge on Image */}
                 <div className="absolute top-4 left-4 z-20">
-                  <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold uppercase bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white shadow-xl">
+                  <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold uppercase bg-orange-500/90 text-white shadow-xl">
                     {selectedArticle.category}
                   </span>
                 </div>
@@ -281,14 +281,14 @@ export default function NewsSection() {
               <div className="flex-1 overflow-y-auto p-8 md:p-10">
                 <div className="space-y-6">
                   {/* Title */}
-                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent leading-tight">
+                  <h2 className="text-3xl md:text-4xl font-bold text-orange-600 leading-tight">
                     {selectedArticle.title}
                   </h2>
 
                   {/* Meta Info */}
                   <div className="flex flex-wrap items-center gap-6 pb-6 border-b-2 border-gray-200">
                     <div className="flex items-center gap-2 text-gray-600">
-                      <div className="w-10 h-10 bg-gradient-to-br from-red-100 via-orange-100 to-green-100 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-orange-50/60 rounded-full flex items-center justify-center">
                         <Calendar className="w-5 h-5 text-orange-600" />
                       </div>
                       <span className="font-medium">
@@ -298,7 +298,7 @@ export default function NewsSection() {
                     
                     {selectedArticle.author && (
                       <div className="flex items-center gap-2 text-gray-600">
-                        <div className="w-10 h-10 bg-gradient-to-br from-red-100 via-orange-100 to-green-100 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-orange-50/60 rounded-full flex items-center justify-center">
                           <User className="w-5 h-5 text-orange-600" />
                         </div>
                         <span className="font-medium">By {selectedArticle.author.name}</span>
@@ -316,12 +316,12 @@ export default function NewsSection() {
               </div>
 
               {/* Modal Footer */}
-              <div className="border-t-2 border-gray-200 px-8 md:px-10 py-6 bg-gradient-to-r from-red-50 via-orange-50 to-green-50">
+              <div className="border-t-2 border-gray-200 px-8 md:px-10 py-6 bg-orange-50/60">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedArticle(null)}
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white rounded-full hover:shadow-2xl transition-all font-bold text-lg"
+                  className="w-full sm:w-auto px-8 py-4 bg-orange-500/90 text-white rounded-full hover:shadow-2xl transition-all font-bold text-lg"
                 >
                   Close
                 </motion.button>

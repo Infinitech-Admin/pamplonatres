@@ -457,7 +457,7 @@ export default function AdminReportsPage() {
 
             <button
               onClick={handleSearch}
-              className="mt-4 w-full sm:w-auto px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+              className="mt-4 w-full sm:w-auto px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
             >
               Search
             </button>
@@ -727,7 +727,7 @@ export default function AdminReportsPage() {
                                 onClick={() => handlePageChange(pageNum)}
                                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
                                   pagination.current_page === pageNum
-                                    ? "bg-orange-600 text-white"
+                                    ? "bg-orange-500 text-white"
                                     : "border border-gray-300 hover:bg-gray-50"
                                 }`}
                               >

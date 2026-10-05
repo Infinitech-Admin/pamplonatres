@@ -221,7 +221,7 @@ export default function ReportIssuePage() {
     <CitizenLayout requireAuth={false}>
       <div className="flex flex-col min-h-screen bg-white">
         {/* Header */}
-        <header className="bg-orange-600 text-white px-4 py-4">
+        <header className="bg-orange-500 text-white px-4 py-4">
           <div className="flex items-center justify-between gap-3 mb-2">
             <div className="flex items-center gap-3">
               <Link href="/dashboard/citizen/">
@@ -450,7 +450,7 @@ export default function ReportIssuePage() {
             <button
               type="submit"
               disabled={loading || !formData.category}
-              className="w-full bg-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg active:scale-98 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg active:scale-98 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Submitting Report..." : "Submit Report"}
             </button>

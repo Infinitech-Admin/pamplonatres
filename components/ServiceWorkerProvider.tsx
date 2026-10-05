@@ -105,7 +105,7 @@ export default function ServiceWorkerProvider() {
       onClick={handleDismiss}
     >
       <div
-        className="w-full max-w-sm bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-xl shadow-2xl p-5 border border-orange-400 animate-in zoom-in-95 duration-200"
+        className="w-full max-w-sm bg-orange-500/90 text-white rounded-xl shadow-2xl p-5 border border-orange-400 animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between mb-2">

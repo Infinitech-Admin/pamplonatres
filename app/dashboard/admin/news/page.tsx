@@ -119,7 +119,7 @@ export default function AdminNewsPage() {
     {
       value: "Environment",
       label: "Environment",
-      color: "bg-emerald-100 text-emerald-700",
+      color: "bg-green-100 text-green-700",
     },
     {
       value: "Community",
@@ -462,14 +462,14 @@ export default function AdminNewsPage() {
               </div>
               <button
                 onClick={handleCreateNew}
-                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-orange-500 text-white rounded-lg hover:from-emerald-700 hover:to-orange-600 transition-all"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-green-600/90 text-white rounded-lg hover:bg-green-700/90 transition-all"
               >
                 <Plus className="w-5 h-5" />
                 New Article
               </button>
               <button
                 onClick={handleCreateNew}
-                className="sm:hidden p-2 bg-gradient-to-r from-emerald-600 to-orange-500 text-white rounded-lg hover:from-emerald-700 hover:to-orange-600 transition-all"
+                className="sm:hidden p-2 bg-green-600/90 text-white rounded-lg hover:bg-green-700/90 transition-all"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -531,7 +531,7 @@ export default function AdminNewsPage() {
 
             <button
               onClick={handleSearch}
-              className="mt-4 w-full sm:w-auto px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+              className="mt-4 w-full sm:w-auto px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
             >
               Search
             </button>
@@ -577,7 +577,7 @@ export default function AdminNewsPage() {
                 </p>
                 <button
                   onClick={handleCreateNew}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-700 transition-colors"
                 >
                   New Article
                 </button>
@@ -782,7 +782,7 @@ export default function AdminNewsPage() {
                                 onClick={() => handlePageChange(pageNum)}
                                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
                                   pagination.current_page === pageNum
-                                    ? "bg-orange-600 text-white"
+                                    ? "bg-orange-500 text-white"
                                     : "border border-gray-300 hover:bg-gray-50"
                                 }`}
                               >
@@ -1061,7 +1061,7 @@ export default function AdminNewsPage() {
                       </button>
                       <button
                         onClick={() => handleEdit(selectedNews!)}
-                        className="w-full sm:w-auto px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+                        className="w-full sm:w-auto px-4 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
                       >
                         Edit
                       </button>
@@ -1077,7 +1077,7 @@ export default function AdminNewsPage() {
                       <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto px-4 py-3 bg-gradient-to-r from-emerald-600 to-orange-500 text-white rounded-lg hover:from-emerald-700 hover:to-orange-600 transition-all text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-4 py-3 bg-green-600/90 text-white rounded-lg hover:bg-green-700/90 transition-all text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isSubmitting ? (
                           <>

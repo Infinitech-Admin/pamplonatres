@@ -122,7 +122,7 @@ export default function CitizenSidebar() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <aside className="hidden lg:block fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-emerald-600 to-orange-500 text-white shadow-2xl z-50">
+    <aside className="hidden lg:block fixed top-0 left-0 h-full w-64 bg-green-600/90 text-white shadow-2xl z-50">
       <div className="p-6 h-full flex flex-col overflow-y-auto">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8">
@@ -136,7 +136,7 @@ export default function CitizenSidebar() {
 
           <div>
             <h1 className="font-bold text-lg">Pamplona Tres City</h1>
-            <p className="text-xs text-emerald-100">Connect</p>
+            <p className="text-xs text-green-100">Connect</p>
           </div>
         </div>
 
@@ -160,7 +160,7 @@ export default function CitizenSidebar() {
 
         {/* Quick Access */}
         <div className="flex-1">
-          <h3 className="text-xs font-semibold text-emerald-100 uppercase tracking-wider mb-3 px-4">
+          <h3 className="text-xs font-semibold text-green-100 uppercase tracking-wider mb-3 px-4">
             Quick Access
           </h3>
           <nav className="space-y-1">

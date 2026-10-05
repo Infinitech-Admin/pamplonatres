@@ -29,8 +29,8 @@ export default function CitizenDashboard() {
     {
       icon: FileText,
       label: "Citizen Guide",
-      color: "bg-emerald-50",
-      iconColor: "text-emerald-600",
+      color: "bg-green-50",
+      iconColor: "text-green-600",
       path: "/dashboard/citizen/citizen-guide",
     },
     {
@@ -88,7 +88,7 @@ export default function CitizenDashboard() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">
-          <span className="bg-gradient-to-r from-emerald-600 to-orange-500 bg-clip-text text-transparent">
+          <span className="text-orange-600">
             Magandang umaga, Pamplona Citizen!
           </span>
         </h1>
@@ -116,9 +116,9 @@ export default function CitizenDashboard() {
       </div>
 
       {/* Help Section */}
-      <div className="bg-gradient-to-r from-emerald-600 to-orange-500 rounded-2xl p-8 mb-8 text-white">
+      <div className="bg-green-600/90 rounded-2xl p-8 mb-8 text-white">
         <h2 className="text-2xl font-bold mb-2">Help us improve our city</h2>
-        <p className="mb-6 text-emerald-50">
+        <p className="mb-6 text-green-50">
           Spotted an issue in your area? Contact us so we can fix it together.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
@@ -126,7 +126,7 @@ export default function CitizenDashboard() {
             onClick={() =>
               router.push("/dashboard/citizen/account/applications")
             }
-            className="flex-1 bg-white text-emerald-600 px-6 py-3 rounded-xl font-bold hover:shadow-xl transition-all"
+            className="flex-1 bg-white text-green-600 px-6 py-3 rounded-xl font-bold hover:shadow-xl transition-all"
           >
             View Reports
           </button>

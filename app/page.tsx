@@ -280,7 +280,7 @@ export default function Home() {
 
               <div className="relative h-full flex flex-col items-center justify-center px-6 text-center">
                 <h1
-                  className="font-serif text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight max-w-[90vw] break-words bg-gradient-to-r from-red-400 via-orange-300 to-green-400 bg-clip-text text-transparent"
+                  className="font-serif text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight max-w-[90vw] break-words text-orange-600"
                   style={{
                     fontFamily: "Georgia, 'Times New Roman', serif",
                     filter:
@@ -295,7 +295,7 @@ export default function Home() {
                       repeat: Infinity,
                       repeatType: "reverse",
                     }}
-                    className="inline-block w-[3px] h-[0.85em] bg-gradient-to-b from-red-400 via-orange-300 to-green-400 ml-1 translate-y-[0.08em] rounded-full"
+                    className="inline-block w-[3px] h-[0.85em] bg-orange-500/90 ml-1 translate-y-[0.08em] rounded-full"
                   />
                 </h1>
 
@@ -310,7 +310,7 @@ export default function Home() {
                       : { scaleX: 0, opacity: 0 }
                   }
                   transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="mt-5 h-1 w-24 sm:w-32 origin-center rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-green-500 shadow-[0_0_16px_rgba(249,115,22,0.6)]"
+                  className="mt-5 h-1 w-24 sm:w-32 origin-center rounded-full bg-orange-500/90 shadow-[0_0_16px_rgba(249,115,22,0.6)]"
                 />
               </div>
             </motion.div>
@@ -415,7 +415,7 @@ export default function Home() {
               </div>
               {/* Accent badge */}
               <div className="absolute -bottom-6 -right-6 hidden sm:flex items-center gap-3 bg-white rounded-2xl shadow-xl px-5 py-4 border-2 border-gray-100">
-                <div className="p-2.5 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full">
+                <div className="p-2.5 bg-orange-500/90 rounded-full">
                   <MapPin className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -439,7 +439,7 @@ export default function Home() {
                 Barangay Pamplona Tres
               </span>
               <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+                <span className="text-orange-600">
                   Serving Our Community, Building a Better Tomorrow
                 </span>
               </h2>
@@ -458,7 +458,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 rounded-full bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white font-bold inline-flex items-center gap-3 shadow-xl hover:shadow-orange-500/40 transition-all"
+                  className="px-8 py-4 rounded-full bg-orange-500/90 text-white font-bold inline-flex items-center gap-3 shadow-xl hover:shadow-orange-500/40 transition-all"
                 >
                   Learn More About Us <ArrowRight className="w-5 h-5" />
                 </motion.button>
@@ -488,11 +488,11 @@ export default function Home() {
                   className="p-8 rounded-3xl bg-white border-2 border-gray-100 hover:border-orange-300 text-center hover:shadow-2xl transition-all group"
                 >
                   <div className="flex justify-center mb-6">
-                    <div className="p-5 bg-gradient-to-br from-red-500 via-orange-500 to-green-500 rounded-full shadow-xl group-hover:scale-110 transition-transform">
+                    <div className="p-5 bg-orange-500/90 rounded-full shadow-xl group-hover:scale-110 transition-transform">
                       <Icon className="w-10 h-10 text-white" />
                     </div>
                   </div>
-                  <div className="text-5xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent mb-3">
+                  <div className="text-5xl font-bold text-orange-600 mb-3">
                     {stat.value}
                   </div>
                   <div className="text-gray-700 font-semibold text-lg">
@@ -518,11 +518,11 @@ export default function Home() {
             className="mb-16 text-center"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+              <span className="text-orange-600">
                 Latest Updates
               </span>
             </h2>
-            <div className="w-32 h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full mx-auto mb-4" />
+            <div className="w-32 h-1.5 bg-orange-500/90 rounded-full mx-auto mb-4" />
             <p className="text-lg text-gray-700 max-w-2xl mx-auto font-medium">
               Stay informed with recent news and announcements from our barangay
             </p>
@@ -533,7 +533,7 @@ export default function Home() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="p-6 rounded-3xl bg-gradient-to-br from-red-200 via-orange-200 to-green-200 animate-pulse h-96"
+                  className="p-6 rounded-3xl bg-orange-50/60 animate-pulse h-96"
                 />
               ))}
             </div>
@@ -550,7 +550,7 @@ export default function Home() {
                   onClick={() => setSelectedArticle(item)}
                   className="group rounded-3xl bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-100 hover:border-orange-300"
                 >
-                  <div className="relative h-56 overflow-hidden bg-gradient-to-br from-red-100 via-orange-100 to-green-100">
+                  <div className="relative h-56 overflow-hidden bg-orange-50/60">
                     {item.image ? (
                       <img
                         src={`${process.env.NEXT_PUBLIC_IMAGE_URL || ""}/${item.image}`}
@@ -558,12 +558,12 @@ export default function Home() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-500 via-orange-500 to-green-500 text-white text-6xl">
+                      <div className="w-full h-full flex items-center justify-center bg-orange-500/90 text-white text-6xl">
                         📰
                       </div>
                     )}
                     <div className="absolute top-4 right-4">
-                      <span className="px-4 py-2 rounded-full text-xs font-bold uppercase bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white shadow-lg">
+                      <span className="px-4 py-2 rounded-full text-xs font-bold uppercase bg-orange-500/90 text-white shadow-lg">
                         {getCategoryLabel(item.category)}
                       </span>
                     </div>
@@ -584,7 +584,7 @@ export default function Home() {
                     </p>
                     <motion.div
                       whileHover={{ x: 5 }}
-                      className="inline-flex items-center gap-2 text-sm font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent"
+                      className="inline-flex items-center gap-2 text-sm font-bold text-orange-600"
                     >
                       Read More
                       <ArrowRight className="w-4 h-4 text-orange-500" />
@@ -609,7 +609,7 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-10 py-4 rounded-full bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white font-bold inline-flex items-center gap-3 shadow-2xl hover:shadow-orange-500/50 transition-all text-lg"
+                className="px-10 py-4 rounded-full bg-orange-500/90 text-white font-bold inline-flex items-center gap-3 shadow-2xl hover:shadow-orange-500/50 transition-all text-lg"
               >
                 View All News <ArrowRight className="w-5 h-5" />
               </motion.button>
@@ -644,7 +644,7 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-r from-red-500 via-orange-500 to-green-500 flex items-center justify-center text-white text-8xl">
+                  <div className="w-full h-full bg-orange-500/90 flex items-center justify-center text-white text-8xl">
                     📰
                   </div>
                 )}
@@ -662,7 +662,7 @@ export default function Home() {
                 </motion.button>
 
                 <div className="absolute bottom-6 left-6">
-                  <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold uppercase bg-gradient-to-r from-red-500 via-orange-500 to-green-500 text-white shadow-xl">
+                  <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold uppercase bg-orange-500/90 text-white shadow-xl">
                     {getCategoryLabel(selectedArticle.category)}
                   </span>
                 </div>
@@ -670,13 +670,13 @@ export default function Home() {
 
               <div className="flex-1 overflow-y-auto p-8 md:p-10">
                 <div className="space-y-6">
-                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent leading-tight">
+                  <h2 className="text-3xl md:text-4xl font-bold text-orange-600 leading-tight">
                     {selectedArticle.title}
                   </h2>
 
                   <div className="flex flex-wrap items-center gap-6 pb-6 border-b-2 border-gray-200">
                     <div className="flex items-center gap-2 text-gray-600">
-                      <div className="w-10 h-10 bg-gradient-to-br from-red-100 via-orange-100 to-green-100 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-orange-50/60 rounded-full flex items-center justify-center">
                         <Calendar className="w-5 h-5 text-orange-600" />
                       </div>
                       <span className="font-medium">
@@ -688,7 +688,7 @@ export default function Home() {
 
                     {selectedArticle.author && (
                       <div className="flex items-center gap-2 text-gray-600">
-                        <div className="w-10 h-10 bg-gradient-to-br from-red-100 via-orange-100 to-green-100 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-orange-50/60 rounded-full flex items-center justify-center">
                           <User className="w-5 h-5 text-orange-600" />
                         </div>
                         <span className="font-medium">
@@ -706,12 +706,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="border-t-2 border-gray-200 px-8 md:px-10 py-6 bg-gradient-to-r from-red-50 via-orange-50 to-green-50">
+              <div className="border-t-2 border-gray-200 px-8 md:px-10 py-6 bg-orange-50/60">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedArticle(null)}
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 text-white rounded-full hover:shadow-2xl transition-all font-bold text-lg"
+                  className="w-full sm:w-auto px-8 py-4 bg-orange-500/90 text-white rounded-full hover:shadow-2xl transition-all font-bold text-lg"
                 >
                   Close
                 </motion.button>
@@ -722,7 +722,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-600 via-orange-600 to-green-600 relative overflow-hidden">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-orange-500/90 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
 

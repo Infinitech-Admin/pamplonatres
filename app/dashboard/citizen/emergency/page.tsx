@@ -22,7 +22,7 @@ export default function EmergencyPage() {
       icon: Phone,
       label: "Emergency Hotline",
       number: "911",
-      color: "bg-gradient-to-br from-red-500 to-red-600",
+      color: "bg-orange-500/90",
     },
     {
       icon: Ambulance,
@@ -34,7 +34,7 @@ export default function EmergencyPage() {
       icon: FireExtinguisher,
       label: "Fire Department",
       number: "(043) 288-7777",
-      color: "bg-gradient-to-br from-orange-500 to-orange-600",
+      color: "bg-orange-500/90",
     },
     {
       icon: Shield,
@@ -56,7 +56,7 @@ export default function EmergencyPage() {
     <CitizenLayout requireAuth={false}>
       <div className="h-screen overflow-auto bg-gray-50">
         {/* Header */}
-        <header className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10 shadow-md">
+        <header className="bg-green-600/90 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10 shadow-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <Link
@@ -112,7 +112,7 @@ export default function EmergencyPage() {
               <button
                 onClick={() => handleEmergencyCall("911")}
                 disabled={calling}
-                className="w-full bg-gradient-to-br from-red-600 to-red-500 text-white p-6 sm:p-8 rounded-xl shadow-lg hover:shadow-xl active:scale-98 transition-all disabled:opacity-50 group"
+                className="w-full bg-orange-500/90 text-white p-6 sm:p-8 rounded-xl shadow-lg hover:shadow-xl active:scale-98 transition-all disabled:opacity-50 group"
               >
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -133,7 +133,7 @@ export default function EmergencyPage() {
             {/* Emergency Contacts Grid */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-emerald-600" />
+                <Shield className="w-5 h-5 text-green-600" />
                 Emergency Contacts
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -162,7 +162,7 @@ export default function EmergencyPage() {
                         {contact.number}
                       </p>
                     </div>
-                    <Phone className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors flex-shrink-0" />
+                    <Phone className="w-5 h-5 text-gray-400 group-hover:text-green-600 transition-colors flex-shrink-0" />
                   </button>
                 ))}
               </div>
@@ -176,7 +176,7 @@ export default function EmergencyPage() {
               </h2>
               <Link
                 href="/dashboard/citizen/emergency/ambulance"
-                className="flex items-center gap-4 bg-gradient-to-r from-emerald-500 to-orange-500 text-white p-5 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all group w-full"
+                className="flex items-center gap-4 bg-green-600/90 text-white p-5 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all group w-full"
               >
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
                   <Ambulance className="w-7 h-7 sm:w-8 sm:h-8 text-white" />

@@ -463,7 +463,7 @@ export default function BarangayClearancePage() {
   if (submitSuccess) {
     return (
       <CitizenLayout requireAuth={false}>
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-orange-50/60 flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -517,7 +517,7 @@ export default function BarangayClearancePage() {
 
   return (
     <CitizenLayout requireAuth={false}>
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 py-8 px-4">
+      <div className="min-h-screen bg-orange-50/60 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -548,7 +548,7 @@ export default function BarangayClearancePage() {
                         <div
                           className={`w-10 h-10 rounded-full flex items-center justify-center ${
                             currentStep >= step.number
-                              ? "bg-orange-600 text-white"
+                              ? "bg-orange-500 text-white"
                               : "bg-gray-200 text-gray-600"
                           }`}
                         >
@@ -560,7 +560,7 @@ export default function BarangayClearancePage() {
                       </div>
                       {index < steps.length - 1 && (
                         <div
-                          className={`h-1 flex-1 mx-2 ${currentStep > step.number ? "bg-orange-600" : "bg-gray-200"}`}
+                          className={`h-1 flex-1 mx-2 ${currentStep > step.number ? "bg-orange-500" : "bg-gray-200"}`}
                         />
                       )}
                     </div>
@@ -918,7 +918,7 @@ export default function BarangayClearancePage() {
                       <Button
                         type="button"
                         onClick={handleNext}
-                        className="bg-orange-500 hover:bg-orange-600"
+                        className="bg-orange-500 hover:bg-orange-500"
                       >
                         Next
                       </Button>
@@ -927,7 +927,7 @@ export default function BarangayClearancePage() {
                         type="button"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="bg-orange-500 hover:bg-orange-600"
+                        className="bg-orange-500 hover:bg-orange-500"
                       >
                         {isSubmitting ? "Submitting..." : "Submit Application"}
                       </Button>

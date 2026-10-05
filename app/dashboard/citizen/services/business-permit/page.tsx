@@ -894,7 +894,7 @@ export default function BusinessPermitPage() {
                 {currentStep < steps.length ? (
                   <Button
                     onClick={handleNext}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-orange-500 hover:bg-orange-500"
                   >
                     Next
                   </Button>
@@ -902,7 +902,7 @@ export default function BusinessPermitPage() {
                   <Button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-orange-500 hover:bg-orange-500"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Application"}
                   </Button>

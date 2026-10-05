@@ -151,7 +151,7 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="hidden lg:block fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-emerald-600 to-orange-500 text-white shadow-2xl z-50 overflow-y-auto">
+    <aside className="hidden lg:block fixed top-0 left-0 h-full w-64 bg-green-600/90 text-white shadow-2xl z-50 overflow-y-auto">
       <div className="p-6 flex flex-col min-h-full">
         {/* Logo Section */}
         <div className="flex items-center gap-3 mb-4">

@@ -303,7 +303,7 @@ export default function EnhancedAdminDashboard() {
           </div>
           <button 
             onClick={fetchDashboardData}
-            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
           >
             <Activity className="w-4 h-4" />
             Refresh Data

@@ -245,7 +245,7 @@ const categories = [
     id: "cedula",
     name: "Cedula",
     icon: Users,
-    color: "from-teal-500 to-emerald-600",
+    color: "from-teal-500 to-green-600",
     bgColor: "bg-teal-50",
     borderColor: "border-teal-500",
     textColor: "text-teal-700",
@@ -479,7 +479,7 @@ function ApplicationsContent() {
     switch (status.toLowerCase()) {
       case "approved":
         return (
-          <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm">
+          <Badge className="bg-green-500 text-white hover:bg-green-600 shadow-sm">
             <CheckCircle className="h-3 w-3 mr-1" />
             Approved
           </Badge>
@@ -506,7 +506,7 @@ function ApplicationsContent() {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "approved":
-        return "border-l-emerald-500 bg-emerald-50/50";
+        return "border-l-green-500 bg-green-50/50";
       case "pending":
         return "border-l-amber-500 bg-amber-50/50";
       case "rejected":
@@ -630,7 +630,7 @@ function ApplicationsContent() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2 flex-1">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/90 flex items-center justify-center shadow-lg">
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -661,9 +661,9 @@ function ApplicationsContent() {
               <p className="text-[10px] text-amber-100 font-medium">Pending</p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2.5 text-center shadow">
+            <div className="bg-orange-500/90 rounded-lg p-2.5 text-center shadow">
               <p className="text-xl font-bold text-white">{stats.approved}</p>
-              <p className="text-[10px] text-emerald-100 font-medium">
+              <p className="text-[10px] text-green-100 font-medium">
                 Approved
               </p>
             </div>
@@ -756,7 +756,7 @@ function ApplicationsContent() {
                               variant="secondary"
                               className={
                                 status === "approved"
-                                  ? "bg-emerald-100 text-emerald-700"
+                                  ? "bg-green-100 text-green-700"
                                   : status === "pending"
                                     ? "bg-amber-100 text-amber-700"
                                     : "bg-rose-100 text-rose-700"
@@ -856,7 +856,7 @@ function ApplicationsContent() {
             {currentCategoryApps.length === 0 ? (
               <Card className="border-0 shadow-lg">
                 <CardContent className="py-16 text-center">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-orange-50/60 flex items-center justify-center">
                     <FileText className="h-10 w-10 text-orange-600" />
                   </div>
                   <h3 className="text-xl font-bold mb-2 text-gray-900">
@@ -883,7 +883,7 @@ function ApplicationsContent() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-lg bg-orange-500/90 flex items-center justify-center shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
                           <FileText className="h-6 w-6 text-white" />
                         </div>
 
@@ -947,7 +947,7 @@ function ApplicationsContent() {
         <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader className="border-b pb-4">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/90 flex items-center justify-center shadow-lg flex-shrink-0">
                 <FileText className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1003,7 +1003,7 @@ function ApplicationsContent() {
 
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-orange-500/90 flex items-center justify-center">
                       <FileText className="h-4 w-4 text-white" />
                     </div>
                     <h3 className="font-bold text-lg text-gray-900">

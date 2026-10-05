@@ -273,7 +273,7 @@ export default function UserAlertsPage() {
                   onClick={() => setFilter(tab)}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     filter === tab
-                      ? "bg-orange-600 text-white"
+                      ? "bg-orange-500 text-white"
                       : "bg-white text-foreground border border-border hover:bg-muted"
                   }`}
                 >

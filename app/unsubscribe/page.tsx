@@ -96,7 +96,7 @@ function UnsubscribeContent() {
               <p className="text-gray-600 mb-6">{message}</p>
               <button
                 onClick={() => router.push('/')}
-                className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-orange-500 text-white rounded-lg hover:from-emerald-700 hover:to-orange-600 transition-all font-medium shadow-md hover:shadow-lg"
+                className="px-6 py-3 bg-green-600/90 text-white rounded-lg hover:bg-green-700/90 transition-all font-medium shadow-md hover:shadow-lg"
               >
                 Go to Home
               </button>

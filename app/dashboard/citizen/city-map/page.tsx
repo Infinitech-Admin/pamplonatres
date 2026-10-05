@@ -51,7 +51,7 @@ export default function MapPage() {
       value: "fire",
       label: "Fire Dept",
       icon: FireExtinguisher,
-      color: "bg-orange-600",
+      color: "bg-orange-500",
     },
     {
       value: "government",
@@ -188,7 +188,7 @@ export default function MapPage() {
     <CitizenLayout requireAuth={false}>
       <div className="flex flex-col min-h-screen bg-white">
         {/* Header */}
-        <header className="bg-orange-600 text-white px-4 py-4">
+        <header className="bg-orange-500 text-white px-4 py-4">
           <div className="flex items-center gap-3 mb-3">
             <Link href="/dashboard/citizen">
               <ChevronLeft className="w-6 h-6" />

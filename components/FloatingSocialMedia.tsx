@@ -83,7 +83,7 @@ export default function FloatingSocialMedia() {
         {/* Globe Button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="bg-gradient-to-r from-orange-600 to-orange-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl"
+          className="bg-orange-500/90 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl"
           aria-label="Social Media Menu"
         >
           <Globe

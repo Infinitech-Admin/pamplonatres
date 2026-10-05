@@ -163,7 +163,7 @@ export default function NewsPage() {
     <CitizenLayout requireAuth={false}>
       <div className="h-screen overflow-auto bg-gray-50">
         {/* Header */}
-        <header className="bg-gradient-to-r from-emerald-600 to-orange-500 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10 shadow-md">
+        <header className="bg-green-600/90 text-white px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10 shadow-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <Link
@@ -198,7 +198,7 @@ export default function NewsPage() {
                   onClick={() => setSelectedCategory(category.value)}
                   className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm whitespace-nowrap transition-all ${
                     selectedCategory === category.value
-                      ? "bg-gradient-to-r from-emerald-600 to-orange-500 text-white shadow-md"
+                      ? "bg-green-600/90 text-white shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
@@ -215,14 +215,14 @@ export default function NewsPage() {
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
-                  <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                   <p className="text-gray-600">Loading news...</p>
                 </div>
               </div>
             ) : filteredNews.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <Calendar className="w-10 h-10 text-emerald-600" />
+                <div className="w-20 h-20 bg-green-600/90 rounded-full flex items-center justify-center mb-4">
+                  <Calendar className="w-10 h-10 text-green-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   No news articles
@@ -240,7 +240,7 @@ export default function NewsPage() {
                     className="group block bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all duration-300"
                   >
                     {article.image && (
-                      <div className="relative aspect-video bg-gradient-to-br from-emerald-100 to-orange-100 overflow-hidden">
+                      <div className="relative aspect-video bg-green-600/90 overflow-hidden">
                         <Image
                           src={article.image}
                           alt={article.title}
@@ -253,7 +253,7 @@ export default function NewsPage() {
 
                     <div className="p-4 sm:p-5">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="px-2.5 py-1 bg-gradient-to-r from-emerald-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-sm">
+                        <span className="px-2.5 py-1 bg-green-600/90 text-white text-xs font-bold rounded-full shadow-sm">
                           {article.category}
                         </span>
                         <span className="text-xs text-gray-500 flex items-center gap-1">
@@ -262,7 +262,7 @@ export default function NewsPage() {
                         </span>
                       </div>
 
-                      <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg leading-tight group-hover:text-emerald-600 transition-colors line-clamp-2">
+                      <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg leading-tight group-hover:text-green-600 transition-colors line-clamp-2">
                         {article.title}
                       </h3>
                       <p className="text-xs sm:text-sm text-gray-600 mb-4 leading-relaxed line-clamp-2">
@@ -283,7 +283,7 @@ export default function NewsPage() {
                               e.preventDefault();
                               // Share functionality
                             }}
-                            className="flex items-center gap-1 hover:text-emerald-600 transition-colors"
+                            className="flex items-center gap-1 hover:text-green-600 transition-colors"
                           >
                             <Share2 className="w-3.5 h-3.5" />
                           </button>

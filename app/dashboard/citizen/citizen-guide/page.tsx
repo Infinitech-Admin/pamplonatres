@@ -143,7 +143,7 @@ export default function CitizenGuidePage() {
                 </div>
               </div>
               <Link href="/dashboard/citizen/services/business-permit">
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 mt-4">
+                <Button className="w-full bg-orange-500 hover:bg-orange-500 mt-4">
                   Apply for Business Permit
                 </Button>
               </Link>
@@ -215,7 +215,7 @@ export default function CitizenGuidePage() {
                 </div>
               </div>
               <Link href="/dashboard/citizen/services/building-permit">
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 mt-4">
+                <Button className="w-full bg-orange-500 hover:bg-orange-500 mt-4">
                   Apply for Building Permit
                 </Button>
               </Link>
@@ -277,7 +277,7 @@ export default function CitizenGuidePage() {
                 </div>
               </div>
               <Link href="/dashboard/citizen/services/cedula">
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 mt-4">
+                <Button className="w-full bg-orange-500 hover:bg-orange-500 mt-4">
                   Apply for Cedula
                 </Button>
               </Link>

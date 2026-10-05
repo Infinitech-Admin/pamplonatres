@@ -7,7 +7,7 @@ import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react"
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-green-500" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-orange-500/90" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-8 mb-8 md:mb-12">
@@ -19,7 +19,7 @@ export default function Footer() {
             className="md:col-span-1"
           >
             <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3">
-              <span className="bg-gradient-to-r from-red-400 via-orange-400 to-green-400 bg-clip-text text-transparent">
+              <span className="text-orange-600">
                 Barangay Pamplona Tres
               </span>
             </h3>
@@ -32,7 +32,7 @@ export default function Footer() {
                 href="https://www.facebook.com/ilovepamplonatres"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-800 hover:bg-gradient-to-r hover:from-red-500 hover:via-orange-500 hover:to-green-500 flex items-center justify-center transition-all"
+                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-800 hover:bg-gradient-to-r flex items-center justify-center transition-all"
               >
                 <Facebook className="w-4 h-4 md:w-5 md:h-5" />
               </a>
@@ -40,7 +40,7 @@ export default function Footer() {
                 href="https://www.instagram.com/explore/locations/1034521926/barangay-pamplona-tres/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-800 hover:bg-gradient-to-r hover:from-red-500 hover:via-orange-500 hover:to-green-500 flex items-center justify-center transition-all"
+                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-800 hover:bg-gradient-to-r flex items-center justify-center transition-all"
               >
                 <Instagram className="w-4 h-4 md:w-5 md:h-5" />
               </a>
@@ -69,7 +69,7 @@ export default function Footer() {
                     href={link.href}
                     className="text-gray-400 hover:text-orange-400 transition-colors text-sm flex items-center gap-2 group"
                   >
-                    <span className="w-0 h-0.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 group-hover:w-4 transition-all" />
+                    <span className="w-0 h-0.5 bg-orange-500/90 group-hover:w-4 transition-all" />
                     {link.label}
                   </Link>
                 </li>
@@ -96,7 +96,7 @@ export default function Footer() {
                     href={link.href}
                     className="text-gray-400 hover:text-orange-400 transition-colors text-sm flex items-center gap-2 group"
                   >
-                    <span className="w-0 h-0.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 group-hover:w-4 transition-all" />
+                    <span className="w-0 h-0.5 bg-orange-500/90 group-hover:w-4 transition-all" />
                     {link.label}
                   </Link>
                 </li>
@@ -166,7 +166,7 @@ export default function Footer() {
                 href="https://infinitechphil.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs md:text-sm font-semibold bg-gradient-to-r from-red-400 via-orange-400 to-green-400 bg-clip-text text-transparent"
+                className="text-xs md:text-sm font-semibold text-orange-600"
               >
                 INFINITECH ADVERTISING
               </a>

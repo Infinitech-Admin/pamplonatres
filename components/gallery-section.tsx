@@ -108,11 +108,11 @@ export default function GallerySection({
           className="mb-16 text-center"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-red-600 via-orange-600 to-green-600 bg-clip-text text-transparent">
+            <span className="text-orange-600">
               {title}
             </span>
           </h2>
-          <div className="w-32 h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full mx-auto mb-4" />
+          <div className="w-32 h-1.5 bg-orange-500/90 rounded-full mx-auto mb-4" />
           <p className="text-lg text-gray-700 max-w-2xl mx-auto font-medium">
             {subtitle}
           </p>
@@ -123,7 +123,7 @@ export default function GallerySection({
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="aspect-square rounded-2xl bg-gradient-to-br from-red-100 via-orange-100 to-green-100 animate-pulse"
+                className="aspect-square rounded-2xl bg-orange-50/60 animate-pulse"
               />
             ))}
           </div>

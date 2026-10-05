@@ -199,7 +199,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50 flex items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-orange-50/60 flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -213,7 +213,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.1 }}
             className="text-center mb-10"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-emerald-100 mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-50/60 mb-4">
               <span className="text-2xl font-bold text-orange-600">C</span>
             </div>
             <h1 className="text-4xl font-bold gradient-text mb-2">
@@ -365,7 +365,7 @@ export default function RegisterPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-4 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+              className="w-full px-6 py-4 rounded-lg bg-orange-500/90 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
               {loading ? "Creating Account..." : "Create Account"}
               <ArrowRight size={18} />

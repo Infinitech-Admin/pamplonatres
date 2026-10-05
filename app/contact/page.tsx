@@ -243,7 +243,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  className="w-full px-6 py-3 rounded-full bg-orange-500/90 text-white font-bold hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -316,7 +316,7 @@ export default function ContactPage() {
                 whileHover={{ scale: 1.05, x: 10 }}
                 className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100 flex gap-4"
               >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-orange-500/90 flex items-center justify-center flex-shrink-0">
                   <item.icon className="text-white" size={24} />
                 </div>
                 <div>
@@ -346,7 +346,7 @@ export default function ContactPage() {
           transition={{ delay: 0.3 }}
           className="bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100"
         >
-          <div className="w-full h-96 bg-gradient-to-br from-orange-200 via-emerald-100 to-orange-100 flex items-center justify-center">
+          <div className="w-full h-96 bg-orange-50/60 flex items-center justify-center">
             <Map />
           </div>
         </motion.div>
@@ -365,7 +365,7 @@ export default function ContactPage() {
               transition={{ duration: 5, repeat: Infinity }}
               style={{
                 backgroundImage:
-                  "linear-gradient(90deg, #1f2937, #ea580c, #059669, #1f2937)",
+                  "linear-gradient(90deg, #1f2937, #F97316, #16A34A, #1f2937)",
                 backgroundSize: "200% auto",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -385,10 +385,10 @@ export default function ContactPage() {
                 <motion.button
                   whileHover={{
                     scale: 1.05,
-                    boxShadow: "0 20px 40px rgba(234, 88, 12, 0.3)",
+                    boxShadow: "0 20px 40px rgba(249, 115, 22, 0.3)",
                   }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3 rounded-full border-2 border-orange-600 bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold relative overflow-hidden"
+                  className="px-8 py-3 rounded-full border-2 border-orange-600 bg-orange-500/90 text-white font-bold relative overflow-hidden"
                 >
                   <span className="relative z-10">Log In</span>
                 </motion.button>

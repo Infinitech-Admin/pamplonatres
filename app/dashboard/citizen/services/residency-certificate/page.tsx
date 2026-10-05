@@ -421,7 +421,7 @@ export default function ResidencyCertificatePage() {
   if (submitSuccess) {
     return (
       <CitizenLayout requireAuth={false}>
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-orange-50/60 flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -475,7 +475,7 @@ export default function ResidencyCertificatePage() {
 
   return (
     <CitizenLayout requireAuth={false}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 py-8 px-4">
+      <div className="min-h-screen bg-orange-50/60 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
